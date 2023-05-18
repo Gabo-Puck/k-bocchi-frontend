@@ -6,7 +6,7 @@ const selectUsuario = (state) => state.usuario;
 export const PrivateRoutes = ({authRol=[],redirect}) => {
   const usuario = useSelector(selectUsuario);
   console.log("USUARIO:",usuario);
-  if(!usuario.uid){
+  if(!usuario.email){
     return <Navigate to="/"/>
   }
   if(!authRol.includes(usuario.rol)){
