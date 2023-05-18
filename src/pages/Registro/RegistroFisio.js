@@ -2,15 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Form, BrowserRouter as Router } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
-import { FISIOTERAPEUTA, PACIENTE } from "../roles";
-import { Input } from "../Components/Input";
-import Formulario from "../Components/Formulario";
+import { FISIOTERAPEUTA, PACIENTE } from "../../roles";
+import  Input  from "../../Components/Input";
+import Formulario from "../../Components/Formulario";
 
 const selectUsuario = (state) => state.usuario;
 
-
 const PaginasFisio = [FormDatosLogin, FormDatosGeneralesFisio];
-function RegistroFisio() {
+export default function RegistroFisio() {
   const usuario = useSelector(selectUsuario);
   
   const [rol, setRol] = useState("");
@@ -54,4 +53,4 @@ function FormDatosGeneralesFisio() {
 }
 
 
-export default RegistroFisio;
+

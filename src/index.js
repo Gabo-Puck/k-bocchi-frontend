@@ -13,7 +13,7 @@ import {
 import Root from "./routes/root";
 import ErrorPage from "./error-page";
 import Home from "./pages/Home";
-import Signup from "./pages/RegistroFisio";
+
 import Login from "./pages/Login";
 import Inicio from "./pages/Inicio";
 
@@ -21,28 +21,7 @@ import store from "./store";
 import { USUARIO_AUTORIZADO } from "./Actions/actionsUsuario";
 import { Provider } from "react-redux";
 
-const router = createBrowserRouter([
-  {
-    path: "/registro",
-    element: <Signup />,
-  },
-  { path: "/bienvenida", element: <Inicio /> },
-  {
-    path: "/app",
-    element: <Root />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        path: "/app/home",
-        element: <Home />,
-      },
-      {
-        path: "/app/login",
-        element: <Login />,
-      },
-    ],
-  },
-]);
+
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

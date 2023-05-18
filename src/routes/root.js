@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Home from "../pages/Home";
-import Signup from "../pages/RegistroFisio";
-import Login from "../pages/Login";
+
 import { Link, Outlet, BrowserRouter as Router } from "react-router-dom";
-import { Routes, Route } from "react-router-dom";
 
 export default function Root() {
   return (
@@ -11,17 +8,17 @@ export default function Root() {
       <div className="navbar">
         <h1>K-Bocchi</h1>
         <ul>
-            <li>
-                <Link to={"/home"}>Home</Link>
-            </li>
-            <li>
-                <Link to={"/signup"}>Signup</Link>
-            </li>
-            <li>
-                <Link to={"/login"}>Login</Link>
-            </li>
+          <li>
+            <Link to={"/home"}>Home</Link>
+          </li>
+          <li>
+            <Link to={"/signup"}>Signup</Link>
+          </li>
+          <li>
+            <Link to={"/login"}>Login</Link>
+          </li>
         </ul>
-        <Outlet/>
+        <Outlet />
       </div>
     </>
   );

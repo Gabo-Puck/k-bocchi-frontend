@@ -10,9 +10,13 @@ import Busqueda from "./pages/Busqueda";
 import Perfil from "./pages/Perfil";
 import Layout from "./Components/Layout";
 import { FISIOTERAPEUTA, PACIENTE } from "./roles";
-import RegistroPaciente from "./pages/RegistroPaciente";
-import RegistroDesicion from "./pages/RegistroDesicion";
-import RegistroFisio from "./pages/RegistroFisio";
+import RegistroPaciente from "./pages/Registro/RegistroPaciente";
+import RegistroDesicion from "./pages/Registro/RegistroDesicion";
+import RegistroFisio from "./pages/Registro/RegistroFisio";
+import DatosBasicos from "./pages/Registro/DatosBasicos";
+import DatosIdentificacion from "./pages/Registro/DatosIdentificacion";
+import Confirmacion from "./pages/Registro/Confirmacion";
+import DatosValidacion from "./pages/Registro/DatosValidacion";
 function App() {
   return (
     <div className="App">
@@ -20,9 +24,18 @@ function App() {
         <Routes>
           <Route path="/" element={<Inicio />} />
           <Route path="/registro">
-            <Route index element={<RegistroDesicion/>}/>
-            <Route path="paciente" element={<RegistroPaciente/>}/>
-            <Route path="fisioterapeuta" element={<RegistroFisio/>}/>
+            <Route index element={<RegistroDesicion />} />
+            <Route path="paciente" element={<RegistroPaciente />}>
+              <Route element={<DatosIdentificacion />} path="credenciales" />
+              <Route element={<DatosBasicos />} path="personal" />
+              <Route element={<Confirmacion />} path="confirmacion" />
+            </Route>
+            <Route path="fisioterapeuta" element={<RegistroFisio />}>
+              <Route element={<DatosIdentificacion />} path="credenciales" />
+              <Route element={<DatosBasicos />} path="personal" />
+              <Route element={<DatosValidacion />} path="profesional" />
+              <Route element={<Confirmacion />} path="confirmacion" />
+            </Route>
           </Route>
           <Route
             path="/app"
@@ -31,8 +44,13 @@ function App() {
             <Route path="/app" element={<Layout />}>
               <Route index element={<Home />} />
               <Route path="perfil" element={<Perfil />} />
-              <Route path="busqueda" element={<PrivateRoutes authRol={[PACIENTE]} redirect={"/app"}/>}>
-                <Route index element={<Busqueda/>}/>
+              <Route
+                path="busqueda"
+                element={
+                  <PrivateRoutes authRol={[PACIENTE]} redirect={"/app"} />
+                }
+              >
+                <Route index element={<Busqueda />} />
               </Route>
             </Route>
           </Route>
