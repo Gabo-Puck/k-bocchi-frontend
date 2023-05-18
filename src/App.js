@@ -20,13 +20,23 @@ import DatosValidacion from "./pages/Registro/DatosValidacion";
 function App() {
   return (
     <div className="App">
+      {/**Router es un componente que permite crear un enrutador para la aplicacion. Además soporta los controles de anterior y siguiente del navegador */}
       <Router>
+        {/**Routes permite definir en donde se empezaran a definir las rutas de la aplicacion, asi como la ruta donde empezaran*/}
         <Routes>
+          {/**Route es componente que permite asociar una ruta a un componente, de forma que cuando se este en esa ruta se mostrara dicho componente */}
+          {/**path indica la ruta y element el componente */}
           <Route path="/" element={<Inicio />} />
           <Route path="/registro">
+            {/**Cuando se anidan componentes routes, los componentes route hijos pueden usar rutas relativas
+             * de forma que por ejemplo en la ruta de abajo, se renderiza "RegistroPaciente" en /registro/paciente
+             */}
             <Route index element={<RegistroDesicion />} />
             <Route path="paciente" element={<RegistroPaciente />}>
-              <Route element={<DatosIdentificacion />} path="credenciales" />
+              <Route
+                element={<DatosIdentificacion siguiente={"../personal"} />}
+                path="credenciales"
+              />
               <Route element={<DatosBasicos />} path="personal" />
               <Route element={<Confirmacion />} path="confirmacion" />
             </Route>
@@ -37,6 +47,14 @@ function App() {
               <Route element={<Confirmacion />} path="confirmacion" />
             </Route>
           </Route>
+          {/**
+           * Para proteger las rutas se utiliza el componente PrivateRoutes. En authRol definimos que roles tienen acceso a cierta ruta
+           * con redirect se indica a donde se tiene que redireccionar al usuario en caso de no tener el rol adecuado.
+           * Para poder usar "PrivateRoutes" se pasa como componente en la propiedad "element" de un componente Route
+           */}
+           {/**
+            * La ruta app es la ruta donde los usuarios podrán usar la aplicacion como tal
+            */}
           <Route
             path="/app"
             element={<PrivateRoutes authRol={[PACIENTE, FISIOTERAPEUTA]} />}
@@ -54,7 +72,9 @@ function App() {
               </Route>
             </Route>
           </Route>
-
+          {/**Mediante el simbolo '*' podemos indicar que esta elemento se renderiza en cualquier ruta. Al estar al final solo se renderiza
+           * cuando el usuario trato de ingresar a una ruta que no existe, por lo tanto se renderiza "PaginaError"
+           */}
           <Route path="*" element={<PaginaError />} />
         </Routes>
       </Router>

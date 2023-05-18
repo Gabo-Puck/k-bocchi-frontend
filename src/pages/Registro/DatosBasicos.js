@@ -1,3 +1,3 @@
-export default function DatosBasicos(){
+export default function DatosBasicos({anterior,siguiente}){
     
 }

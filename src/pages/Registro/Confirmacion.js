@@ -1,3 +1,3 @@
-export default function Confirmacion(){
+export default function Confirmacion({anterior,siguiente}){
     
 }

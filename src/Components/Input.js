@@ -21,9 +21,6 @@ import { isFormInvalid } from "../utils/isFormInvalid";
  * @param {name} string el valor que permite vincular la etiqueta html label e input
  * @param {setValue} function es una función que permite vincular el estado del input del componente con algun valor externo al mismo
  * @param {validacion} RegisterOptions es un objeto que contiene las validaciones a ejecutar sobre los valores introducidos por el usuario
- * 
- 
- * 
  * @description Este componente es una extensión que permite validar el valor que el usuario introduce. Para su correcto funcionamiento tiene que estar dentro de
  * un FormProvider
  * 
@@ -67,13 +64,13 @@ function Input({ label, name, setValue, validacion, ...props }) {
    * }
    * */
   const { errors } = formState;
-  //con la función ''findInputError'' obtenemos el error asociado al input actual y lo guardamos en "error"
+  //con la función ''findInputError'' se obtiene el error asociado al input actual y lo guardamos en "error"
   const { error } = findInputError(errors, name);
   return (
     <div>
       <label htmlFor={name}>{label}</label>
       {error && <InputError message={error.message} />}
-      {/* Aqui suscribimos el input llamando a la funcion register, pasandole "name" y el objeto de "validacion" como parametro
+      {/* Aqui se suscribe el input llamando a la funcion register, pasandole "name" y el objeto de "validacion" como parametro
           "name" sera el nombre que tendra el input en el contexto del formulario
        */}
       <input

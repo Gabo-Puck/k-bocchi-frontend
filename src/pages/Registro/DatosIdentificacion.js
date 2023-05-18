@@ -3,7 +3,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import Input from "../../Components/Input";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { isRequired, password_validation } from "../../utils/inputValidation";
-export default function DatosIdentificacion({ siguiente }) {
+export default function DatosIdentificacion({ siguiente,atras }) {
   const { datos, setDatos } = useOutletContext();
   const { correo, contrasena } = datos;
   console.log(datos);
@@ -14,6 +14,10 @@ export default function DatosIdentificacion({ siguiente }) {
     alert(JSON.stringify(datos));
     navigate(siguiente);
   };
+
+  const irAtras = () => {
+    navigate(atras);
+  }
 
   return (
     <FormProvider {...methods}>
@@ -41,7 +45,8 @@ export default function DatosIdentificacion({ siguiente }) {
           validacion={password_validation}
           id={"contraseña"}
         />
-        <button type="sumbit">Enviar</button>
+        <button onClick={()=>irAtras}>Atras</button>
+        <button type="sumbit">Siguiente</button>
       </form>
     </FormProvider>
   );
