@@ -1,3 +1,4 @@
+import { Card } from "@mantine/core";
 import React, { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 
@@ -14,7 +15,9 @@ function RegistroPaciente() {
   return (
     <>
       <h1>Registro paciente</h1>
-      <Outlet context={{ setDatos: setDatos, datos: datos }} />
+      <Card shadow="sm" padding="lg" radius="md" withBorder>
+        <Outlet context={{ setDatos: setDatos, datos: datos }} />
+      </Card>
     </>
   );
 }
