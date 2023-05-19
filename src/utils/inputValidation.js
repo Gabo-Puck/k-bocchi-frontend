@@ -1,3 +1,8 @@
+/**
+ * Este archivo contiene los objetos de validacion para los formularios
+ * 
+ */
+
 export const name_validation = {
   name: "name",
   label: "name",
