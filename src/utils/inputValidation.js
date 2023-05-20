@@ -6,72 +6,62 @@
 import axios from "axios";
 import { BACKEND_SERVER } from "../server";
 
-export const name_validation = {
-  required: {
-    value: true,
-    message: "required",
-  },
-  maxLength: {
-    value: 30,
-    message: "30 characters max",
-  },
+export const isEmailAvailable = async ({email}) => {
+  //En caso de encontrar un correo repetido, va a generar una excepcion
+  console.log(email);
+  try {
+    await axios.post(`${BACKEND_SERVER}/usuarios/datos/email`, { email: email });
+  } catch (error) {
+    return error.response.data;
+  }
 };
 
-export const desc_validation = {
-  required: {
-    value: true,
-    message: "required",
-  },
-  maxLength: {
-    value: 200,
-    message: "200 characters max",
-  },
-};
-
-export const password_validation = {
-  required: {
-    value: true,
-    message: "required",
-  },
-  minLength: {
-    value: 8,
-    message: "min 8 characters",
-    validate:{
-      contieneMayuscula: (value) => /([A-Z])/
-    }
-  },
-};
-
-export const num_validation = {
-  required: {
-    value: true,
-    message: "required",
-  },
-};
-
-export const email_validation = {
-  required: {
-    value: true,
-    message: "Este es un campo obligatorio",
-  },
-  pattern: {
-    value: /^[A-Za-z0-9._%+-]+@google\.com$/,
-    message: "Correo no valido",
-  },
-  validate: {
-    correoExistente: async (value) => {
-      let resultado = await axios.post(
-        `${BACKEND_SERVER}/usuarios/datos/email`,
-        {
-          value,
-        }
-      );
-      return resultado;
-    },
-  },
+export const isRequiredValidation = (value) => {
+  if (!value || value == "") return "Este campo es necesario";
+  return null;
 };
 
 
+
+export const password_validation = (value) => {
+  if (value.length < 8)
+    return "La contraseña tiene que tener minimo 8 caracteres";
+
+  if (!/[A-Z]/.test(value))
+    return "La contraseña debe de tener minimo una mayuscula";
+
+  console.log("x");
+  return null;
+};
+
+export const email_validation = (value) => {
+  if (!/[\w.%+-]+@([\w-]+\.)+[\w-]{2,3}/.test(value))
+    return "Correo en formato invalido";
+  if (!/[\w.%+-]+@gmail.com$/.test(value))
+    return "El correo debe ser del dominio de google (gmail.com)";
+};
+
+// export const email_validation = {
+//   required: {
+//     value: true,
+//     message: "Este es un campo obligatorio",
+//   },
+//   pattern: {
+//     value: /^[A-Za-z0-9._%+-]+@google\.com$/,
+//     message: "Correo no valido",
+//   },
+//   validate: {
+//     correoExistente: async (value) => {
+//       let resultado = await axios.post(
+//         `${BACKEND_SERVER}/usuarios/datos/email`,
+//         {
+//           value,
+//         }
+//       );
+//       return resultado;
+//     },
+//   },
+// };
 
 export const isRequired = {
   required: {
