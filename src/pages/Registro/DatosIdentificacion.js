@@ -98,7 +98,7 @@ export default function DatosIdentificacion({ siguiente, atras }) {
           {...form.getInputProps("confirmarContrasena")}
         />
         <Group position="center">
-          {disabled ? <DisabledButton mt /> : <EnabledButton />}
+          {disabled ? <DisabledButton mt={5} /> : <EnabledButton />}
         </Group>
       </form>
     </Box>
