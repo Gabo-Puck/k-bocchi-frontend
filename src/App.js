@@ -15,12 +15,91 @@ import RegistroDesicion from "./pages/Registro/RegistroDesicion";
 import RegistroFisio from "./pages/Registro/RegistroFisio";
 import DatosBasicos from "./pages/Registro/DatosBasicos";
 import DatosIdentificacion from "./pages/Registro/DatosIdentificacion";
-import Confirmacion from "./pages/Registro/Confirmacion";
+import Confirmacion, { saveInfoPaciente } from "./pages/Registro/Confirmacion";
 import DatosValidacion from "./pages/Registro/DatosValidacion";
 import { MantineProvider } from "@mantine/core";
 function App() {
   return (
-    <MantineProvider withGlobalStyles withNormalizeCSS>
+    <MantineProvider
+      withGlobalStyles
+      withNormalizeCSS
+      theme={{
+        globalStyles: (theme) => ({
+          body: { backgroundColor: theme.colors.gray[1] },
+        }),
+
+        colors: {
+          background: [
+            "#F6F8FA",
+            "#F4F6F8",
+            "#F2F4F5",
+            "#EFF1F3",
+            "#EDEFF0",
+            "#EBECEE",
+            "#E9EAEB",
+            "#E6E8E9",
+            "#E3E5E8",
+            "#E0E3E6",
+            "#DCE1E6",
+          ],
+
+          "blue-empire": [
+            "#8194FF",
+            "#7185FD",
+            "#6379F6",
+            "#576EEE",
+            "#4D64E5",
+            "#455BDC",
+            "#3E54D3",
+            "#2943D7",
+            "#1F39D3",
+            "#1530CE",
+            "#0C28C9",
+          ],
+          "blue-calm": [
+            "#AECAFF",
+            "#95BAFF",
+            "#81ABFF",
+            "#719FFA",
+            "#6494F3",
+            "#5989EB",
+            "#4F80E2",
+            "#3872E7",
+            "#2065ED",
+            "#0957F4",
+            "#004FF0",
+          ],
+          "cyan-opaque": [
+            "#39FFFF",
+            "#26FFFF",
+            "#14FFFF",
+            "#08FFFF",
+            "#04FAF6",
+            "#0DE2DF",
+            "#15CDCA",
+            "#0CC8C5",
+            "#03C4C1",
+            "#00C1BE",
+            "#00B8B5",
+          ],
+          "green-nature": [
+            "#ABFFDE",
+            "#92FFD4",
+            "#80FEC9",
+            "#71F8BF",
+            "#64F1B5",
+            "#59E9AC",
+            "#4FE0A3",
+            "#38E49C",
+            "#21EB96",
+            "#0CF090",
+            "#01EB89",
+            "#00E782",
+            "#00DA7B",
+          ],
+        },
+      }}
+    >
       <div className="App">
         {/**Router es un componente que permite crear un enrutador para la aplicacion. Además soporta los controles de anterior y siguiente del navegador */}
         <Router>
@@ -39,8 +118,25 @@ function App() {
                   element={<DatosIdentificacion siguiente={"../personal"} />}
                   path="credenciales"
                 />
-                <Route element={<DatosBasicos />} path="personal" />
-                <Route element={<Confirmacion />} path="confirmacion" />
+                <Route
+                  element={
+                    <DatosBasicos
+                      siguiente={"../confirmacion"}
+                      anterior={"../credenciales"}
+                    />
+                  }
+                  path="personal"
+                />
+                <Route
+                  element={
+                    <Confirmacion
+                      anterior={"../personal"}
+                      siguiente={"/"}
+                      saveFunction={saveInfoPaciente}
+                    />
+                  }
+                  path="confirmacion"
+                />
               </Route>
               <Route path="fisioterapeuta" element={<RegistroFisio />}>
                 <Route element={<DatosIdentificacion />} path="credenciales" />

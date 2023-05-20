@@ -4,29 +4,35 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import {
   email_validation,
   isEmailAvailable,
-  isRequired,
   isRequiredValidation,
   password_validation,
 } from "../../utils/inputValidation";
 import { useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import {
   Box,
   LoadingOverlay,
   PasswordInput,
   TextInput,
-  Button,
-  Group,
-  Tooltip,
+  ThemeIcon,
+  Title,
+  Text,
+  Flex,
 } from "@mantine/core";
-import { executeValidation, isFormInvalid } from "../../utils/isFormInvalid";
+import { executeValidation } from "../../utils/isFormInvalid";
 import { hasInitialValues } from "../../utils/hasInitialValues";
+import ErrorModal from "../../Components/ErrorModal";
+import MensajeErrorConexion from "../../Components/MensajeErrorConexion";
+import { DisabledButton, EnabledButton } from "../../Components/DynamicButtons";
+import { FaLock } from "react-icons/fa";
 export default function DatosIdentificacion({ siguiente, atras }) {
   const { datos, setDatos } = useOutletContext();
+  const [opened, { open, close }] = useDisclosure(false);
   const navigate = useNavigate();
   const { email, contrasena } = datos;
   const [disabled, setDisabled] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  // const isMobile = useMediaQuery("(max-width: 50em)");
   const form = useForm({
     validateInputOnChange: true,
     validateInputOnBlur: true,
@@ -51,8 +57,11 @@ export default function DatosIdentificacion({ siguiente, atras }) {
   });
   useEffect(() => {
     setDatos({ ...datos, ...form.values });
-    if(form.values.confirmarContrasena!=form.values.contrasena)
-      form.setErrors({...form.errors, confirmarcontrasena:"Las contraseñas no coinciden"})
+    if (form.values.confirmarContrasena != form.values.contrasena)
+      form.setErrors({
+        ...form.errors,
+        confirmarcontrasena: "Las contraseñas no coinciden",
+      });
     setDisabled(!form.isValid());
   }, [form.values]);
   useEffect(() => hasInitialValues(form), []);
@@ -61,9 +70,17 @@ export default function DatosIdentificacion({ siguiente, atras }) {
     console.log("DATOS: ", datos);
     setIsLoading(true);
     let resultado = await isEmailAvailable({ ...data });
-    if (resultado) {
-      form.setErrors({ email: resultado });
-      setIsLoading(false);
+    setIsLoading(false);
+    if (resultado && resultado.response && resultado.response.data) {
+      form.setErrors({ email: resultado.response.data });
+      return;
+    }
+    if (resultado && !resultado.response) {
+      open();
+      console.log(
+        "Se nos murio la api o esta mal puesto la direccion del server: ",
+        resultado
+      );
       return;
     }
     navigate(siguiente);
@@ -75,51 +92,52 @@ export default function DatosIdentificacion({ siguiente, atras }) {
   };
 
   return (
-    <Box maw={320} mx="auto" pos={"relative"}>
-      <LoadingOverlay visible={isLoading} overlayBlur={2} />
-      <form onSubmit={form.onSubmit(onSubmitSuccess, onSubmitError)}>
-        <TextInput
-          label="Correo"
-          placeholder="bidenBlast@gmail.com"
-          withAsterisk
-          {...form.getInputProps("email")}
-        />
-        <PasswordInput
-          label="Contraseña"
-          placeholder="Contrasena"
-          withAsterisk
-          {...form.getInputProps("contrasena")}
-        />
-        <PasswordInput
-          label="Confirmar contraseña"
-          placeholder="Contraseña"
-          // disabled={!form.isValid("contrasena")}
-          withAsterisk
-          {...form.getInputProps("confirmarContrasena")}
-        />
-        <Group position="center">
-          {disabled ? <DisabledButton mt={5} /> : <EnabledButton />}
-        </Group>
-      </form>
-    </Box>
-  );
-}
+    <>
+      <ErrorModal close={close} opened={opened}>
+        <MensajeErrorConexion />
+      </ErrorModal>
 
-function EnabledButton({...props}) {
-  return <Button {...props} type="sumbit">Siguiente</Button>;
-}
-
-function DisabledButton({...props}) {
-  return (
-    <Tooltip label="Llena todos los campos correctamente">
-      <Button
-        data-disabled
-        sx={{ "&[data-disabled]": { pointerEvents: "all" } }}
-        onClick={(event) => event.preventDefault()}
-        {...props}
-      >
-        Siguiente
-      </Button>
-    </Tooltip>
+      <Box mx="auto" pos={"relative"}>
+        <LoadingOverlay visible={isLoading} overlayBlur={2} />
+        <ThemeIcon radius="xl" size="xl" color="green-nature">
+          <FaLock color="green-nature"/>
+        </ThemeIcon>
+        <Title order={3}>¡Bienvenido!</Title>
+        <Text order={5} mt="lg" size="lg" color="dimmed">
+          Empecemos con tus datos datos para ingresar a Bocchi
+        </Text>
+        <form onSubmit={form.onSubmit(onSubmitSuccess, onSubmitError)}>
+          <TextInput
+            label="Correo"
+            placeholder="bidenBlast@gmail.com"
+            mt="lg"
+            withAsterisk
+            {...form.getInputProps("email")}
+          />
+          <PasswordInput
+            label="Contraseña"
+            placeholder="Contrasena"
+            mt="xl"
+            withAsterisk
+            {...form.getInputProps("contrasena")}
+          />
+          <PasswordInput
+            label="Confirmar contraseña"
+            placeholder="Contraseña"
+            mt="xl"
+            // disabled={!form.isValid("contrasena")}
+            withAsterisk
+            {...form.getInputProps("confirmarContrasena")}
+          />
+          <Flex justify="flex-end" mt="lg">
+            {disabled ? (
+              <DisabledButton color="green-nature">Siguiente</DisabledButton>
+            ) : (
+              <EnabledButton color="green-nature">Siguiente</EnabledButton>
+            )}
+          </Flex>
+        </form>
+      </Box>
+    </>
   );
 }

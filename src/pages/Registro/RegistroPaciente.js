@@ -1,4 +1,4 @@
-import { Card } from "@mantine/core";
+import { Card, Center, Container } from "@mantine/core";
 import React, { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 
@@ -7,20 +7,27 @@ function RegistroPaciente() {
     email: "melkor@gmail.com",
     contrasena: "",
     nombre: "",
-    apellido: "",
+    apellidos: "",
     edad: 0,
     telefono: "",
   });
 
   return (
     <>
-      <h1>Registro paciente</h1>
-      <Card shadow="sm" padding="lg" radius="md" maw={320} mx="auto"  withBorder>
-        <Outlet context={{ setDatos: setDatos, datos: datos }} />
-      </Card>
+      <Center mx="center" mih="100vh">
+        <Card
+          shadow="xl"
+          padding="lg"
+          radius="md"
+          maw="30%" miw={350}
+          mx="auto"
+          style={{ borderRadius: 0 }}
+        >
+          <Outlet context={{ setDatos: setDatos, datos: datos }} />
+        </Card>
+      </Center>
     </>
   );
 }
 
 export default RegistroPaciente;
-

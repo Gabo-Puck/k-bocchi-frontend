@@ -12,9 +12,20 @@ export const isEmailAvailable = async ({email}) => {
   try {
     await axios.post(`${BACKEND_SERVER}/usuarios/datos/email`, { email: email });
   } catch (error) {
-    return error.response.data;
+    return error;
   }
 };
+
+export const isPhoneValidation = (value) =>{
+  if(!/^\d{10}$/.test(value.toString()))
+    return "Un numero de telefono valido tiene 10 digitos"
+  return null;
+}
+
+export const isNumber = (value) =>{
+  if(!/\d$/.test(value))
+    return "Este campo tiene que ser un numero"
+}
 
 export const isRequiredValidation = (value) => {
   if (!value || value == "") return "Este campo es necesario";
