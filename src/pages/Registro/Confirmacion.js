@@ -30,7 +30,7 @@ const selectUsuarioUid = (state) => state.usuario.uid;
 export const saveInfoPaciente = async (data, usuarioUid) => {
   const { email, contrasena } = data;
   const pacienteData = {
-    id: usuarioUid||"",
+    id: usuarioUid || "",
     email: email,
     contrasena: contrasena,
     rol: PACIENTE,
@@ -118,14 +118,15 @@ export default function Confirmacion({ anterior, siguiente, saveFunction }) {
           </Center>
         </Box>
       </CorrectModal>
-
       <Box mx="auto" pos={"relative"}>
         <LoadingOverlay visible={isLoading} overlayBlur={2} />
-        <ThemeIcon radius="xl" size="xl" color="green-nature">
-          <FaQuestion />
-        </ThemeIcon>
-        <Title order={3}>Antes de continuar...</Title>
-        <Text order={5} mt="lg" size="lg" color="dimmed">
+        <Center>
+          <ThemeIcon radius="xl" size="xl" color="green-nature">
+            <FaQuestion />
+          </ThemeIcon>
+        </Center>
+        <Title order={3} align="center">Antes de continuar...</Title>
+        <Text order={5} align="center" mt="lg" size="lg" color="dimmed">
           Revisa que tus datos esten correctos
         </Text>
         <Stack align="flex-start" spacing="md" mt="lg">

@@ -18,6 +18,8 @@ import DatosIdentificacion from "./pages/Registro/DatosIdentificacion";
 import Confirmacion, { saveInfoPaciente } from "./pages/Registro/Confirmacion";
 import DatosValidacion from "./pages/Registro/DatosValidacion";
 import { MantineProvider } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
+
 function App() {
   return (
     <MantineProvider
@@ -25,7 +27,8 @@ function App() {
       withNormalizeCSS
       theme={{
         globalStyles: (theme) => ({
-          body: { backgroundColor: theme.colors.gray[1] },
+          body: { backgroundColor: "#fff" },
+          
         }),
 
         colors: {
@@ -100,6 +103,7 @@ function App() {
         },
       }}
     >
+      <Notifications/>
       <div className="App">
         {/**Router es un componente que permite crear un enrutador para la aplicacion. Además soporta los controles de anterior y siguiente del navegador */}
         <Router>

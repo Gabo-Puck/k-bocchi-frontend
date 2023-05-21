@@ -8,7 +8,7 @@ import {
   password_validation,
 } from "../../utils/inputValidation";
 import { useForm } from "@mantine/form";
-import { useDisclosure, useMediaQuery } from "@mantine/hooks";
+import { useDisclosure } from "@mantine/hooks";
 import {
   Box,
   LoadingOverlay,
@@ -18,6 +18,7 @@ import {
   Title,
   Text,
   Flex,
+  Center,
 } from "@mantine/core";
 import { executeValidation } from "../../utils/isFormInvalid";
 import { hasInitialValues } from "../../utils/hasInitialValues";
@@ -34,7 +35,7 @@ export default function DatosIdentificacion({ siguiente, atras }) {
   const [opened, { open, close }] = useDisclosure(false);
   const navigate = useNavigate();
   const { email, contrasena } = datos;
-  const [disabled, setDisabled] = useState(true&&!isGmail);
+  const [disabled, setDisabled] = useState(true && !isGmail);
   const [isLoading, setIsLoading] = useState(false);
   // const isMobile = useMediaQuery("(max-width: 50em)");
   const form = useForm({
@@ -48,11 +49,11 @@ export default function DatosIdentificacion({ siguiente, atras }) {
     validate: {
       contrasena: (value) =>
         isGmail
-          ? null:executeValidation(value, [
+          ? null
+          : executeValidation(value, [
               isRequiredValidation,
               password_validation,
-            ])
-          ,
+            ]),
       email: (value) =>
         executeValidation(value, [isRequiredValidation, email_validation]),
       confirmarContrasena: (value, values) =>
@@ -68,15 +69,18 @@ export default function DatosIdentificacion({ siguiente, atras }) {
             ]),
     },
   });
+
   useEffect(() => {
     setDatos({ ...datos, ...form.values });
-    if (form.values.confirmarContrasena != form.values.contrasena)
+    if (form.values.confirmarContrasena !== form.values.contrasena)
       form.setErrors({
         ...form.errors,
         confirmarcontrasena: "Las contraseñas no coinciden",
       });
     setDisabled(!form.isValid());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => hasInitialValues(form), []);
 
   const onSubmitSuccess = async (data) => {
@@ -96,6 +100,7 @@ export default function DatosIdentificacion({ siguiente, atras }) {
       );
       return;
     }
+    
     navigate(siguiente);
   };
 
@@ -112,11 +117,15 @@ export default function DatosIdentificacion({ siguiente, atras }) {
 
       <Box mx="auto" pos={"relative"}>
         <LoadingOverlay visible={isLoading} overlayBlur={2} />
+        <Center>
         <ThemeIcon radius="xl" size="xl" color="green-nature">
           <FaLock color="green-nature" />
         </ThemeIcon>
-        <Title order={3}>¡Bienvenido!</Title>
-        <Text order={5} mt="lg" size="lg" color="dimmed">
+
+        </Center>
+        <Title align="center" order={3}>¡Bienvenido!</Title>
+        
+        <Text order={5} mt="lg" size="lg" color="dimmed" align="center">
           Empecemos con tus datos datos para ingresar a Bocchi
         </Text>
         <form onSubmit={form.onSubmit(onSubmitSuccess, onSubmitError)}>

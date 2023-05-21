@@ -1,14 +1,11 @@
-import { Card, Center, Container } from "@mantine/core";
-import React, { useState, useEffect } from "react";
+import { Card, Center } from "@mantine/core";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Outlet } from "react-router-dom";
 
-
-const selectUsuario = (state) => state.usuario
-
 function RegistroPaciente() {
-  const usuario = useSelector((state)=>state.usuario);
-  console.log(usuario)
+  const usuario = useSelector((state) => state.usuario);
+  console.log(usuario);
   const [datos, setDatos] = useState({
     email: usuario.email,
     contrasena: "",
@@ -25,7 +22,8 @@ function RegistroPaciente() {
           shadow="xl"
           padding="lg"
           radius="md"
-          maw="30%" miw={350}
+          maw="30%"
+          miw={350}
           mx="auto"
           style={{ borderRadius: 0 }}
         >

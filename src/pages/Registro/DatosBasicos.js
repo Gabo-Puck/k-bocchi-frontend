@@ -4,12 +4,28 @@ import { useEffect, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import ErrorModal from "../../Components/ErrorModal";
 import MensajeErrorConexion from "../../Components/MensajeErrorConexion";
-import { isNumber, isPhoneValidation, isRequiredValidation } from "../../utils/inputValidation";
+import {
+  isNumber,
+  isPhoneValidation,
+  isRequiredValidation,
+} from "../../utils/inputValidation";
 import { executeValidation } from "../../utils/isFormInvalid";
-import { Box, Button, Flex, LoadingOverlay, NumberInput, Text, TextInput, ThemeIcon, Title } from "@mantine/core";
+import {
+  Box,
+  Button,
+  Center,
+  Flex,
+  LoadingOverlay,
+  NumberInput,
+  Text,
+  TextInput,
+  ThemeIcon,
+  Title,
+} from "@mantine/core";
 import { hasInitialValues } from "../../utils/hasInitialValues";
 import { FaUserAlt } from "react-icons/fa";
 import { DisabledButton, EnabledButton } from "../../Components/DynamicButtons";
+import { TituloRegistro } from "../../Components/TituloRegistro";
 
 export default function DatosBasicos({ anterior, siguiente }) {
   const { datos, setDatos } = useOutletContext();
@@ -31,8 +47,10 @@ export default function DatosBasicos({ anterior, siguiente }) {
     validate: {
       nombre: (value) => executeValidation(value, [isRequiredValidation]),
       apellidos: (value) => executeValidation(value, [isRequiredValidation]),
-      edad: (value)=>executeValidation(value,[isRequiredValidation,isNumber]),
-      telefono:(value)=>executeValidation(value,[isRequiredValidation,isPhoneValidation])
+      edad: (value) =>
+        executeValidation(value, [isRequiredValidation, isNumber]),
+      telefono: (value) =>
+        executeValidation(value, [isRequiredValidation, isPhoneValidation]),
     },
   });
   useEffect(() => {
@@ -41,12 +59,12 @@ export default function DatosBasicos({ anterior, siguiente }) {
   }, [form.values]);
   useEffect(() => hasInitialValues(form), []);
 
-  const onSubmitSuccess = () =>{
-    navigate(siguiente)
-  }
-  const irAtras = () =>{
-    navigate(anterior)
-  }
+  const onSubmitSuccess = () => {
+    navigate(siguiente);
+  };
+  const irAtras = () => {
+    navigate(anterior);
+  };
   return (
     <>
       <ErrorModal close={close} opened={opened}>
@@ -55,11 +73,14 @@ export default function DatosBasicos({ anterior, siguiente }) {
 
       <Box mx="auto" pos={"relative"}>
         <LoadingOverlay visible={isLoading} overlayBlur={2} />
-        <ThemeIcon radius="xl" size="xl" color="green-nature">
-          <FaUserAlt />
-        </ThemeIcon>
-        <Title order={3}>¡Ahora cuéntanos sobre ti!</Title>
-        <Text order={5} mt="lg" size="lg" color="dimmed">
+        <Center>
+          <ThemeIcon radius="xl" size="xl" color="green-nature">
+            <FaUserAlt />
+          </ThemeIcon>
+        </Center>
+        
+        <Title order={3} align="center">¡Ahora cuéntanos sobre ti!</Title>
+        <Text order={5} align="center" mt="lg" size="lg" color="dimmed">
           Completa los siguientes datos personales
         </Text>
         <form onSubmit={form.onSubmit(onSubmitSuccess)}>
@@ -92,13 +113,14 @@ export default function DatosBasicos({ anterior, siguiente }) {
             {...form.getInputProps("telefono")}
           />
           <Flex justify="space-between" mt="lg">
-            <Button onClick={irAtras} color="cyan-opaque.9">Atrás</Button>
+            <Button onClick={irAtras} color="cyan-opaque.9">
+              Atrás
+            </Button>
             {disabled ? (
               <DisabledButton color="green-nature">Siguiente</DisabledButton>
             ) : (
               <EnabledButton color="green-nature">Siguiente</EnabledButton>
             )}
-            
           </Flex>
         </form>
       </Box>

@@ -11,7 +11,7 @@ export default function CorrectModal({ opened, close, ...props }) {
       onClose={close}
       
       {...props}
-      overlayProps={{Modal}}
+      
       title={
         <Center>
           <FaCheck size="30px" color={theme.colors["green"][5]} />
