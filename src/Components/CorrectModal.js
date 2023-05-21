@@ -1,16 +1,20 @@
-import { Center, Modal, Title } from "@mantine/core";
+import { Center, Modal, Title, useMantineColorScheme, useMantineTheme } from "@mantine/core";
 
 import { FaCheck } from "react-icons/fa";
 
 export default function CorrectModal({ opened, close, ...props }) {
+  let theme = useMantineTheme()
+
   return (
     <Modal
       opened={opened}
       onClose={close}
+      
       {...props}
+      overlayProps={{Modal}}
       title={
         <Center>
-          <FaCheck size="40px" color="green" />
+          <FaCheck size="30px" color={theme.colors["green"][5]} />
           <Title mx="sm" order={3}>
             ¡Bien!
           </Title>

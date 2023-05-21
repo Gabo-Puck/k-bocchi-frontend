@@ -1,10 +1,16 @@
 import { Card, Center, Container } from "@mantine/core";
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Outlet } from "react-router-dom";
 
+
+const selectUsuario = (state) => state.usuario
+
 function RegistroPaciente() {
+  const usuario = useSelector((state)=>state.usuario);
+  console.log(usuario)
   const [datos, setDatos] = useState({
-    email: "melkor@gmail.com",
+    email: usuario.email,
     contrasena: "",
     nombre: "",
     apellidos: "",

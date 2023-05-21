@@ -8,7 +8,9 @@ import MensajeErrorConexion from "../../Components/MensajeErrorConexion";
 import {
   Box,
   Button,
+  Center,
   Flex,
+  Loader,
   LoadingOverlay,
   Progress,
   Stack,
@@ -22,10 +24,13 @@ import { PACIENTE } from "../../roles";
 import axios from "axios";
 import { BACKEND_SERVER } from "../../server";
 import CorrectModal from "../../Components/CorrectModal";
+import { useSelector } from "react-redux";
 
-export const saveInfoPaciente = async (data) => {
+const selectUsuarioUid = (state) => state.usuario.uid;
+export const saveInfoPaciente = async (data, usuarioUid) => {
   const { email, contrasena } = data;
   const pacienteData = {
+    id: usuarioUid||"",
     email: email,
     contrasena: contrasena,
     rol: PACIENTE,
@@ -55,19 +60,25 @@ export const saveInfoPaciente = async (data) => {
 
 export default function Confirmacion({ anterior, siguiente, saveFunction }) {
   const { datos, setDatos } = useOutletContext();
-  const [openedError, { openError, closeError }] = useDisclosure(false);
-  const [openedSuccess, { openSuccess, closeSuccess }] = useDisclosure(false);
+  const usuarioUid = useSelector(selectUsuarioUid) || null;
+  const [openedError, { open: openError, close: closeError }] =
+    useDisclosure(false);
+  const [openedSuccess, { open: openSuccess, close: closeSuccess }] =
+    useDisclosure(false);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [loadingValue, setLoadingValue] = useState(0);
+  const [ticks, setTicks] = useState(0);
   const interval = useInterval(() => {
-    if (loadingValue == 5) {
-      navigate("/");
-      interval.stop();
-      return;
-    }
-    setLoadingValue(loadingValue + 1);
-  }, 100);
+    setLoadingValue((v) => {
+      if (v >= 100) {
+        interval.stop();
+        navigate("/");
+      }
+      return v + 30;
+    });
+  }, 300);
+
   // const isMobile = useMediaQuery("(max-width: 50em)");
 
   const irAtras = () => {
@@ -75,7 +86,10 @@ export default function Confirmacion({ anterior, siguiente, saveFunction }) {
   };
 
   const onClick = async () => {
-    let result = await saveFunction(datos);
+    console.log("");
+    setIsLoading(true);
+    let result = await saveFunction(datos, usuarioUid);
+    setIsLoading(false);
     if (!result) {
       openError();
       return;
@@ -96,9 +110,13 @@ export default function Confirmacion({ anterior, siguiente, saveFunction }) {
         close={closeSuccess}
         opened={openedSuccess}
       >
-        <Text>Se ha guardado correctamente tu registro</Text>
-        <Text>Te estamos redirigiendo</Text>
-        <Progress color="cyan" size="xs" value={loadingValue} animate />;
+        <Box pos="relative">
+          <Text pos="">Se ha guardado correctamente tu registro</Text>
+          <Text>Te estamos redirigiendo</Text>
+          <Center mt="sm">
+            <Loader size="lg" />
+          </Center>
+        </Box>
       </CorrectModal>
 
       <Box mx="auto" pos={"relative"}>
@@ -129,10 +147,7 @@ export default function Confirmacion({ anterior, siguiente, saveFunction }) {
           <Button onClick={irAtras} color="cyan-opaque.9">
             Atrás
           </Button>
-          <EnabledButton
-            onClick={() => saveFunction(datos)}
-            color="green-nature"
-          >
+          <EnabledButton onClick={onClick} color="green-nature">
             Guardar
           </EnabledButton>
         </Flex>

@@ -3,6 +3,7 @@ const initialState = {
   email: "",
   rol: "",
   nombre: "",
+  isGmail:false
 };
 
 export default function usuarioReducer(state = initialState, action) {

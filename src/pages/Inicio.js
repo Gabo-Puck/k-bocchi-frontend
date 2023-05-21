@@ -6,12 +6,33 @@ import { useDispatch } from "react-redux";
 import { USUARIO_AUTORIZADO } from "../Actions/actionsUsuario";
 import axios from "axios";
 import { BACKEND_SERVER } from "../server";
+import { Button, PasswordInput, TextInput } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { executeValidation } from "../utils/isFormInvalid";
+import {
+  email_validation,
+  isRequired,
+  isRequiredValidation,
+  password_validation,
+} from "../utils/inputValidation";
 
 export default function Inicio() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const form = useForm({
+    validateInputOnChange: true,
+    validateInputOnBlur: true,
+    initialValues: {
+      email: "",
+      contrasena: "",
+    },
+    validate: {
+      contrasena: (value) =>
+        executeValidation(value, [isRequiredValidation, password_validation]),
+      email: (value) =>
+        executeValidation(value, [isRequiredValidation, email_validation]),
+    },
+  });
   const getRol = async ({ uid }) =>
     await axios.get(`${BACKEND_SERVER}/usuarios/datos/${uid}`);
   useEffect(() => {
@@ -29,8 +50,12 @@ export default function Inicio() {
             dispatch({ type: USUARIO_AUTORIZADO, payload: user });
           } catch (err) {
             console.log(err);
+
             navigate("/registro");
-            dispatch({ type: USUARIO_AUTORIZADO, payload: firebaseUser });
+            dispatch({
+              type: USUARIO_AUTORIZADO,
+              payload: { isGmail: true, ...firebaseUser },
+            });
           }
 
           // This gives you a Facebook Access Token.
@@ -44,10 +69,18 @@ export default function Inicio() {
     checkLogin();
   }, []);
   const loginUsuario = async () => {
+    if (form.validate().hasErrors) return;
+    let { email, contrasena } = form.values;
     try {
-      let response = await axios.post(`${BACKEND_SERVER}/usuarios/datos/log`,{email:email,contrasena:password});
+      let response = await axios.post(`${BACKEND_SERVER}/usuarios/datos/log`, {
+        email: email,
+        contrasena: contrasena,
+      });
       console.log(response.data);
-      dispatch({ type: USUARIO_AUTORIZADO, payload: { ...response.data } });
+      dispatch({
+        type: USUARIO_AUTORIZADO,
+        payload: { ...response.data },
+      });
       navigate("/app");
     } catch (err) {
       console.log(err);
@@ -59,14 +92,26 @@ export default function Inicio() {
       <h1>Bienvenido a K-Bocchi</h1>
       <h2>Plataforma para pacientes y fisioterapeutas</h2>
       <form>
-        <input placeholder="Email" onChange={(e) => setEmail(e.target.value)} required/>
-        <input
-          placeholder="Contrasena"
-          type="password"
-          onChange={(e) => setPassword(e.target.value)}
-          required
+        <TextInput
+          placeholder="Escribe tu correo"
+          label="Correo"
+          {...form.getInputProps("email")}
         />
-        <button type="button" onClick={(e) => {e.preventDefault(); loginUsuario()}}>Ingresar</button>
+        <PasswordInput
+          placeholder="Escribe tu contraseña"
+          label="Contraseña"
+          type="password"
+          {...form.getInputProps("contrasena")}
+        />
+        <Button
+          type="submit"
+          onClick={(e) => {
+            e.preventDefault();
+            loginUsuario();
+          }}
+        >
+          Ingresar
+        </Button>
       </form>
       <button
         onClick={() => {
