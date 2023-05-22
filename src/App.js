@@ -4,7 +4,7 @@ import Home from "./pages/Home";
 import Root from "./routes/root";
 import Inicio from "./pages/Inicio";
 import { PrivateRoutes } from "./Components/PrivateRoutes";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, HashRouter } from "react-router-dom";
 import PaginaError from "./pages/PaginaError";
 import Busqueda from "./pages/Busqueda";
 import Perfil from "./pages/Perfil";
@@ -106,7 +106,7 @@ function App() {
       <Notifications/>
       <div className="App">
         {/**Router es un componente que permite crear un enrutador para la aplicacion. Además soporta los controles de anterior y siguiente del navegador */}
-        <Router>
+        <HashRouter>
           {/**Routes permite definir en donde se empezaran a definir las rutas de la aplicacion, asi como la ruta donde empezaran*/}
           <Routes>
             {/**Route es componente que permite asociar una ruta a un componente, de forma que cuando se este en esa ruta se mostrara dicho componente */}
@@ -179,7 +179,7 @@ function App() {
              */}
             <Route path="*" element={<PaginaError />} />
           </Routes>
-        </Router>
+        </HashRouter>
       </div>
     </MantineProvider>
   );

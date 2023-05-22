@@ -55,7 +55,9 @@ export default function DatosIdentificacion({ siguiente, atras }) {
               password_validation,
             ]),
       email: (value) =>
-        executeValidation(value, [isRequiredValidation, email_validation]),
+        isGmail
+          ? null
+          : executeValidation(value, [isRequiredValidation, email_validation]),
       confirmarContrasena: (value, values) =>
         isGmail
           ? null
@@ -100,7 +102,7 @@ export default function DatosIdentificacion({ siguiente, atras }) {
       );
       return;
     }
-    
+
     navigate(siguiente);
   };
 
@@ -118,13 +120,14 @@ export default function DatosIdentificacion({ siguiente, atras }) {
       <Box mx="auto" pos={"relative"}>
         <LoadingOverlay visible={isLoading} overlayBlur={2} />
         <Center>
-        <ThemeIcon radius="xl" size="xl" color="green-nature">
-          <FaLock color="green-nature" />
-        </ThemeIcon>
-
+          <ThemeIcon radius="xl" size="xl" color="green-nature">
+            <FaLock color="green-nature" />
+          </ThemeIcon>
         </Center>
-        <Title align="center" order={3}>¡Bienvenido!</Title>
-        
+        <Title align="center" order={3}>
+          ¡Bienvenido!
+        </Title>
+
         <Text order={5} mt="lg" size="lg" color="dimmed" align="center">
           Empecemos con tus datos datos para ingresar a Bocchi
         </Text>
