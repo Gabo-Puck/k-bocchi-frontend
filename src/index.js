@@ -20,6 +20,8 @@ import Inicio from "./pages/Inicio";
 import store from "./store";
 import { USUARIO_AUTORIZADO } from "./Actions/actionsUsuario";
 import { Provider } from "react-redux";
+import faceapi from "face-api.js"
+
 
 
 
