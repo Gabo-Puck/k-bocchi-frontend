@@ -23,7 +23,7 @@ function RegistroPaciente() {
           padding="lg"
           radius="md"
           maw="30%"
-          miw={350}
+          miw="320px"
           mx="auto"
           style={{ borderRadius: 0 }}
         >

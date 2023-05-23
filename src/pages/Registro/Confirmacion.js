@@ -58,6 +58,11 @@ export const saveInfoPaciente = async (data, usuarioUid) => {
   }
 };
 
+export const saveInfoFisioterapeuta = async (data,usuarioUid) => {
+  //No implementado aún
+  return false;
+}
+
 export default function Confirmacion({ anterior, siguiente, saveFunction }) {
   const { datos, setDatos } = useOutletContext();
   const usuarioUid = useSelector(selectUsuarioUid) || null;
