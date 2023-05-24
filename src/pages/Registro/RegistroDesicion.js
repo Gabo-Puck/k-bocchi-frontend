@@ -5,15 +5,12 @@ import { ReactComponent as PacienteSvg } from "../../resources/svg/pacienteSvg.s
 import {
   Button,
   Stack,
-  Flex,
-  Text,
   Title,
   Center,
   UnstyledButton,
-  useMantineTheme,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const PACIENTE_REGISTRO = "paciente/credenciales";
 const FISIOTERAPEUTA_REGISTRO = "fisioterapeuta/credenciales";
@@ -21,7 +18,7 @@ const FISIOTERAPEUTA_REGISTRO = "fisioterapeuta/credenciales";
 export default function RegistroDesicion() {
   const [url, setUrl] = useState("");
   const navigate = useNavigate();
-  const theme = useMantineTheme();
+  
 
   useEffect(() => {
     console.log(url);

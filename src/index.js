@@ -4,26 +4,9 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
-import {
-  createBrowserRouter,
-  RouterProvider,
-  Route,
-  Link,
-} from "react-router-dom";
-import Root from "./routes/root";
-import ErrorPage from "./error-page";
-import Home from "./pages/Home";
-
-import Login from "./pages/Login";
-import Inicio from "./pages/Inicio";
-
 import store from "./store";
-import { USUARIO_AUTORIZADO } from "./Actions/actionsUsuario";
+
 import { Provider } from "react-redux";
-import faceapi from "face-api.js"
-
-
-
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

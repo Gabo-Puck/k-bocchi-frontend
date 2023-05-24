@@ -25,7 +25,7 @@ import {
 import { hasInitialValues } from "../../utils/hasInitialValues";
 import { FaUserAlt } from "react-icons/fa";
 import { DisabledButton, EnabledButton } from "../../Components/DynamicButtons";
-import { TituloRegistro } from "../../Components/TituloRegistro";
+
 
 export default function DatosBasicos({ anterior, siguiente }) {
   const { datos, setDatos } = useOutletContext();

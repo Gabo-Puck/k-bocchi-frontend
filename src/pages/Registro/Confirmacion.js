@@ -2,8 +2,8 @@ import { FaQuestion } from "react-icons/fa";
 import ErrorModal from "../../Components/ErrorModal";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { useDisclosure, useInterval } from "@mantine/hooks";
-import { useEffect, useState } from "react";
-import { hasInitialValues } from "../../utils/hasInitialValues";
+import { useState } from "react";
+
 import MensajeErrorConexion from "../../Components/MensajeErrorConexion";
 import {
   Box,
@@ -12,13 +12,12 @@ import {
   Flex,
   Loader,
   LoadingOverlay,
-  Progress,
   Stack,
   Text,
   ThemeIcon,
   Title,
 } from "@mantine/core";
-import { DisabledButton, EnabledButton } from "../../Components/DynamicButtons";
+import { EnabledButton } from "../../Components/DynamicButtons";
 import { capitalizeWord } from "../../utils/capitalizeWord";
 import { PACIENTE } from "../../roles";
 import axios from "axios";
@@ -64,7 +63,7 @@ export const saveInfoFisioterapeuta = async (data,usuarioUid) => {
 }
 
 export default function Confirmacion({ anterior, siguiente, saveFunction }) {
-  const { datos, setDatos } = useOutletContext();
+  const { datos } = useOutletContext();
   const usuarioUid = useSelector(selectUsuarioUid) || null;
   const [openedError, { open: openError, close: closeError }] =
     useDisclosure(false);
@@ -73,7 +72,6 @@ export default function Confirmacion({ anterior, siguiente, saveFunction }) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [loadingValue, setLoadingValue] = useState(0);
-  const [ticks, setTicks] = useState(0);
   const interval = useInterval(() => {
     setLoadingValue((v) => {
       if (v >= 100) {

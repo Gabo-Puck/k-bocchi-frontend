@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import { useSelector } from "react-redux";
 import {Center,Card} from "@mantine/core"
 import { Outlet} from "react-router-dom";
-import Input from "../../Components/Input";
 
 export default function RegistroFisio() {
   const usuario = useSelector((state) => state.usuario);

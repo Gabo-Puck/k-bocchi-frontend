@@ -21,7 +21,7 @@ function RegistroPaciente() {
         <Card
           shadow="xl"
           padding="lg"
-          
+          radius="md"
           maw="30%"
           miw="320px"
           mx="auto"

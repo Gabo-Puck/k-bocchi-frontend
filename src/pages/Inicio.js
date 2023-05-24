@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { signInWithGoogle, auth } from "../firebase";
-import { getRedirectResult, GoogleAuthProvider } from "firebase/auth";
+import { getRedirectResult } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { BsExclamationLg } from "react-icons/bs";
 import {RiSignalWifiErrorLine} from "react-icons/ri"
@@ -10,7 +10,6 @@ import { USUARIO_AUTORIZADO } from "../Actions/actionsUsuario";
 import axios from "axios";
 import { BACKEND_SERVER } from "../server";
 import {
-  Notification,
   Box,
   Button,
   Center,
@@ -21,20 +20,17 @@ import {
   Text,
   TextInput,
   Title,
-  MediaQuery,
   useMantineTheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { executeValidation } from "../utils/isFormInvalid";
 import {
   email_validation,
-  isRequired,
   isRequiredValidation,
   password_validation,
 } from "../utils/inputValidation";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { DisabledButton, EnabledButton } from "../Components/DynamicButtons";
-import { useTheme } from "@emotion/react";
 import { notifications } from "@mantine/notifications";
 
 export default function Inicio() {
@@ -251,34 +247,6 @@ export default function Inicio() {
           </Grid>
         </Stack>
       </Center>
-
-      {/* <MediaQuery smallerThan="sm" styles={{ display: "none" }}>
-        <Notification
-          withBorder
-          maw="50vw"
-          icon={<BsExclamationLg />}
-          title="Aviso"
-          color="orange.4"
-          display={isAtencionOpen ? "" : "none"}
-        >
-          {message}
-        </Notification>
-      </MediaQuery>
-      <MediaQuery largerThan="sm" styles={{ display: "none" }}>
-        <Notification
-          withBorder
-          maw="100vw"
-          icon={<BsExclamationLg />}
-          title="Aviso"
-          color="orange.4"
-          display={isAtencionOpen ? "" : "none"}
-          onCl
-        >
-          {message}
-        </Notification>
-      </MediaQuery> */}
-
-      <br />
     </>
   );
 }
