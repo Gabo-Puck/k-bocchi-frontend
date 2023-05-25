@@ -3,7 +3,7 @@ import { signInWithGoogle, auth } from "../firebase";
 import { getRedirectResult } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { BsExclamationLg } from "react-icons/bs";
-import {RiSignalWifiErrorLine} from "react-icons/ri"
+import { RiSignalWifiErrorLine } from "react-icons/ri";
 import { FcGoogle } from "react-icons/fc";
 import { useDispatch } from "react-redux";
 import { USUARIO_AUTORIZADO } from "../Actions/actionsUsuario";
@@ -15,6 +15,7 @@ import {
   Center,
   Divider,
   Grid,
+  LoadingOverlay,
   PasswordInput,
   Stack,
   Text,
@@ -44,7 +45,7 @@ export default function Inicio() {
     useDisclosure(false);
   const [isErrorOpen, { open: openError, close: closeError }] =
     useDisclosure(false);
-
+  const [isLoadingGoogleAuth, setIsLoadingGoogleAuth] = useState(false);
   const form = useForm({
     validateInputOnChange: true,
     validateInputOnBlur: true,
@@ -64,6 +65,7 @@ export default function Inicio() {
   useEffect(() => {
     async function checkLogin() {
       try {
+        setIsLoadingGoogleAuth(true);
         const result = await getRedirectResult(auth);
         console.log(result);
         if (result) {
@@ -89,6 +91,7 @@ export default function Inicio() {
           // const credential = GoogleAuthProvider.credentialFromResult(auth, result);
           // const token = credential.accessToken;
         }
+        setIsLoadingGoogleAuth(false);
       } catch (err) {
         if (err) console.log(err);
       }
@@ -118,11 +121,12 @@ export default function Inicio() {
           errorResponse
         );
         notifications.show({
-          message: "Estamos experimentando problemas, disculpa 😭. Intenta más tarde",
-          autoClose:3500,
-          icon:<RiSignalWifiErrorLine/>,
-          color:"red.5"
-        })
+          message:
+            "Estamos experimentando problemas, disculpa 😭. Intenta más tarde",
+          autoClose: 3500,
+          icon: <RiSignalWifiErrorLine />,
+          color: "red.5",
+        });
         return;
       }
       if (
@@ -141,17 +145,17 @@ export default function Inicio() {
       }
       notifications.show({
         message: errorResponse.response.data,
-        autoClose:3500,
-        icon:<BsExclamationLg/>,
-        color:"orange.5"
-      })
-      
+        autoClose: 3500,
+        icon: <BsExclamationLg />,
+        color: "orange.5",
+      });
     }
   };
   return (
     <>
-      <Center mx="center" pos="relative" mih="90vh">
-        <Stack w="90vw">
+      <Center mx="center" pos="relative" mih="90vh" >
+        <Stack w="90vw" pos="relative">
+          <LoadingOverlay visible={isLoadingGoogleAuth} overlayBlur={2}/>
           <Title align="center" order={2}>
             Ingresa a K-Bocchi
           </Title>
@@ -167,7 +171,6 @@ export default function Inicio() {
                   <PasswordInput
                     placeholder="Escribe tu contraseña"
                     label="Contraseña"
-                    
                     {...form.getInputProps("contrasena")}
                   />
                   {isDisabled ? (
@@ -202,18 +205,18 @@ export default function Inicio() {
                 />
               </form>
             </Grid.Col>
-            
-              {!isMobile && (
-                <Grid.Col sm={1} span="content">
-                  <div
-                    style={{
-                      borderRight: `1px solid ${theme.colors.dark[0]} `,
-                      height: "40vh",
-                    }}
-                  ></div>
-                </Grid.Col>
-              )}
-            
+
+            {!isMobile && (
+              <Grid.Col sm={1} span="content">
+                <div
+                  style={{
+                    borderRight: `1px solid ${theme.colors.dark[0]} `,
+                    height: "40vh",
+                  }}
+                ></div>
+              </Grid.Col>
+            )}
+
             <Grid.Col sm="auto" span="content">
               <Center>
                 <Button

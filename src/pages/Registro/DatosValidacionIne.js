@@ -9,6 +9,7 @@ import {
   LoadingOverlay,
   Title,
   Flex,
+  Divider,
 } from "@mantine/core";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { useCallback, useRef, useState, useEffect } from "react";
@@ -21,6 +22,7 @@ import { DisabledButton, EnabledButton } from "../../Components/DynamicButtons";
 import { FaCheck } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 export function DatosValidacionIne({ anterior, siguiente }) {
   const [file, setFile] = useState();
   const [isLoading, setIsLoading] = useState(false);
@@ -29,10 +31,11 @@ export function DatosValidacionIne({ anterior, siguiente }) {
   const webcamRef = useRef(null);
   const imagenINE = useRef(null);
   const imagenFotoWebcam = useRef(null);
-
+  const navigate = useNavigate();
   const [disabled, setDisabled] = useState(true);
   const [urlFoto, setUrlFoto] = useState();
   const net = new faceapi.FaceRecognitionNet();
+  // const [isSubirFotoDisabled,setIsSubirFotoDisabled] = useState(false);
   const openAviso = () => {
     if (isCamaraEnabled) return;
     modals.openConfirmModal({
@@ -41,7 +44,7 @@ export function DatosValidacionIne({ anterior, siguiente }) {
       confirmProps: { color: "green-nature" },
       children: (
         <Text>
-          Para poder continuar necesitamos tomar una fotografía con el fin de
+          Para poder continuar necesitamos una fotografía con el fin de
           compararla con su INE para validar su identidad. ¿Esta usted de
           acuerdo?
         </Text>
@@ -60,7 +63,12 @@ export function DatosValidacionIne({ anterior, siguiente }) {
       withCloseButton: false,
     });
   };
-  const irAtras = () => {};
+  const irAtras = () => {
+    navigate(anterior);
+  };
+  const irSiguiente = () => {
+    navigate(siguiente);
+  };
 
   const validar = () => {};
   useEffect(() => {
@@ -161,7 +169,8 @@ export function DatosValidacionIne({ anterior, siguiente }) {
                 console.log("invalido");
                 notifications.update({
                   id: "validar-notificacion",
-                  message: "No se ha podido validar tu identidad, no coinciden los rostros en la INE y la foto tomada de la webcam",
+                  message:
+                    "No se ha podido validar tu identidad, no coinciden los rostros en la INE y la imagen de tu rostro",
                   color: "red",
                   loading: false,
                   autoClose: 10000,
@@ -177,8 +186,7 @@ export function DatosValidacionIne({ anterior, siguiente }) {
               console.log(err);
               notifications.update({
                 id: "validar-notificacion",
-                message:
-                  "Ha habido un error, intenta de vuelta",
+                message: "Ha habido un error, intenta de vuelta",
                 color: "red",
                 loading: false,
                 autoClose: 10000,
@@ -245,7 +253,6 @@ export function DatosValidacionIne({ anterior, siguiente }) {
 
   return (
     <Stack pos="relative">
-      <img src={urlFoto} />
       {/* <LoadingOverlay visible={isModelsLoading}> */}
       <Box mx="auto" pos={"relative"}>
         <LoadingOverlay visible={isLoading} overlayBlur={2} />
@@ -300,6 +307,17 @@ export function DatosValidacionIne({ anterior, siguiente }) {
                   Tomar foto
                 </Button>
               </Center>
+              <Divider label="ó" labelPosition="center" />
+              <Dropzone
+                accept={IMAGE_MIME_TYPE}
+                onDrop={([file]) => {
+                  console.log(file);
+                  setUrlFoto(URL.createObjectURL(file));
+                }}
+                maxFiles={1}
+              >
+                <Text align="center">Sube una foto de tu rostro aquí</Text>
+              </Dropzone>
             </>
           )}
         </Stack>
@@ -310,7 +328,9 @@ export function DatosValidacionIne({ anterior, siguiente }) {
           {disabled ? (
             <DisabledButton color="green-nature">Siguiente</DisabledButton>
           ) : (
-            <EnabledButton color="green-nature">Siguiente</EnabledButton>
+            <EnabledButton color="green-nature" onClick={irSiguiente}>
+              Siguiente
+            </EnabledButton>
           )}
         </Flex>
       </Box>

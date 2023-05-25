@@ -14,6 +14,7 @@ export default function RegistroFisio() {
     edad: 0,
     telefono: "",
     especialidad: "",
+    numero_cedula: "",
     nombre_del_consultorio: "",
     servicioDomiciolio: "",
     calle: "",
