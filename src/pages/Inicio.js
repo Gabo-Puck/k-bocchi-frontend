@@ -33,6 +33,7 @@ import {
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { DisabledButton, EnabledButton } from "../Components/DynamicButtons";
 import { notifications } from "@mantine/notifications";
+import { showErrorConexionNotification } from "../utils/notificationTemplate";
 
 export default function Inicio() {
   const dispatch = useDispatch();
@@ -120,13 +121,7 @@ export default function Inicio() {
           "Se nos murio la api o esta mal puesto la direccion del server: ",
           errorResponse
         );
-        notifications.show({
-          message:
-            "Estamos experimentando problemas, disculpa 😭. Intenta más tarde",
-          autoClose: 3500,
-          icon: <RiSignalWifiErrorLine />,
-          color: "red.5",
-        });
+        showErrorConexionNotification();
         return;
       }
       if (

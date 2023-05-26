@@ -13,7 +13,6 @@ export default function RegistroFisio() {
     apellidos: "",
     edad: 0,
     telefono: "",
-    especialidad: "",
     numero_cedula: "",
     nombre_del_consultorio: "",
     servicioDomiciolio: "",

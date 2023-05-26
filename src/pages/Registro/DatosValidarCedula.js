@@ -23,6 +23,11 @@ import { isRequiredValidation } from "../../utils/inputValidation";
 import axios from "axios";
 import { notifications } from "@mantine/notifications";
 import { ImCross } from "react-icons/im";
+import {
+  showErrorConexionNotification,
+  showNegativeFeedbackNotification,
+  showPositiveFeedbackNotification,
+} from "../../utils/notificationTemplate";
 
 export function DatosValidarCedula({ anterior, siguiente }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -30,10 +35,11 @@ export function DatosValidarCedula({ anterior, siguiente }) {
   const [urlImagen, setUrlImagen] = useState();
   const [file, setFile] = useState();
   const { datos, setDatos } = useOutletContext();
-  const { numero_cedula } = datos;
+  const { numero_cedula, nombre, apellidos } = datos;
   const navigate = useNavigate();
   const [isDisabledCedulaFoto, setIsDisabledCedulaFoto] = useState(true);
   const [isValidandoNumCedula, setIsValidandoNumCedula] = useState(false);
+  const [isValidandoCedulaFoto, setIsValidandoCedulaFoto] = useState(false);
   const form = useForm({
     validateInputOnBlur: true,
     validateInputOnChange: true,
@@ -45,6 +51,41 @@ export function DatosValidarCedula({ anterior, siguiente }) {
         executeValidation(value, [isRequiredValidation]),
     },
   });
+
+  const validarCedulaOCR = async () => {
+    setIsValidandoCedulaFoto(true);
+    const formData = new FormData();
+    let nombreCompleto = `${nombre.trim()} ${apellidos.trim()}`;
+    formData.append("imagenCedula", file);
+    formData.append("nombre", nombreCompleto);
+    formData.append("numeroCedula", numero_cedula);
+    try {
+      let result = await axios.post(
+        `${process.env.REACT_APP_BACKEND_API}/utilidades/validarCedulaOCR`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      showPositiveFeedbackNotification(
+        "Se ha validado correctamente todos tus datos"
+      );
+      setIsValidandoCedulaFoto(false);
+      setIsDisabled(false);
+    } catch (err) {
+      setIsValidandoCedulaFoto(false);
+      console.log(err);
+      if (!err.response) {
+        showErrorConexionNotification();
+        return;
+      }
+      let mensaje = err.response.data;
+      showNegativeFeedbackNotification(mensaje);
+      setIsDisabled(true);
+    }
+  };
   useEffect(() => {}, []);
   const irAtras = () => {
     navigate(anterior);
@@ -67,17 +108,14 @@ export function DatosValidarCedula({ anterior, siguiente }) {
       setIsDisabledCedulaFoto(false);
     } catch (err) {
       if (!err.response) {
-        notifications.show({
-          message: "Ha habido un error, intenta más tarde",
-          autoClose: 3500,
-          icon: <ImCross />,
-          color: "red",
-        });
+        showErrorConexionNotification();
         console.log("ERROR: ", err);
       } else {
         setIsDisabledCedulaFoto(true);
         let mensaje = err.response.data;
-        form.setErrors({ numero_cedula: mensaje });
+        if (err.response.status == 500)
+          showNegativeFeedbackNotification(mensaje);
+        else form.setErrors({ numero_cedula: mensaje });
       }
     }
     setIsValidandoNumCedula(false);
@@ -117,7 +155,7 @@ export function DatosValidarCedula({ anterior, siguiente }) {
             }}
             color="green-nature"
           >
-            Validar
+            Buscar
           </Button>
           {!isDisabledCedulaFoto && (
             <>
@@ -145,6 +183,14 @@ export function DatosValidarCedula({ anterior, siguiente }) {
                   <Text align="center">Sube una foto de tu cedula</Text>
                 )}
               </Dropzone>
+              <Button
+                loading={isValidandoCedulaFoto}
+                onClick={validarCedulaOCR}
+                color="green-nature"
+                disabled={!urlImagen}
+              >
+                Validar
+              </Button>
             </>
           )}
         </Stack>
