@@ -8,9 +8,10 @@ export function EnabledButton({ ...props }) {
     );
   }
   
-export function DisabledButton({ ...props }) {
+const defaultLabelDisabled = "Llena todos los campos correctamente"
+export function DisabledButton({ label=defaultLabelDisabled,...props }) {
     return (
-      <Tooltip label="Llena todos los campos correctamente">
+      <Tooltip label={label}>
         <Button
           data-disabled
           sx={{ "&[data-disabled]": { pointerEvents: "all" } }}

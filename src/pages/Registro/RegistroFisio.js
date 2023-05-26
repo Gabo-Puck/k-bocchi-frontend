@@ -15,10 +15,12 @@ export default function RegistroFisio() {
     telefono: "",
     numero_cedula: "",
     nombre_del_consultorio: "",
-    servicioDomiciolio: "",
-    calle: "",
-    colonia: "",
-    numero_exterior: 0,
+    servicioDomicilio: false,
+    direccion:"",
+    servicioConsultorio: false
+    // calle: "",
+    // colonia: "",
+    // numero_exterior: 0,
   });
   return (
     <>
