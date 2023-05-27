@@ -18,8 +18,8 @@ import {
   Title,
 } from "@mantine/core";
 import { EnabledButton } from "../../Components/DynamicButtons";
-import { capitalizeWord } from "../../utils/capitalizeWord";
-import { PACIENTE } from "../../roles";
+import { capitalizeWord, showDato } from "../../utils/capitalizeWord";
+import { FISIOTERAPEUTA, PACIENTE } from "../../roles";
 import axios from "axios";
 import { BACKEND_SERVER } from "../../server";
 import CorrectModal from "../../Components/CorrectModal";
@@ -57,10 +57,46 @@ export const saveInfoPaciente = async (data, usuarioUid) => {
   }
 };
 
-export const saveInfoFisioterapeuta = async (data,usuarioUid) => {
+export const saveInfoFisioterapeuta = async (data, usuarioUid) => {
   //No implementado aún
+  const { email, contrasena } = data;
+  
+  const terapeutaData = {
+    id: usuarioUid || "",
+    email: email,
+    contrasena: contrasena,
+    rol: FISIOTERAPEUTA,
+    terapeuta: {
+      nombre: data.nombre,
+      apellidos: data.apellidos,
+      nombre_del_consultorio: data.nombre_del_consultorio||"",
+      telefono: data.telefono,
+      pago_minimo: data.pago_minimo,
+      pago_maximo: data.pago_maximo,
+      servicio_domicilio: data.servicioDomicilio,
+      lat:data.coords.lat,
+      lng:data.coords.lng,
+      numero_cedula:data.numero_cedula
+    },
+  };
+  console.log(terapeutaData);
+  try {
+    await axios.post(`${BACKEND_SERVER}/usuarios/registrar`, terapeutaData);
+    return true;
+  } catch (error) {
+    if (error && error.response && error.response.data) {
+      return false;
+    }
+    if (error && !error.response) {
+      console.log(
+        "Se nos murio la api o esta mal puesto la direccion del server: ",
+        error
+      );
+      return false;
+    }
+  }
   return false;
-}
+};
 
 export default function Confirmacion({ anterior, siguiente, saveFunction }) {
   const { datos } = useOutletContext();
@@ -128,20 +164,22 @@ export default function Confirmacion({ anterior, siguiente, saveFunction }) {
             <FaQuestion />
           </ThemeIcon>
         </Center>
-        <Title order={3} align="center">Antes de continuar...</Title>
+        <Title order={3} align="center">
+          Antes de continuar...
+        </Title>
         <Text order={5} align="center" mt="lg" size="lg" color="dimmed">
           Revisa que tus datos esten correctos
         </Text>
         <Stack align="flex-start" spacing="md" mt="lg">
           {Object.keys(datos).map(
             (dato) =>
-              !["confirmarContrasena", "contrasena"].includes(dato) && (
+              !["confirmarContrasena", "contrasena","coords"].includes(dato) && (
                 <Stack spacing="xs" align="flex-start" key={dato}>
                   <Text fw={500} color="dark">
-                    {capitalizeWord(dato)}
+                    {capitalizeWord(dato).replaceAll("_"," ")}
                   </Text>
                   <Text color="dimmed" pl="md">
-                    {datos[dato]}
+                    {showDato(datos[dato])}
                   </Text>
                 </Stack>
               )

@@ -32,7 +32,10 @@ export const isRequiredValidation = (value) => {
   return null;
 };
 
-
+export const isLongitudMinima = (value,min)=>{
+  if(value.length<min) return `Este campo requiere minimo ${min}`
+  return null;
+}
 
 export const password_validation = (value) => {
   if (value.length < 8)

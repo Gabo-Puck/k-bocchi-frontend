@@ -201,7 +201,7 @@ function App() {
                         saveFunction={saveInfoFisioterapeuta}
                       />
                     }
-                    path="confrimacion"
+                    path="confirmacion"
                   />
                 </Route>
               </Route>
