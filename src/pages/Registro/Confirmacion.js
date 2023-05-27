@@ -60,7 +60,7 @@ export const saveInfoPaciente = async (data, usuarioUid) => {
 export const saveInfoFisioterapeuta = async (data, usuarioUid) => {
   //No implementado aún
   const { email, contrasena } = data;
-  
+
   const terapeutaData = {
     id: usuarioUid || "",
     email: email,
@@ -69,14 +69,14 @@ export const saveInfoFisioterapeuta = async (data, usuarioUid) => {
     terapeuta: {
       nombre: data.nombre,
       apellidos: data.apellidos,
-      nombre_del_consultorio: data.nombre_del_consultorio||"",
+      nombre_del_consultorio: data.nombre_del_consultorio || "",
       telefono: data.telefono,
       pago_minimo: data.pago_minimo,
       pago_maximo: data.pago_maximo,
       servicio_domicilio: data.servicioDomicilio,
-      lat:data.coords.lat,
-      lng:data.coords.lng,
-      numero_cedula:data.numero_cedula
+      lat: data.coords.lat,
+      lng: data.coords.lng,
+      numero_cedula: data.numero_cedula,
     },
   };
   console.log(terapeutaData);
@@ -173,12 +173,22 @@ export default function Confirmacion({ anterior, siguiente, saveFunction }) {
         <Stack align="flex-start" spacing="md" mt="lg">
           {Object.keys(datos).map(
             (dato) =>
-              !["confirmarContrasena", "contrasena","coords"].includes(dato) && (
+              !["confirmarContrasena", "contrasena", "coords"].includes(
+                dato
+              ) && (
                 <Stack spacing="xs" align="flex-start" key={dato}>
-                  <Text fw={500} color="dark">
-                    {capitalizeWord(dato).replaceAll("_"," ")}
+                  <Text
+                    fw={500}
+                    color="dark"
+                    style={{ wordWrap: "break-word" }}
+                  >
+                    {capitalizeWord(dato).replaceAll("_", " ")}
                   </Text>
-                  <Text color="dimmed" pl="md">
+                  <Text
+                    color="dimmed"
+                    pl="md"
+                    style={{ wordWrap: "break-word",width:"90%"}}
+                  >
                     {showDato(datos[dato])}
                   </Text>
                 </Stack>
