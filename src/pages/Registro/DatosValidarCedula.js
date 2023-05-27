@@ -90,7 +90,9 @@ export function DatosValidarCedula({ anterior, siguiente }) {
   const irAtras = () => {
     navigate(anterior);
   };
-  const irSiguiente = () => {};
+  const irSiguiente = () => {
+    navigate(siguiente);
+  };
   const buscarCedula = async () => {
     try {
       let response = await axios.post(
