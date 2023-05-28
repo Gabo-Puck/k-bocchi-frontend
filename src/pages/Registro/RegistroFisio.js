@@ -7,7 +7,7 @@ export default function RegistroFisio() {
   const usuario = useSelector((state) => state.usuario);
   console.log(usuario);
   const [datos, setDatos] = useState({
-    email: "pruebaConsultorioDomicilio@gmail.com",
+    email: usuario.email,
     contrasena: "",
     nombre: "",
     apellidos: "",

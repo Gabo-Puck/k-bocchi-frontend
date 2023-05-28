@@ -86,7 +86,11 @@ export function DatosValidarCedula({ anterior, siguiente }) {
       setIsDisabled(true);
     }
   };
-  useEffect(() => {}, []);
+  useEffect(() => {
+    setIsDisabledCedulaFoto(true);
+    setIsDisabled(true);
+    setUrlImagen(null);
+  }, [numero_cedula]);
   const irAtras = () => {
     navigate(anterior);
   };
@@ -146,6 +150,7 @@ export function DatosValidarCedula({ anterior, siguiente }) {
             label="Numero de cedula"
             placeholder="00000000"
             mt="lg"
+            disabled={isValidandoNumCedula}
             withAsterisk
             {...form.getInputProps("numero_cedula")}
           />

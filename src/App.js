@@ -113,7 +113,9 @@ function App() {
         },
       }}
     >
-      <ModalsProvider>
+      <ModalsProvider modalProps={{
+        centered:true
+      }}>
         <Notifications />
         <div className="App">
           {/**Router es un componente que permite crear un enrutador para la aplicacion. Además soporta los controles de anterior y siguiente del navegador */}

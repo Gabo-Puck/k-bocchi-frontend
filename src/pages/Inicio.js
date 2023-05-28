@@ -10,11 +10,14 @@ import { USUARIO_AUTORIZADO } from "../Actions/actionsUsuario";
 import axios from "axios";
 import { BACKEND_SERVER } from "../server";
 import {
+  Anchor,
   Box,
   Button,
   Center,
   Divider,
+  Flex,
   Grid,
+  List,
   LoadingOverlay,
   PasswordInput,
   Stack,
@@ -27,26 +30,121 @@ import { useForm } from "@mantine/form";
 import { executeValidation } from "../utils/isFormInvalid";
 import {
   email_validation,
+  isEmailAvailable,
   isRequiredValidation,
   password_validation,
 } from "../utils/inputValidation";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { DisabledButton, EnabledButton } from "../Components/DynamicButtons";
-import { notifications } from "@mantine/notifications";
-import { showErrorConexionNotification } from "../utils/notificationTemplate";
+import { Notifications, notifications } from "@mantine/notifications";
+import {
+  showErrorConexionNotification,
+  showInfoNotification,
+  showNegativeFeedbackNotification,
+  showPositiveFeedbackNotification,
+} from "../utils/notificationTemplate";
+import { modals } from "@mantine/modals";
 
+async function mandarCorreoRestablecer( email ) {
+  try {
+    await axios.post("/usuarios/solicitarReestablecerContrasena", {
+      email: email,
+    });
+    showPositiveFeedbackNotification("¡Listo! Se ha enviado el correo 📩");
+    return null;
+  } catch (err) {
+    if (!err) {
+      showNegativeFeedbackNotification(
+        "Estamos teniendo dificultades para mandar el correo, intenta de nuevo"
+      );
+    }
+  }
+}
+
+function RecuperarContrasena({ email, onCorrect }) {
+  const [enviando, setEnviando] = useState(false);
+
+  const form = useForm({
+    validateInputOnBlur: true,
+    validateInputOnChange: true,
+    initialValues: { email },
+    validate: {
+      email: (value) =>
+        executeValidation(value, [isRequiredValidation, email_validation]),
+    },
+  });
+  const handleSubmit = async () => {
+    setEnviando(true);
+    try {
+      await axios.post(`/usuarios/datos/email`, {
+        email: email,
+      });
+      form.setErrors({ email: "Este correo no se encuentra registrado" });
+    } catch (error) {
+      if (error) {
+        await mandarCorreoRestablecer(form.values.email);
+        onCorrect();
+      }
+    }
+    setEnviando(false);
+  };
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSubmit();
+      }}
+    >
+      <Stack spacing="xl">
+        <TextInput
+          label="Correo"
+          withAsterisk
+          {...form.getInputProps("email")}
+        />
+        <Flex justify="end">
+          <Button color="green-nature" loading={enviando} type="submit">
+            Enviar
+          </Button>
+        </Flex>
+      </Stack>
+    </form>
+  );
+}
+
+function AvisoSeguridad() {
+  return (
+    <Stack mb="lg">
+      <Text>
+        Hemos deshabilitado los intentos de acceso a tu cuenta por seguridad.
+      </Text>
+      <Text>
+        Para habilitar el acceso a tu cuenta, tenemos que enviar un correo para
+        validar que tu haz hecho los intentos de acceso
+      </Text>
+      <Text>El correo contiene dos formas para reactivar tu cuenta: </Text>
+      <List>
+        <List.Item>
+          Tendrás un hipervínculo que permite reactivar tu cuenta
+        </List.Item>
+        <List.Item>
+          Tendrás un hipervínculo que permite cambiar tu contraseña
+        </List.Item>
+      </List>
+      <Text>
+        Cualquiera de los dos métodos reactivara el acceso a tu cuenta
+      </Text>
+    </Stack>
+  );
+}
 export default function Inicio() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const theme = useMantineTheme();
   const isMobile = useMediaQuery(`(max-width:${theme.breakpoints.sm})`);
   const [isDisabled, setIsDisabled] = useState(true);
-  const [message, setMessage] = useState("");
-  const [isAtencionOpen, { open: openAtencion, close: closeAtencion }] =
-    useDisclosure(false);
-  const [isErrorOpen, { open: openError, close: closeError }] =
-    useDisclosure(false);
   const [isLoadingGoogleAuth, setIsLoadingGoogleAuth] = useState(false);
+  const [isBloqueada, setIsBloqueada] = useState(false);
+  const [isValidandoCredenciales, setIsValidandoCredenciales] = useState(false);
   const form = useForm({
     validateInputOnChange: true,
     validateInputOnBlur: true,
@@ -61,8 +159,61 @@ export default function Inicio() {
         executeValidation(value, [isRequiredValidation, email_validation]),
     },
   });
-  const getRol = async ({ uid }) =>
-    await axios.get(`${BACKEND_SERVER}/usuarios/datos/${uid}`);
+  const getRol = async ({ uid }) => await axios.get(`/usuarios/datos/${uid}`);
+
+  const abrirModalSeguridad = () => {
+    modals.open({
+      title: <Title order={2}>Aviso de seguridad</Title>,
+      children: (
+        <>
+          <AvisoSeguridad />
+          <RecuperarContrasena
+            email={form.values.email}
+            onCorrect={() => modals.closeAll()}
+          />
+        </>
+      ),
+      size: "auto",
+    });
+  };
+  const handleRespuestaLogin = (errorResponse) => {
+    if (!errorResponse) {
+      return;
+    }
+    let message = errorResponse.response.data;
+    if (errorResponse.response.status == 451) {
+      console.log("usuario registrado con google");
+    }
+    if (errorResponse.response.status == 401) {
+      console.log("contraseña incorrecta");
+    }
+    if (errorResponse.response.status == 403) {
+      console.log("Cuenta bloqueada");
+      setIsBloqueada(true);
+      form.setValues({
+        ...form.values,
+        contrasena: "",
+      });
+      abrirModalSeguridad();
+      return;
+    }
+    if (errorResponse.response.status == 404) {
+      console.log("Usuario no encontrado");
+      message = (
+        <Text>
+          {errorResponse.response.data}. Crea una cuenta{" "}
+          <Anchor onClick={() => navigate("/registro")}>aquí</Anchor>{" "}
+        </Text>
+      );
+    }
+    notifications.clean();
+    notifications.show({
+      message: message,
+      autoClose: 8000,
+      icon: <BsExclamationLg />,
+      color: "orange.5",
+    });
+  };
   useEffect(() => {
     async function checkLogin() {
       try {
@@ -74,13 +225,13 @@ export default function Inicio() {
           const firebaseUser = result.user;
 
           try {
+            setIsLoadingGoogleAuth(true);
             const response = (await getRol(firebaseUser)).data;
             const user = { ...response, ...firebaseUser };
             navigate("/app");
             dispatch({ type: USUARIO_AUTORIZADO, payload: user });
           } catch (err) {
             console.log(err);
-
             navigate("/registro");
             dispatch({
               type: USUARIO_AUTORIZADO,
@@ -91,8 +242,9 @@ export default function Inicio() {
           // This gives you a Facebook Access Token.
           // const credential = GoogleAuthProvider.credentialFromResult(auth, result);
           // const token = credential.accessToken;
+        } else {
+          setIsLoadingGoogleAuth(false);
         }
-        setIsLoadingGoogleAuth(false);
       } catch (err) {
         if (err) console.log(err);
       }
@@ -103,8 +255,9 @@ export default function Inicio() {
   const loginUsuario = async () => {
     if (form.validate().hasErrors) return;
     let { email, contrasena } = form.values;
+    setIsValidandoCredenciales(true);
     try {
-      let response = await axios.post(`${BACKEND_SERVER}/usuarios/datos/log`, {
+      let response = await axios.post(`/usuarios/datos/log`, {
         email: email,
         contrasena: contrasena,
       });
@@ -115,42 +268,15 @@ export default function Inicio() {
       });
       navigate("/app");
     } catch (errorResponse) {
-      if (errorResponse && !errorResponse.response) {
-        openError();
-        console.log(
-          "Se nos murio la api o esta mal puesto la direccion del server: ",
-          errorResponse
-        );
-        showErrorConexionNotification();
-        return;
-      }
-      if (
-        errorResponse &&
-        errorResponse.response.data &&
-        errorResponse.response.status == 451
-      ) {
-        console.log("usuario registrado con google");
-      }
-      if (
-        errorResponse.response &&
-        errorResponse.response.data &&
-        errorResponse.response.status == 452
-      ) {
-        console.log("contraseña incorrecta");
-      }
-      notifications.show({
-        message: errorResponse.response.data,
-        autoClose: 3500,
-        icon: <BsExclamationLg />,
-        color: "orange.5",
-      });
+      handleRespuestaLogin(errorResponse);
+      setIsValidandoCredenciales(false);
     }
   };
   return (
     <>
-      <Center mx="center" pos="relative" mih="90vh" >
+      <Center mx="center" pos="relative" mih="90vh">
         <Stack w="90vw" pos="relative">
-          <LoadingOverlay visible={isLoadingGoogleAuth} overlayBlur={2}/>
+          <LoadingOverlay visible={isLoadingGoogleAuth} overlayBlur={2} />
           <Title align="center" order={2}>
             Ingresa a K-Bocchi
           </Title>
@@ -167,6 +293,7 @@ export default function Inicio() {
                     placeholder="Escribe tu contraseña"
                     label="Contraseña"
                     {...form.getInputProps("contrasena")}
+                    disabled={isBloqueada}
                   />
                   {isDisabled ? (
                     <DisabledButton
@@ -183,6 +310,7 @@ export default function Inicio() {
                       w="100%"
                       radius="0"
                       color="green-nature"
+                      loading={isValidandoCredenciales}
                       onClick={(e) => {
                         e.preventDefault();
                         loginUsuario();

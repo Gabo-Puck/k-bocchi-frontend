@@ -154,7 +154,7 @@ export function DatosConsultorio({ anterior, siguiente }) {
           </Button>
           {disabled ? (
             <DisabledButton
-              label="Elige por lo menos una modalidad"
+              
               color="green-nature"
             >
               Siguiente
@@ -227,10 +227,10 @@ function ConsultorioInformacion({ datos, setDatos, setIsCorrecto }) {
     }
     if (direccion == "" || direccion == null) {
       setIsCorrecto(false);
-      form.setErrors({
-        ...form.errors,
-        nombre_del_consultorio: "Falta seleccionar la direccion",
-      });
+      // form.setErrors({
+      //   ...form.errors,
+      //   nombre_del_consultorio: "Falta seleccionar la direccion",
+      // });
       return;
     }
     setIsCorrecto(true);
@@ -244,7 +244,7 @@ function ConsultorioInformacion({ datos, setDatos, setIsCorrecto }) {
         onChange={(e) => {}}
         {...form.getInputProps("nombre_del_consultorio")}
       />
-      <Text color="dimmed">
+      <Text color={!direccion?"red.4":"green-nature"}>
         Dirección del consultorio: {direccion || "Aún no se ha seleccionado"}
       </Text>
       <Button

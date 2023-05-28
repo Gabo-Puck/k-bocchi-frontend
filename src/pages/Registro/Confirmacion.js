@@ -170,17 +170,17 @@ export default function Confirmacion({ anterior, siguiente, saveFunction }) {
         <Text order={5} align="center" mt="lg" size="lg" color="dimmed">
           Revisa que tus datos esten correctos
         </Text>
-        <Stack align="flex-start" spacing="md" mt="lg">
+        <Stack align="flex-start"  spacing="md" mt="lg">
           {Object.keys(datos).map(
             (dato) =>
               !["confirmarContrasena", "contrasena", "coords"].includes(
                 dato
               ) && (
-                <Stack spacing="xs" align="flex-start" key={dato}>
+                <Stack spacing="xs" w="100%" align="flex-start" key={dato}>
                   <Text
                     fw={500}
                     color="dark"
-                    style={{ wordWrap: "break-word" }}
+                    style={{ wordWrap: "break-word",width:"90%"}}
                   >
                     {capitalizeWord(dato).replaceAll("_", " ")}
                   </Text>
