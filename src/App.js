@@ -9,6 +9,7 @@ import {
   Routes,
   Route,
   HashRouter,
+  BrowserRouter,
 } from "react-router-dom";
 import PaginaError from "./pages/PaginaError";
 import Busqueda from "./pages/Busqueda";
@@ -30,6 +31,7 @@ import { DatosValidacionIne } from "./pages/Registro/DatosValidacionIne";
 import { DatosValidarCedula } from "./pages/Registro/DatosValidarCedula";
 import { DatosConsultorio } from "./pages/Registro/DatosConsultorio";
 import { ModalsProvider } from "@mantine/modals";
+import CambiarContrasena from "./pages/CambiarContrasena";
 
 function App() {
   return (
@@ -119,7 +121,7 @@ function App() {
         <Notifications />
         <div className="App">
           {/**Router es un componente que permite crear un enrutador para la aplicacion. Además soporta los controles de anterior y siguiente del navegador */}
-          <HashRouter>
+          <BrowserRouter  >
             {/**Routes permite definir en donde se empezaran a definir las rutas de la aplicacion, asi como la ruta donde empezaran*/}
             <Routes>
               {/**Route es componente que permite asociar una ruta a un componente, de forma que cuando se este en esa ruta se mostrara dicho componente */}
@@ -235,9 +237,10 @@ function App() {
               {/**Mediante el simbolo '*' podemos indicar que esta elemento se renderiza en cualquier ruta. Al estar al final solo se renderiza
                * cuando el usuario trato de ingresar a una ruta que no existe, por lo tanto se renderiza "PaginaError"
                */}
+              <Route path="/reestablecerContrasena/:stringEncoded" element={<CambiarContrasena/>}/>
               <Route path="*" element={<PaginaError />} />
             </Routes>
-          </HashRouter>
+          </BrowserRouter>
         </div>
       </ModalsProvider>
     </MantineProvider>

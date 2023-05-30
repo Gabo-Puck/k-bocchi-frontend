@@ -60,15 +60,11 @@ export function DatosValidarCedula({ anterior, siguiente }) {
     formData.append("nombre", nombreCompleto);
     formData.append("numeroCedula", numero_cedula);
     try {
-      let result = await axios.post(
-        `${process.env.REACT_APP_BACKEND_API}/utilidades/validarCedulaOCR`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      let result = await axios.post(`/utilidades/validarCedulaOCR`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       showPositiveFeedbackNotification(
         "Se ha validado correctamente todos tus datos"
       );
@@ -77,8 +73,7 @@ export function DatosValidarCedula({ anterior, siguiente }) {
     } catch (err) {
       setIsValidandoCedulaFoto(false);
       console.log(err);
-      if (!err.response) {
-        showErrorConexionNotification();
+      if (!err) {
         return;
       }
       let mensaje = err.response.data;
@@ -99,12 +94,9 @@ export function DatosValidarCedula({ anterior, siguiente }) {
   };
   const buscarCedula = async () => {
     try {
-      let response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_API}/utilidades/validarCedula`,
-        {
-          cedula: form.values.numero_cedula,
-        }
-      );
+      let response = await axios.post(`/utilidades/validarCedula`, {
+        cedula: form.values.numero_cedula,
+      });
       notifications.show({
         message: "Se ha encontrado tu cedula!",
         autoClose: 3500,
@@ -113,16 +105,13 @@ export function DatosValidarCedula({ anterior, siguiente }) {
       });
       setIsDisabledCedulaFoto(false);
     } catch (err) {
-      if (!err.response) {
-        showErrorConexionNotification();
-        console.log("ERROR: ", err);
-      } else {
-        setIsDisabledCedulaFoto(true);
-        let mensaje = err.response.data;
-        if (err.response.status == 500)
-          showNegativeFeedbackNotification(mensaje);
-        else form.setErrors({ numero_cedula: mensaje });
+      if (!err) {
+        return;
       }
+      setIsDisabledCedulaFoto(true);
+      let mensaje = err.response.data;
+      if (err.response.status == 500) showNegativeFeedbackNotification(mensaje);
+      else form.setErrors({ numero_cedula: mensaje });
     }
     setIsValidandoNumCedula(false);
   };

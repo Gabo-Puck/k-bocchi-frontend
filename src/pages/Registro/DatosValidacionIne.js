@@ -233,14 +233,6 @@ export function DatosValidacionIne({ anterior, siguiente }) {
       } catch (err) {
         console.log(err);
       }
-      // const res = await axios.get(
-      //   "./models/face_recognition_model-weights_manifest.json",
-      //   { responseType: "arraybuffer" }
-      // );
-
-      // const weights = new Float32Array(res.data);
-      // net.load(weights);
-      // setIsModelsLoading(false);
     }
     fetchModels();
   }, []);

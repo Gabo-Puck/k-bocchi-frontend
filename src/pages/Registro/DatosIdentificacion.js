@@ -90,19 +90,12 @@ export default function DatosIdentificacion({ siguiente, atras }) {
     setIsLoading(true);
     let resultado = await isEmailAvailable({ ...data });
     setIsLoading(false);
-    if (resultado && resultado.response && resultado.response.data) {
+    if(!resultado)
+      return;
+    if (resultado.response && resultado.response.data) {
       form.setErrors({ email: resultado.response.data });
       return;
     }
-    if (resultado && !resultado.response) {
-      open();
-      console.log(
-        "Se nos murio la api o esta mal puesto la direccion del server: ",
-        resultado
-      );
-      return;
-    }
-
     navigate(siguiente);
   };
 

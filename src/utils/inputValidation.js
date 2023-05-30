@@ -10,7 +10,7 @@ export const isEmailAvailable = async ({email}) => {
   //En caso de encontrar un correo repetido, va a generar una excepcion
   console.log(email);
   try {
-    await axios.post(`${BACKEND_SERVER}/usuarios/datos/email`, { email: email });
+    return await axios.post(`/usuarios/datos/email`, { email: email });
   } catch (error) {
     return error;
   }

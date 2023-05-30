@@ -1,12 +1,25 @@
 import { Link } from "react-router-dom";
-import "../css/navbar.css"
-export default function BarraNavegacion() {
-    return (
-        <nav className="navbar">
-            <Link className="link" to="">Home</Link>
-            <Link className="link" to="perfil">Perfil</Link>
-            <Link className="link" to="busqueda">Busqueda</Link>
-            <Link className="link" to="/registro">Registro</Link>
-        </nav>
-    )
+import "../css/navbar.css";
+import { NavLink, Navbar } from "@mantine/core";
+
+export default function BarraNavegacion({}) {
+  return (
+    <Navbar className="Navbarbar" width={{ base: 300 }} height="100vh">
+      <Link to="perfil">
+        <Navbar.Section className="link" to="">
+          <NavLink label={<Link to="/registro">Registro</Link>} />
+        </Navbar.Section>
+      </Link>
+      <Link to="perfil">
+        <Navbar.Section className="link" to="">
+          <NavLink label={<Link to="/registro">Registro</Link>} />
+        </Navbar.Section>
+      </Link>
+      <Link to="perfil">
+        <Navbar.Section className="link" to="">
+          <NavLink label={<Link to="/registro">Registro</Link>} />
+        </Navbar.Section>
+      </Link>
+    </Navbar>
+  );
 }
