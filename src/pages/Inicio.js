@@ -44,6 +44,7 @@ import {
   showPositiveFeedbackNotification,
 } from "../utils/notificationTemplate";
 import { modals } from "@mantine/modals";
+import Layout from "../Components/Layout";
 
 async function mandarCorreoRestablecer( email ) {
   try {
@@ -373,6 +374,7 @@ export default function Inicio() {
           </Grid>
         </Stack>
       </Center>
+      {/* <Layout/> */}
     </>
   );
 }

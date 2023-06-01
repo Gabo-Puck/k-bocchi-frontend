@@ -16,6 +16,8 @@ import {
   Flex,
   Stack,
   Box,
+  Avatar,
+  Menu,
 } from "@mantine/core";
 import { useState } from "react";
 
@@ -31,15 +33,15 @@ function NavLinkBar({ to, label }) {
 
 export default function Layout() {
   const dispatch = useDispatch();
-  const user = useSelector(selectUsuario);
+  const usuario = useSelector(selectUsuario);
   const setPaciente = () => {
-    dispatch({ type: USUARIO_AUTORIZADO, payload: { ...user, rol: PACIENTE } });
+    dispatch({ type: USUARIO_AUTORIZADO, payload: { ...usuario, rol: PACIENTE } });
   };
   const theme = useMantineTheme();
   const setFisio = () => {
     dispatch({
       type: USUARIO_AUTORIZADO,
-      payload: { ...user, rol: FISIOTERAPEUTA },
+      payload: { ...usuario, rol: FISIOTERAPEUTA },
     });
   };
   const [opened, setOpened] = useState(false);
@@ -55,7 +57,7 @@ export default function Layout() {
           <NavLinkBar label="Registro" to="/registro" />
         </Link>
         <Link to="perfil">
-          <NavLinkBar label="Perfil" to="perfil"/>
+          <NavLinkBar label="Perfil" to="perfil" />
         </Link>
       </Navbar>
     );
@@ -87,8 +89,26 @@ export default function Layout() {
               mr="xl"
             />
           </MediaQuery>
-
-          <Text>K-Bocchi</Text>
+          <Flex justify="space-between" align="center" w="100%">
+            <Text>K-Bocchi</Text>
+            <Flex>
+              <NavLink label="First" />
+              <NavLink label="Sec" />
+              <Menu>
+                <Menu.Target>
+                  <Avatar radius="xl" />
+                </Menu.Target>
+                <Menu.Dropdown>
+                  <Link>
+                    <Menu.Item component="li">{usuario.paciente.nombre}</Menu.Item>
+                  </Link>
+                  <Link>
+                    <Menu.Item component="li">Salir</Menu.Item>
+                  </Link>
+                </Menu.Dropdown>
+              </Menu>
+            </Flex>
+          </Flex>
         </div>
       </Header>
     );

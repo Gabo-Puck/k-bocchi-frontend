@@ -203,6 +203,7 @@ function App() {
                       <Confirmacion
                         siguiente="/"
                         saveFunction={saveInfoFisioterapeuta}
+                        anterior="../consultorio"
                       />
                     }
                     path="confirmacion"

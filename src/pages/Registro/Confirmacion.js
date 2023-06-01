@@ -33,10 +33,11 @@ export const saveInfoPaciente = async (data, usuarioUid) => {
     email: email,
     contrasena: contrasena,
     rol: PACIENTE,
+    nombre:`${data.nombre} ${data.apellidos}`,
+    telefono: data.telefono,
     paciente: {
       nombre: data.nombre,
       apellidos: data.apellidos,
-      telefono: data.telefono,
     },
   };
   console.log(pacienteData);
@@ -66,11 +67,10 @@ export const saveInfoFisioterapeuta = async (data, usuarioUid) => {
     email: email,
     contrasena: contrasena,
     rol: FISIOTERAPEUTA,
+    nombre:`${data.nombre} ${data.apellidos}`,
+    telefono: data.telefono,
     terapeuta: {
-      nombre: data.nombre,
-      apellidos: data.apellidos,
       nombre_del_consultorio: data.nombre_del_consultorio || "",
-      telefono: data.telefono,
       pago_minimo: data.pago_minimo,
       pago_maximo: data.pago_maximo,
       servicio_domicilio: data.servicioDomicilio,

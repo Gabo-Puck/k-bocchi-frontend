@@ -61,7 +61,7 @@ export function DatosConsultorio({ anterior, siguiente }) {
 
   useEffect(() => {
     let isModalidadSeleccionada = isDomicilio || isConsultorio;
-    if (isDomicilio && isRangoCorrecto && !isConsultorio) {
+    if (isDomicilio && isRangoCorrecto && !isConsultorio && direccion) {
       setDisabled(false);
       return;
     }
@@ -99,7 +99,7 @@ export function DatosConsultorio({ anterior, siguiente }) {
     navigate(siguiente);
   };
   const irAnterior = () => {
-    navigate(anterior)
+    navigate(anterior);
   };
 
   return (
@@ -128,7 +128,7 @@ export function DatosConsultorio({ anterior, siguiente }) {
             checked={isDomicilio}
             setChecked={(value) => {
               setIsDomicilio(value);
-              setDatos({ ...datos, servicioDomicilio: value });
+              setDatos({ ...datos, servicio_domicilio: value });
             }}
             label={"Servicio a domicilio"}
           />
@@ -136,10 +136,39 @@ export function DatosConsultorio({ anterior, siguiente }) {
             checked={isConsultorio}
             setChecked={(value) => {
               setIsConsultorio(value);
-              setDatos({ ...datos, servicioConsultorio: value });
+              setDatos({ ...datos, servicio_consultorio: value });
             }}
             label={"Servicio en consultorio"}
           />
+          <Text color="dimmed">
+            Agrega una referencia de la zona en que sueles trabajar, para que
+            sea más sencillo que tus pacientes te encuentren
+          </Text>
+          {!isConsultorio && isDomicilio && (
+            <>
+              <Text color={!direccion ? "red.4" : "green-nature"}>
+                Dirección:{" "}
+                {direccion || "Aún no se ha seleccionado"}
+              </Text>
+              <Button
+                color="green-nature"
+                onClick={() =>
+                  abrirMapa({
+                    setDatosLat: ({ coords, direccion }) => {
+                      setDatos({
+                        ...datos,
+                        coords: { ...coords },
+                        direccion: direccion,
+                      });
+                    },
+                  })
+                }
+              >
+                {" "}
+                Añadir dirección
+              </Button>
+            </>
+          )}
           {isConsultorio && (
             <ConsultorioInformacion
               datos={datos}
@@ -153,12 +182,7 @@ export function DatosConsultorio({ anterior, siguiente }) {
             Atrás
           </Button>
           {disabled ? (
-            <DisabledButton
-              
-              color="green-nature"
-            >
-              Siguiente
-            </DisabledButton>
+            <DisabledButton color="green-nature">Siguiente</DisabledButton>
           ) : (
             <EnabledButton color="green-nature" onClick={irSiguiente}>
               Siguiente
@@ -244,7 +268,7 @@ function ConsultorioInformacion({ datos, setDatos, setIsCorrecto }) {
         onChange={(e) => {}}
         {...form.getInputProps("nombre_del_consultorio")}
       />
-      <Text color={!direccion?"red.4":"green-nature"}>
+      <Text color={!direccion ? "red.4" : "green-nature"}>
         Dirección del consultorio: {direccion || "Aún no se ha seleccionado"}
       </Text>
       <Button
@@ -300,11 +324,12 @@ function RegistroRangoPrecios({ datos, setDatos, setIsCorrecto }) {
     },
   });
   useEffect(() => {
-    if (form.isDirty()) {
+    setIsCorrecto(form.isValid());
+    if (form.isDirty() ) {
       setDatos({ ...datos, ...form.values });
       setIsCorrecto(!form.validate().hasErrors);
     }
-  }, [form.values]);
+  }, [form.values,datos]);
   return (
     <Center>
       <Grid>
