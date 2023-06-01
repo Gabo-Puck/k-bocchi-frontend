@@ -73,7 +73,7 @@ export const saveInfoFisioterapeuta = async (data, usuarioUid) => {
       nombre_del_consultorio: data.nombre_del_consultorio || "",
       pago_minimo: data.pago_minimo,
       pago_maximo: data.pago_maximo,
-      servicio_domicilio: data.servicioDomicilio,
+      servicio_domicilio: data.servicio_domicilio,
       lat: data.coords.lat,
       lng: data.coords.lng,
       numero_cedula: data.numero_cedula,
