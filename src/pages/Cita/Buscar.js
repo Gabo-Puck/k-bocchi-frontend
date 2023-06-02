@@ -16,6 +16,7 @@ import {
   TextInput,
   useMantineTheme,
   Rating,
+  Tooltip,
 } from "@mantine/core";
 import axios from "axios";
 import { MdPersonSearch } from "react-icons/md";
@@ -24,6 +25,10 @@ import { useSearchParams } from "react-router-dom";
 import { useContext } from "react";
 import { BusquedaTerapeutaContext } from "../../Components/BusquedaTerapeutaContext";
 import { useForm } from "@mantine/form";
+import { showNegativeFeedbackNotification } from "../../utils/notificationTemplate";
+import { abrirMapa } from "../../Components/Mapa";
+
+import TerapeutaResultado from "../../Components/TerapeutaResultado";
 function serializarSearchParams(object) {
   const filteredEntries = Object.entries(object).filter(
     ([key, value]) => value !== undefined
@@ -115,8 +120,8 @@ export default function Buscar() {
               {resultados.length == 0 ? (
                 <Text display="block">No hay resultados</Text>
               ) : (
-                resultados.map((result) => (
-                  <Text display="block">{result.nombre}</Text>
+                resultados.map((terapeuta) => (
+                  <TerapeutaResultado terapeuta={terapeuta}/>
                 ))
               )}
             </Flex>
@@ -139,6 +144,7 @@ export function Filtros({ parametrosBusqueda, setParametrosBusqueda }) {
               <FiltroServicioConsultorio />
               <FiltroPrecio />
               <FiltroEstrellas />
+              <FiltroUbicacion />
             </Stack>
           </ScrollArea.Autosize>
         </Accordion.Panel>
@@ -349,9 +355,9 @@ function FiltroEstrellas() {
           </Text>
           <Center>
             <Rating
-              value={parametrosBusqueda.estrellas||null}
+              value={parametrosBusqueda.estrellas || null}
               onChange={(estrellas) => {
-                setParametrosBusqueda({...parametrosBusqueda, estrellas});
+                setParametrosBusqueda({ ...parametrosBusqueda, estrellas });
               }}
               count={10}
               color="green-nature"
@@ -364,6 +370,94 @@ function FiltroEstrellas() {
     </>
   );
 }
+
+function FiltroUbicacion() {
+  const { parametrosBusqueda, setParametrosBusqueda } = useContext(
+    BusquedaTerapeutaContext
+  );
+
+  function getUbicacionActual() {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setParametrosBusqueda({
+          ...parametrosBusqueda,
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        });
+        console.log(pos);
+      },
+      (err) => {
+        showNegativeFeedbackNotification(
+          "No se pudo obtener la posición actual"
+        );
+        console.log(err);
+      }
+    );
+  }
+  return (
+    <>
+      <Paper shadow="sm" p="xl" pb="xs" pos="rel">
+        <Center>Ubicacion</Center>
+        <Stack my="xs">
+          <Text fz="xs" ta="center" color="dimmed">
+            Mostrará terapeutas en un area de{" "}
+            {parametrosBusqueda.distancia || 15}km
+          </Text>
+          <Stack>
+            <Button color="green-nature" onClick={getUbicacionActual}>
+              Ubicación actual
+            </Button>
+            <Button
+              color="green-nature"
+              onClick={() =>
+                abrirMapa({
+                  setDatosLat: ({ coords, direccion }) => {
+                    setParametrosBusqueda({
+                      ...parametrosBusqueda,
+                      ...coords,
+                    });
+                  },
+                })
+              }
+            >
+              Seleccionar ubicación
+            </Button>
+            <NumberInput
+              hideControls
+              disabled={!parametrosBusqueda.lat && !parametrosBusqueda.lng}
+              parser={(value) => value.replace(/km\s?|(,*)/g, "")}
+              value={parametrosBusqueda.distancia || 15}
+              formatter={(value) =>
+                !Number.isNaN(parseFloat(value))
+                  ? ` ${value} km`.replace(
+                      /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
+                      ","
+                    )
+                  : "km "
+              }
+              onChange={(distancia) => {
+                if (distancia === "" || distancia===0) {
+                  setParametrosBusqueda({
+                    ...parametrosBusqueda,
+                    distancia:undefined,
+                  });
+                  return;
+                }
+                setParametrosBusqueda({
+                  ...parametrosBusqueda,
+                  distancia,
+                });
+                // setMinimoMaximo(value, input2);
+              }}
+            />
+          </Stack>
+        </Stack>
+        <BotonBorrarFiltro filtros={["distancia", "lat", "lng"]} />
+      </Paper>
+    </>
+  );
+}
+
 function BotonBorrarFiltro({ filtros }) {
   const { setParametrosBusqueda } = useContext(BusquedaTerapeutaContext);
   return (

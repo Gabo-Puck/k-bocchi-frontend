@@ -7,9 +7,12 @@ import {
 } from "@react-google-maps/api";
 import "../css/mapa.css";
 import {
+  Box,
   Button,
   Flex,
   Grid,
+  Loader,
+  LoadingOverlay,
   Select,
   SimpleGrid,
   Stack,
@@ -29,8 +32,7 @@ export default function MapaComponent({ setDatosLat }) {
     googleMapsApiKey: process.env.REACT_APP_MAPS_API_KEY,
     libraries: libraries,
   });
-  if (!isLoaded) return <div>Loading...</div>;
-
+  if (!isLoaded) return <LoadingOverlay visible/>;
   return <MapaSelectPlace setDatosLat={setDatosLat} />;
 }
 
