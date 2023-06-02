@@ -35,7 +35,10 @@ export default function Layout() {
   const dispatch = useDispatch();
   const usuario = useSelector(selectUsuario);
   const setPaciente = () => {
-    dispatch({ type: USUARIO_AUTORIZADO, payload: { ...usuario, rol: PACIENTE } });
+    dispatch({
+      type: USUARIO_AUTORIZADO,
+      payload: { ...usuario, rol: PACIENTE },
+    });
   };
   const theme = useMantineTheme();
   const setFisio = () => {
@@ -92,15 +95,19 @@ export default function Layout() {
           <Flex justify="space-between" align="center" w="100%">
             <Text>K-Bocchi</Text>
             <Flex>
-              <NavLink label="First" />
-              <NavLink label="Sec" />
+              <Link to="/app/cita/buscar">
+                <NavLink label="Cita" />
+              </Link>
+              <Link>
+                <NavLink label="Ventas" />
+              </Link>
               <Menu>
                 <Menu.Target>
                   <Avatar radius="xl" />
                 </Menu.Target>
                 <Menu.Dropdown>
                   <Link>
-                    <Menu.Item component="li">{usuario.paciente.nombre}</Menu.Item>
+                    <Menu.Item component="li">{usuario.nombre}</Menu.Item>
                   </Link>
                   <Link>
                     <Menu.Item component="li">Salir</Menu.Item>
@@ -118,7 +125,8 @@ export default function Layout() {
       navbarOffsetBreakpoint="sm"
       asideOffsetBreakpoint="sm"
       header={<HeaderApp />}
-      navbar={<BarraNavegacion />}
+      mih="100vh"
+      // navbar={<BarraNavegacion />}
       footer={<FooterApp />}
     >
       <Outlet />

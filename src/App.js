@@ -32,6 +32,9 @@ import { DatosValidarCedula } from "./pages/Registro/DatosValidarCedula";
 import { DatosConsultorio } from "./pages/Registro/DatosConsultorio";
 import { ModalsProvider } from "@mantine/modals";
 import CambiarContrasena from "./pages/CambiarContrasena";
+import LayoutCita from "./pages/Cita/LayoutCita";
+import ListaTerapeutas from "./Components/ListaTerapeutas";
+import Buscar from "./pages/Cita/Buscar";
 
 function App() {
   return (
@@ -115,13 +118,15 @@ function App() {
         },
       }}
     >
-      <ModalsProvider modalProps={{
-        centered:true
-      }}>
+      <ModalsProvider
+        modalProps={{
+          centered: true,
+        }}
+      >
         <Notifications />
         <div className="App">
           {/**Router es un componente que permite crear un enrutador para la aplicacion. Además soporta los controles de anterior y siguiente del navegador */}
-          <BrowserRouter  >
+          <BrowserRouter>
             {/**Routes permite definir en donde se empezaran a definir las rutas de la aplicacion, asi como la ruta donde empezaran*/}
             <Routes>
               {/**Route es componente que permite asociar una ruta a un componente, de forma que cuando se este en esa ruta se mostrara dicho componente */}
@@ -221,24 +226,26 @@ function App() {
               <Route
                 path="/app"
                 element={<PrivateRoutes authRol={[PACIENTE, FISIOTERAPEUTA]} />}
+                
               >
                 <Route path="/app" element={<Layout />}>
                   <Route index element={<Home />} />
                   <Route path="perfil" element={<Perfil />} />
                   <Route
-                    path="busqueda"
-                    element={
-                      <PrivateRoutes authRol={[PACIENTE]} redirect={"/app"} />
-                    }
+                    path="cita"
+                    element={<LayoutCita/>}
                   >
-                    <Route index element={<Busqueda />} />
+                    <Route path="buscar" element={<Buscar/>}/>
                   </Route>
                 </Route>
               </Route>
               {/**Mediante el simbolo '*' podemos indicar que esta elemento se renderiza en cualquier ruta. Al estar al final solo se renderiza
                * cuando el usuario trato de ingresar a una ruta que no existe, por lo tanto se renderiza "PaginaError"
                */}
-              <Route path="/reestablecerContrasena/:stringEncoded" element={<CambiarContrasena/>}/>
+              <Route
+                path="/reestablecerContrasena/:stringEncoded"
+                element={<CambiarContrasena />}
+              />
               <Route path="*" element={<PaginaError />} />
             </Routes>
           </BrowserRouter>
