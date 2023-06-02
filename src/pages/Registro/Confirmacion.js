@@ -33,7 +33,7 @@ export const saveInfoPaciente = async (data, usuarioUid) => {
     email: email,
     contrasena: contrasena,
     rol: PACIENTE,
-    nombre:`${data.nombre} ${data.apellidos}`,
+    nombre: `${data.nombre} ${data.apellidos}`,
     telefono: data.telefono,
     paciente: {
       nombre: data.nombre,
@@ -67,7 +67,7 @@ export const saveInfoFisioterapeuta = async (data, usuarioUid) => {
     email: email,
     contrasena: contrasena,
     rol: FISIOTERAPEUTA,
-    nombre:`${data.nombre} ${data.apellidos}`,
+    nombre: `${data.nombre} ${data.apellidos}`,
     telefono: data.telefono,
     terapeuta: {
       nombre_del_consultorio: data.nombre_del_consultorio || "",
@@ -77,6 +77,7 @@ export const saveInfoFisioterapeuta = async (data, usuarioUid) => {
       lat: data.coords.lat,
       lng: data.coords.lng,
       numero_cedula: data.numero_cedula,
+      domicilio: data.domicilio,
     },
   };
   console.log(terapeutaData);
@@ -170,7 +171,7 @@ export default function Confirmacion({ anterior, siguiente, saveFunction }) {
         <Text order={5} align="center" mt="lg" size="lg" color="dimmed">
           Revisa que tus datos esten correctos
         </Text>
-        <Stack align="flex-start"  spacing="md" mt="lg">
+        <Stack align="flex-start" spacing="md" mt="lg">
           {Object.keys(datos).map(
             (dato) =>
               !["confirmarContrasena", "contrasena", "coords"].includes(
@@ -180,14 +181,14 @@ export default function Confirmacion({ anterior, siguiente, saveFunction }) {
                   <Text
                     fw={500}
                     color="dark"
-                    style={{ wordWrap: "break-word",width:"90%"}}
+                    style={{ wordWrap: "break-word", width: "90%" }}
                   >
                     {capitalizeWord(dato).replaceAll("_", " ")}
                   </Text>
                   <Text
                     color="dimmed"
                     pl="md"
-                    style={{ wordWrap: "break-word",width:"90%"}}
+                    style={{ wordWrap: "break-word", width: "90%" }}
                   >
                     {showDato(datos[dato])}
                   </Text>
