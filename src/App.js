@@ -35,6 +35,7 @@ import CambiarContrasena from "./pages/CambiarContrasena";
 import LayoutCita from "./pages/Cita/LayoutCita";
 import ListaTerapeutas from "./Components/ListaTerapeutas";
 import Buscar from "./pages/Cita/Buscar";
+import DetallesTerapeuta from "./pages/Cita/DetallesTerapeuta";
 
 function App() {
   return (
@@ -226,16 +227,16 @@ function App() {
               <Route
                 path="/app"
                 element={<PrivateRoutes authRol={[PACIENTE, FISIOTERAPEUTA]} />}
-                
               >
                 <Route path="/app" element={<Layout />}>
                   <Route index element={<Home />} />
                   <Route path="perfil" element={<Perfil />} />
-                  <Route
-                    path="cita"
-                    element={<LayoutCita/>}
-                  >
-                    <Route path="buscar" element={<Buscar/>}/>
+                  <Route path="cita" element={<LayoutCita />}>
+                    <Route path="buscar" element={<Buscar />}/>
+                    <Route
+                      path="terapeuta/:id"
+                      element={<DetallesTerapeuta />}
+                    />
                   </Route>
                 </Route>
               </Route>

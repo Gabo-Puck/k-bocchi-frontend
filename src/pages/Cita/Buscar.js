@@ -17,6 +17,11 @@ import {
   useMantineTheme,
   Rating,
   Tooltip,
+  MediaQuery,
+  rem,
+  Group,
+  Drawer,
+  createStyles,
 } from "@mantine/core";
 import axios from "axios";
 import { MdPersonSearch } from "react-icons/md";
@@ -29,6 +34,12 @@ import { showNegativeFeedbackNotification } from "../../utils/notificationTempla
 import { abrirMapa } from "../../Components/Mapa";
 
 import TerapeutaResultado from "../../Components/TerapeutaResultado";
+import {
+  useDebouncedState,
+  useDebouncedValue,
+  useDisclosure,
+} from "@mantine/hooks";
+
 function serializarSearchParams(object) {
   const filteredEntries = Object.entries(object).filter(
     ([key, value]) => value !== undefined
@@ -38,20 +49,33 @@ function serializarSearchParams(object) {
 }
 export function BarraBusquedaTerapeuta() {
   const theme = useMantineTheme();
+  const [value, setValue] = useDebouncedState("", 300);
   const { setResultados, parametrosBusqueda, setParametrosBusqueda } =
     useContext(BusquedaTerapeutaContext);
   let [searchParams, setSearchParams] = useSearchParams();
   let [buscando, setBuscando] = useState(false);
   const buscar = async () => {
-    alert(searchParams);
+    // alert(searchParams);
     setBuscando(true);
-    let response = await axios.get(
-      `/usuarios/fisioterapeutas/buscar?${searchParams}`
-    );
-    if (!response) return;
+    try {
+      let response = await axios.get(
+        `/usuarios/fisioterapeutas/buscar?${searchParams}`
+      );
+      setResultados(response.data.resultados);
+    } catch (err) {
+      console.log(err);
+      return;
+    }
     setBuscando(false);
-    setResultados(response.data.resultados);
   };
+  useEffect(
+    () =>
+      setParametrosBusqueda({
+        ...parametrosBusqueda,
+        nombre: value,
+      }),
+    [value]
+  );
   return (
     <>
       {/* <Flex justify="center" align="center"> */}
@@ -61,10 +85,7 @@ export function BarraBusquedaTerapeuta() {
         radius={0}
         disabled={buscando}
         onChange={({ target }) => {
-          setParametrosBusqueda({
-            ...parametrosBusqueda,
-            nombre: target.value,
-          });
+          setValue(target.value);
         }}
       />
       <Button
@@ -97,6 +118,7 @@ export default function Buscar() {
   const [resultados, setResultados] = useState([]);
   let [searchParams, setSearchParams] = useSearchParams();
   let [parametrosBusqueda, setParametrosBusqueda] = useState({});
+  const [opened, { open, close }] = useDisclosure(false);
   useEffect(() => {
     setSearchParams(serializarSearchParams(parametrosBusqueda));
   }, [parametrosBusqueda]);
@@ -104,27 +126,66 @@ export default function Buscar() {
     <BusquedaTerapeutaContext.Provider
       value={{ setResultados, parametrosBusqueda, setParametrosBusqueda }}
     >
+      <Drawer
+        opened={opened}
+        onClose={close}
+        title="Filtros"
+        scrollAreaComponent={ScrollArea.Autosize}
+      >
+        <Filtros />
+      </Drawer>
       <Stack>
         <Grid>
-          <Grid.Col span={3}>
-            <Filtros
-              setParametrosBusqueda={setParametrosBusqueda}
-              parametrosBusqueda={parametrosBusqueda}
-            />
-          </Grid.Col>
+          <MediaQuery smallerThan="md" styles={{ display: "none" }}>
+            <Grid.Col span={3}>
+              <FiltrosDropdown />
+            </Grid.Col>
+          </MediaQuery>
+
           <Grid.Col span="auto">
             <Center miw="70%">
-              <BarraBusquedaTerapeuta />
+              <MediaQuery smallerThan="md" styles={{ width: "50%" }}>
+                <BarraBusquedaTerapeuta />
+              </MediaQuery>
             </Center>
-            <Flex>
+            <MediaQuery largerThan="md" styles={{ display: "none" }}>
+              <Button
+                variant="subtle"
+                mt="md"
+                compact
+                color="green-nature"
+                onClick={open}
+              >
+                Filtros
+              </Button>
+            </MediaQuery>
+
+            <Stack my="md" key="resultadosBusqueda">
               {resultados.length == 0 ? (
                 <Text display="block">No hay resultados</Text>
               ) : (
-                resultados.map((terapeuta) => (
-                  <TerapeutaResultado terapeuta={terapeuta}/>
-                ))
+                <ScrollArea.Autosize h="63vh">
+                  <MediaQuery
+                    smallerThan="md"
+                    styles={{ justifyContent: "center" }}
+                  >
+                    <Flex
+                      justify="flex-start"
+                      align="flex-start"
+                      wrap="wrap"
+                      gap="lg"
+                    >
+                      {resultados.map((terapeuta) => (
+                        <TerapeutaResultado
+                          usuario={terapeuta}
+                          key={terapeuta.id}
+                        />
+                      ))}
+                    </Flex>
+                  </MediaQuery>
+                </ScrollArea.Autosize>
               )}
-            </Flex>
+            </Stack>
           </Grid.Col>
         </Grid>
       </Stack>
@@ -132,24 +193,30 @@ export default function Buscar() {
   );
 }
 
-export function Filtros({ parametrosBusqueda, setParametrosBusqueda }) {
+export function FiltrosDropdown() {
   return (
     <Accordion defaultValue="Filtros">
       <Accordion.Item value="Filtros">
         <Accordion.Control>Filtros</Accordion.Control>
         <Accordion.Panel>
-          <ScrollArea.Autosize mah="68vh" scrollbarSize={6}>
-            <Stack>
-              <FiltroServicioDomicilio />
-              <FiltroServicioConsultorio />
-              <FiltroPrecio />
-              <FiltroEstrellas />
-              <FiltroUbicacion />
-            </Stack>
+          <ScrollArea.Autosize mah="63vh" scrollbarSize={6}>
+            <Filtros />
           </ScrollArea.Autosize>
         </Accordion.Panel>
       </Accordion.Item>
     </Accordion>
+  );
+}
+
+function Filtros() {
+  return (
+    <Stack>
+      <FiltroServicioDomicilio />
+      <FiltroServicioConsultorio />
+      <FiltroPrecio />
+      <FiltroEstrellas />
+      <FiltroUbicacion />
+    </Stack>
   );
 }
 
@@ -247,12 +314,12 @@ function FiltroPrecio() {
       });
     }
   }
-  useEffect(() => {
-    if (!parametrosBusqueda.pago_maximo && !parametrosBusqueda.pago_minimo) {
-      setInput1("");
-      setInput2("");
-    }
-  }, [parametrosBusqueda]);
+  // useEffect(() => {
+  //   if (!parametrosBusqueda.pago_maximo && !parametrosBusqueda.pago_minimo) {
+  //     setInput1("");
+  //     setInput2("");
+  //   }
+  // }, [parametrosBusqueda]);
   useEffect(() => {
     if (
       (input1 === "" || input1 === undefined) &&
@@ -436,10 +503,10 @@ function FiltroUbicacion() {
                   : "km "
               }
               onChange={(distancia) => {
-                if (distancia === "" || distancia===0) {
+                if (distancia === "" || distancia === 0) {
                   setParametrosBusqueda({
                     ...parametrosBusqueda,
-                    distancia:undefined,
+                    distancia: undefined,
                   });
                   return;
                 }

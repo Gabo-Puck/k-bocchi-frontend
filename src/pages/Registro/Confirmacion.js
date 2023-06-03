@@ -77,7 +77,7 @@ export const saveInfoFisioterapeuta = async (data, usuarioUid) => {
       lat: data.coords.lat,
       lng: data.coords.lng,
       numero_cedula: data.numero_cedula,
-      domicilio: data.domicilio,
+      domicilio: data.direccion,
     },
   };
   console.log(terapeutaData);

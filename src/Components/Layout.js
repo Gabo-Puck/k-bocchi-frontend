@@ -127,7 +127,7 @@ export default function Layout() {
       header={<HeaderApp />}
       mih="100vh"
       // navbar={<BarraNavegacion />}
-      footer={<FooterApp />}
+      // footer={<FooterApp />}
     >
       <Outlet />
     </AppShell>
