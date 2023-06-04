@@ -160,7 +160,7 @@ export default function DetallesTerapeuta() {
             <Flex align="center">
               <Title order={3}>Comentarios</Title>
             </Flex>
-            <ScrollArea.Autosize mah="80vh">
+            <ScrollArea.Autosize h="70vh">
               <ListaComentarios comentarios={terapeuta.comentarios} />
             </ScrollArea.Autosize>
           </Stack>

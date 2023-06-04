@@ -46,7 +46,7 @@ export default function Comentario({ comentario }) {
         <div>
           <Text fz="sm">{comentario.comentario_paciente.usuario.nombre}</Text>
           <Text fz="xs" c="dimmed">
-            {comentario.fecha}
+            {FormatUTCDateTime(comentario.fecha)}
           </Text>
           <Resena value={comentario.comentario_paciente.resenas[0].estrellas} />
         </div>
@@ -61,9 +61,15 @@ export default function Comentario({ comentario }) {
   );
 }
 
-function FormatSqlDateTime(date) {
-  const [year, month, day] = [date.split("-")];
-  const monthIndex = month - 1; // remember that Date's constructor 2nd param is monthIndex (0-11) not month number (1-12)!
-  const newDate = new Date(year, monthIndex, day);
-  return newDate.toString();
+function FormatUTCDateTime(date) {
+  let stringFecha = "2023-09-15T09:12:39.000Z";
+  let date_comentario = new Date(stringFecha);
+
+  let formatDay = Intl.DateTimeFormat("es-MX", {
+    dateStyle: "medium",
+    timeStyle: "medium",
+
+    hourCycle: "h12",
+  }).format(date_comentario);
+  return formatDay;
 }
