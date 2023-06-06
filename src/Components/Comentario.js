@@ -62,8 +62,8 @@ export default function Comentario({ comentario }) {
 }
 
 function FormatUTCDateTime(date) {
-  let stringFecha = "2023-09-15T09:12:39.000Z";
-  let date_comentario = new Date(stringFecha);
+  
+  let date_comentario = new Date(date);
 
   let formatDay = Intl.DateTimeFormat("es-MX", {
     dateStyle: "medium",

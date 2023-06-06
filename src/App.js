@@ -36,6 +36,7 @@ import LayoutCita from "./pages/Cita/LayoutCita";
 import ListaTerapeutas from "./Components/ListaTerapeutas";
 import Buscar from "./pages/Cita/Buscar";
 import DetallesTerapeuta from "./pages/Cita/DetallesTerapeuta";
+import ChatBot from "./pages/Chatbot/Chatbot";
 
 function App() {
   return (
@@ -238,6 +239,7 @@ function App() {
                       element={<DetallesTerapeuta />}
                     />
                   </Route>
+                  <Route path="chatbot" element={<ChatBot/>}/>
                 </Route>
               </Route>
               {/**Mediante el simbolo '*' podemos indicar que esta elemento se renderiza en cualquier ruta. Al estar al final solo se renderiza

@@ -98,8 +98,8 @@ export default function Layout() {
               <Link to="/app/cita/buscar">
                 <NavLink label="Cita" />
               </Link>
-              <Link>
-                <NavLink label="Ventas" />
+              <Link to="/app/chatbot">
+                <NavLink label="Chatbot" />
               </Link>
               <Menu>
                 <Menu.Target>
