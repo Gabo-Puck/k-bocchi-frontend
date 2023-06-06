@@ -4,6 +4,7 @@ import {
   Flex,
   Grid,
   Loader,
+  ScrollArea,
   Stack,
   Text,
   TextInput,
@@ -11,18 +12,21 @@ import {
   Title,
   useMantineTheme,
 } from "@mantine/core";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import MensajeBienvenida from "../../Components/Chatbot/MensajeBienvenida";
 import MensajeOpcionesCrud from "../../Components/Chatbot/MensajeOpcionesCrud";
 import { MdPersonSearch } from "react-icons/md";
-import NodoPregunta from "../../utils/NodoPregunta";
-
+import NodoPregunta from "../../utils/Chatbot/NodoPregunta";
+import { PreguntaBienvenida } from "../../utils/Chatbot/Preguntas/PreguntaBienvenida";
+import { useSelector } from "react-redux";
+const selectUsuarioId = (state) => state.usuario.paciente.id;
 function useMensajes() {
   const [mensajes, setMensajes] = useState([
     { key: 0, element: <MensajeBienvenida /> },
-    { key: 1, element: <MensajeOpcionesCrud /> },
   ]);
+
   const [uniqueKey, setUniqueKey] = useState(2);
+
   const addMensaje = (mensaje) => {
     setMensajes((mensajes) => [
       ...mensajes,
@@ -33,99 +37,91 @@ function useMensajes() {
     ]);
     setUniqueKey((key) => key + 1);
   };
-  return [mensajes, addMensaje];
-}
+  const popMensaje = (mensaje) => {
+    setMensajes((mensajes) => {
+      let mensajesPop = [...mensajes];
+      mensajesPop.pop();
+      return mensajesPop;
+    });
+    setUniqueKey((key) => key + 1);
+  };
 
+  return [mensajes, addMensaje, popMensaje];
+}
+// let skip = true;
 export default function ChatBot() {
   const theme = useMantineTheme();
+  const [skip, setSkip] = useState(true);
   const [pensando, setPensando] = useState(false);
-  const [mensajes, addMensaje] = useMensajes();
-  const ref = useRef(null);
-  const PreguntaBienvenida = new NodoPregunta(
-    null,
-    null,
-    (e) => {
-        console.log(e);
-      let error = (
-        <>
-          <Box>
-            <Text>Opcion no reconocida</Text>
-          </Box>
-          <MensajeOpcionesCrud />
-        </>
-      );
-      addMensaje(error);
-      return;
-    },
-    (siguiente) => {
-        console.log(this.pregunta)
-        console.log("bien");
-    //   setPreguntaActual(siguiente);
-    },
-    (
-      <>
-        <MensajeBienvenida />
-        <MensajeOpcionesCrud />
-      </>
-    ),
-    async (value) => {
-      switch (value) {
-        case "1":
-          //agendar
-          console.log("Agendar");
-          break;
-        //Modificar
-        case "2":
-          console.log("Modificar");
-          break;
-        case "3":
-          console.log("Cancelar");
-          //Cancelar
-          break;
-        default:
-          throw new Error("Opcion fuera de los parametros");
-      }
-    }
-  );
+  const [mensajes, addMensaje, popMensaje] = useMensajes();
+  const refInput = useRef(null);
+  const refScrollArea = useRef(null);
   const [preguntaActual, setPreguntaActual] = useState(PreguntaBienvenida);
+  const [datos, setDatos] = useState({});
+  NodoPregunta.addMensaje = addMensaje;
+  NodoPregunta.setPregunta = setPreguntaActual;
+  const usuarioId = useSelector(selectUsuarioId);
+  useEffect(() => {
+    if (!skip) {
+      let res = preguntaActual.onInit();
+      if (res) addMensaje(preguntaActual.pregunta);
+    } else {
+      NodoPregunta.setDatos({
+        cita: {
+          id_paciente: usuarioId,
+        },
+      });
+    }
+    setSkip(false);
+    // return ()=>{skip=false}
+  }, [preguntaActual.pregunta, skip]);
+  useEffect(() => {
+    refScrollArea.current.scrollTo({
+      top: refScrollArea.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [mensajes]);
+  // useEffect(() => {
+  //   console.log(datos);
+  // }, [datos]);
   return (
-    <Box w="100%" h="100%">
-      <Stack w="100%" h="100%">
-        <Stack h="80%" w="100%">
+    <Stack w="100%" mih="100%" mah="100%" justify="center">
+      <Stack mah="80%" mih="20%" w="100%">
+        <ScrollArea.Autosize mah="75vh" mih="75vh" viewportRef={refScrollArea}>
           {mensajes.map((m) => m.element)}
-        </Stack>
-        <Flex h="20%" w="100%">
-          <TextInput
-            ref={ref}
-            placeholder="Escribe tu respuesta..."
-            w="100%"
-            radius={0}
-            onChange={({ target }) => {}}
-          />
-          <Button
-            radius={0}
-            color="green-nature"
-            variant="subtle"
-            styles={{
-              root: {
-                border: `1px solid ${theme.colors.gray[4]}`,
-                borderLeft: 0,
-              },
-            }}
-            onClick={() => {
-              addMensaje(<Text children={ref.current.value}></Text>);
-              preguntaActual.onSubmit(ref.current.value);
-              ref.current.value = "";
-            }}
-          >
-            {pensando ? (
-              <Loader color="green-nature" size="xs" />
-            ) : (
-              <MdPersonSearch />
-            )}
-          </Button>
-        </Flex>
+        </ScrollArea.Autosize>
       </Stack>
-    </Box>
+      <Flex w="100%">
+        <TextInput
+          ref={refInput}
+          placeholder="Escribe tu respuesta..."
+          w="100%"
+          radius={0}
+          onChange={({ target }) => {}}
+        />
+        <Button
+          radius={0}
+          color="green-nature"
+          variant="subtle"
+          styles={{
+            root: {
+              border: `1px solid ${theme.colors.gray[4]}`,
+              borderLeft: 0,
+            },
+          }}
+          onClick={() => {
+            addMensaje(<Text children={refInput.current.value}></Text>);
+            preguntaActual.onSubmit(refInput.current.value);
+            refInput.current.value = "";
+          }}
+        >
+          {pensando ? (
+            <Loader color="green-nature" size="xs" />
+          ) : (
+            <MdPersonSearch />
+          )}
+        </Button>
+      </Flex>
+    </Stack>
   );
 }

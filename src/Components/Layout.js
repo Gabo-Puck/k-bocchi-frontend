@@ -125,6 +125,7 @@ export default function Layout() {
       navbarOffsetBreakpoint="sm"
       asideOffsetBreakpoint="sm"
       header={<HeaderApp />}
+      mah="100vh"
       mih="100vh"
       // navbar={<BarraNavegacion />}
       // footer={<FooterApp />}

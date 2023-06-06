@@ -5,9 +5,9 @@ export default function MensajeOpcionesCrud() {
     <Box>
       <Text>¿Qué deseas hacer?</Text>
       <List type="ordered">
-        <List.Item>Agendar una cita</List.Item>
-        <List.Item>Modificar una cita</List.Item>
-        <List.Item>Cancelar una cita</List.Item>
+        <List.Item key="agendar-c">Agendar una cita</List.Item>
+        <List.Item key="agendar-u">Modificar una cita</List.Item>
+        <List.Item key="agendar-d">Cancelar una cita</List.Item>
       </List>
     </Box>
   );
