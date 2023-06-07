@@ -8,8 +8,9 @@ import {
 } from "../../../Components/Chatbot/MensajesAgendarCita";
 import axios from "axios";
 import { PreguntaSeleccionarTerapeuta } from "./PreguntaSeleccionarTerapeuta";
+import { PreguntaSeleccionarDomicilio } from "./PreguntaSeleccionarDomicilio";
 
-//PreguntaSeleccionarModalidad ->
+//PreguntaSeleccionarModalidad ->PreguntaSeleccionarDomicilio
 export const PreguntaSeleccionarModalidad = new NodoPregunta(
   null,
   null,
@@ -42,6 +43,7 @@ export const PreguntaSeleccionarModalidad = new NodoPregunta(
         break;
       case "2":
         console.log("domicilio");
+        NodoPregunta.setPregunta(PreguntaSeleccionarDomicilio);
         break;
       default:
         throw new Error("Opcion no reconocida");
@@ -61,6 +63,7 @@ export const PreguntaSeleccionarModalidad = new NodoPregunta(
       terapeuta.nombre_del_consultorio === ""
     ) {
       alert("Domicilio");
+      NodoPregunta.setPregunta(PreguntaSeleccionarDomicilio);
       return false;
     }
     if (
@@ -74,6 +77,7 @@ export const PreguntaSeleccionarModalidad = new NodoPregunta(
           modalidad: "consultorio",
           lat: terapeuta.lat,
           lng: terapeuta.lng,
+          domicilio: terapeuta.domicilio,
         },
       });
       return false;
