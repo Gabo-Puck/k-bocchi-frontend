@@ -18,9 +18,10 @@ import {
   Box,
   Avatar,
   Menu,
+  LoadingOverlay,
 } from "@mantine/core";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import { socket } from "../socket";
 const selectUsuario = (state) => state.usuario;
 
 function NavLinkBar({ to, label }) {
@@ -32,8 +33,26 @@ function NavLinkBar({ to, label }) {
 }
 
 export default function Layout() {
-  const dispatch = useDispatch();
+  const [isConnected, setIsConnected] = useState(socket.connected);
   const usuario = useSelector(selectUsuario);
+  useEffect(() => {
+    socket.connect();
+    function onConnect() {
+      socket.emit("send_data", { id: usuario.id, nombre: usuario.nombre });
+      setIsConnected(true);
+    }
+
+    function onDisconnect() {
+      setIsConnected(false);
+    }
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+    return () => {
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+    };
+  }, []);
+  const dispatch = useDispatch();
   const setPaciente = () => {
     dispatch({
       type: USUARIO_AUTORIZADO,
@@ -101,6 +120,9 @@ export default function Layout() {
               <Link to="/app/chatbot">
                 <NavLink label="Chatbot" />
               </Link>
+              <Link to="/app/chat">
+                <NavLink label="Chat" />
+              </Link>
               <Menu>
                 <Menu.Target>
                   <Avatar radius="xl" />
@@ -121,16 +143,19 @@ export default function Layout() {
     );
   }
   return (
-    <AppShell
-      navbarOffsetBreakpoint="sm"
-      asideOffsetBreakpoint="sm"
-      header={<HeaderApp />}
-      mah="100vh"
-      mih="100vh"
-      // navbar={<BarraNavegacion />}
-      // footer={<FooterApp />}
-    >
-      <Outlet />
-    </AppShell>
+    <>
+      <LoadingOverlay visible={!isConnected} overlayBlur={2} />
+      <AppShell
+        navbarOffsetBreakpoint="sm"
+        asideOffsetBreakpoint="sm"
+        header={<HeaderApp />}
+        mah="100vh"
+        mih="100vh"
+        // navbar={<BarraNavegacion />}
+        // footer={<FooterApp />}
+      >
+        <Outlet />
+      </AppShell>
+    </>
   );
 }
