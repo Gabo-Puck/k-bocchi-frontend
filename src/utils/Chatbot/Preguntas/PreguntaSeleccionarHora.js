@@ -14,6 +14,7 @@ import axios from "axios";
 import { PreguntaSeleccionarTerapeuta } from "./PreguntaSeleccionarTerapeuta";
 import { PreguntaSeleccionarDomicilio } from "./PreguntaSeleccionarDomicilio";
 import { PreguntaConfirmacionAgendar } from "./PreguntaConfirmacionAgendar";
+import BotMensaje from "../../../Components/Chatbot/BotMensaje";
 
 //PreguntaSeleccionarModalidad ->PreguntaSeleccionarDomicilio
 export const PreguntaSeleccionarHora = new NodoPregunta(
@@ -23,9 +24,9 @@ export const PreguntaSeleccionarHora = new NodoPregunta(
     console.log(error);
     NodoPregunta.addMensaje(
       <>
-        <Box>
+        <BotMensaje>
           <Text>{error.message}</Text>
-        </Box>
+        </BotMensaje>
       </>
     );
     NodoPregunta.addMensaje(

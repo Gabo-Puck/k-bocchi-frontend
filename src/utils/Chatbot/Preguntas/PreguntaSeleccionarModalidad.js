@@ -59,14 +59,14 @@ export const PreguntaSeleccionarModalidad = new NodoPregunta(
       terapeuta.servicio_domicilio === 1 &&
       terapeuta.nombre_del_consultorio !== ""
     ) {
-      alert("Ambos");
+      // alert("Ambos");
       return true;
     }
     if (
       terapeuta.servicio_domicilio === 1 &&
       terapeuta.nombre_del_consultorio === ""
     ) {
-      alert("Domicilio");
+      // alert("Domicilio");
       NodoPregunta.setPregunta(PreguntaSeleccionarDomicilio);
       return false;
     }
@@ -74,8 +74,9 @@ export const PreguntaSeleccionarModalidad = new NodoPregunta(
       terapeuta.servicio_domicilio === 0 &&
       terapeuta.nombre_del_consultorio !== ""
     ) {
-      alert("Consultorio");
+      // alert("Consultorio");
       setTerapeutaConsultorioDatos(terapeuta);
+      NodoPregunta.setPregunta(PreguntaSeleccionarFecha);
       return false;
     }
   }

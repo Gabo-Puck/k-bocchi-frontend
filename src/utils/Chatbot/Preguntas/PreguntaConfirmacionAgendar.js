@@ -16,6 +16,8 @@ import axios from "axios";
 import { PreguntaSeleccionarTerapeuta } from "./PreguntaSeleccionarTerapeuta";
 import { PreguntaSeleccionarDomicilio } from "./PreguntaSeleccionarDomicilio";
 import { PreguntaBienvenida } from "./PreguntaBienvenida";
+import { type } from "@testing-library/user-event/dist/type";
+import BotMensaje from "../../../Components/Chatbot/BotMensaje";
 
 //PreguntaSeleccionarModalidad ->PreguntaSeleccionarDomicilio
 export const PreguntaConfirmacionAgendar = new NodoPregunta(
@@ -25,9 +27,9 @@ export const PreguntaConfirmacionAgendar = new NodoPregunta(
     console.log(error);
     NodoPregunta.addMensaje(
       <>
-        <Box>
+        <BotMensaje>
           <Text>{error.message}</Text>
-        </Box>
+        </BotMensaje>
       </>
     );
     NodoPregunta.addMensaje(
@@ -38,7 +40,7 @@ export const PreguntaConfirmacionAgendar = new NodoPregunta(
     );
   },
   (Siguiente) => {
-    NodoPregunta.setPregunta(Siguiente)
+    NodoPregunta.setPregunta(Siguiente);
   },
   (
     <>
@@ -55,9 +57,9 @@ export const PreguntaConfirmacionAgendar = new NodoPregunta(
           });
           NodoPregunta.addMensaje(
             <>
-              <Box>
-                <Text>¡Listo! He guardado tu cita :)</Text>
-              </Box>
+              <BotMensaje>
+                <Text>¡Listo! He guardado tu cita 😉</Text>
+              </BotMensaje>
             </>
           );
           return PreguntaBienvenida;
@@ -67,6 +69,7 @@ export const PreguntaConfirmacionAgendar = new NodoPregunta(
           throw new Error("Opcion no reconocida");
       }
     } catch (err) {
+      if (err.message) throw err;
       throw new Error("Algo ha salido mal");
     }
   }

@@ -19,6 +19,7 @@ import { MdPersonSearch } from "react-icons/md";
 import NodoPregunta from "../../utils/Chatbot/NodoPregunta";
 import { PreguntaBienvenida } from "../../utils/Chatbot/Preguntas/PreguntaBienvenida";
 import { useSelector } from "react-redux";
+import UsuarioMensaje from "../../Components/Chatbot/UsuarioMensaje";
 const selectUsuarioId = (state) => state.usuario.paciente.id;
 function useMensajes() {
   const [mensajes, setMensajes] = useState([
@@ -85,19 +86,26 @@ export default function ChatBot() {
   //   console.log(datos);
   // }, [datos]);
   function handleEnter(e) {
-    if ((e.key === "Enter" || e.keyCode === 13) && refInput.current.value !== "") {
+    if (
+      (e.key === "Enter" || e.keyCode === 13) &&
+      refInput.current.value !== ""
+    ) {
       mandarMensaje();
     }
   }
   function mandarMensaje() {
-    addMensaje(<Text children={refInput.current.value}></Text>);
+    addMensaje(
+      <UsuarioMensaje>
+        <Text children={refInput.current.value}></Text>
+      </UsuarioMensaje>
+    );
     preguntaActual.onSubmit(refInput.current.value);
     refInput.current.value = "";
   }
   return (
     <Stack w="100%" mih="100%" mah="100%" justify="center">
       <Stack mah="80%" mih="20%" w="100%">
-        <ScrollArea.Autosize mah="75vh" mih="75vh" viewportRef={refScrollArea}>
+        <ScrollArea.Autosize offsetScrollbars mah="75vh" mih="75vh" viewportRef={refScrollArea}>
           {mensajes.map((m) => m.element)}
         </ScrollArea.Autosize>
       </Stack>

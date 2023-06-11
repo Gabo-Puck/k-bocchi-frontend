@@ -7,27 +7,29 @@ import {
   seleccionarUbicacion,
 } from "../../utils/Chatbot/Preguntas/PreguntaSeleccionarDomicilio";
 import { FormatUTCDateTime } from "../Comentario";
+import BotMensaje from "./BotMensaje";
+import { capitalizeWord } from "../../utils/capitalizeWord";
 
 export function MensajeBienvenidaAgendar() {
   return (
-    <Box>
+    <BotMensaje>
       <Text>¡Ok! Agendemos una cita</Text>
-    </Box>
+    </BotMensaje>
   );
 }
 
 export function MensajeNombre() {
   return (
-    <Box>
+    <BotMensaje>
       <Text>Porfavor ingresa el nombre completo del terapeuta</Text>
-    </Box>
+    </BotMensaje>
   );
 }
 
 export function MensajeSeleccionarTerapeuta({ terapeutas }) {
   console.log(NodoPregunta.opciones);
   return (
-    <Box>
+    <BotMensaje>
       <Text>
         Por favor elige el terapeuta con el que deseas agendar una cita
       </Text>
@@ -44,22 +46,22 @@ export function MensajeSeleccionarTerapeuta({ terapeutas }) {
           );
         })}
       </List>
-    </Box>
+    </BotMensaje>
   );
 }
 
 export function MensajeAvisoVariosTerapeutas() {
   return (
-    <Box>
+    <BotMensaje>
       <Text>Se han encotrado varios terapeutas con nombre similar.</Text>
-    </Box>
+    </BotMensaje>
   );
 }
 
 export function MensajeSeleccionarModalidad() {
   let { terapeuta } = NodoPregunta.datos;
   return (
-    <Box>
+    <BotMensaje>
       <Text>Este terapeuta cuenta con las siguientes modalidades:</Text>
       <List type="ordered">
         <List.Item key="consultorio">
@@ -67,19 +69,21 @@ export function MensajeSeleccionarModalidad() {
         </List.Item>
         <List.Item key="domicilio">Domicilio</List.Item>
       </List>
-    </Box>
+    </BotMensaje>
   );
 }
 
 export function MensajeSeleccionarDomicilio() {
   const [direccionSeleccionada, setDireccionSeleccionada] = useState(false);
   return (
-    <Box>
+    <BotMensaje>
+      <Text mb="sm">Ahora tienes que seleccionar el domicilio de la cita</Text>
       {direccionSeleccionada ? (
-        <Text>Direccion seleccionada:{direccionSeleccionada}</Text>
+        <Text>Direccion seleccionada: {direccionSeleccionada}</Text>
       ) : (
         <>
           <Button
+          color="blue-calm.4"
             onClick={async () => {
               let domicilio = await seleccionarUbicacion();
               await PreguntaSeleccionarDomicilio.onSubmit(domicilio);
@@ -90,13 +94,13 @@ export function MensajeSeleccionarDomicilio() {
           </Button>
         </>
       )}
-    </Box>
+    </BotMensaje>
   );
 }
 
 export function MensajeFechasOpciones({ fechas }) {
   return (
-    <Box>
+    <BotMensaje>
       <Text>
         La fecha seleccionada no esta disponible. Las siguientes opciones son
         las más cercanas a la elegida
@@ -110,25 +114,25 @@ export function MensajeFechasOpciones({ fechas }) {
           );
         })}
       </List>
-    </Box>
+    </BotMensaje>
   );
 }
 
 export function MensajeIngresarFecha() {
   return (
-    <Box>
+    <BotMensaje>
       <Text>
         Ingresa la fecha que deseas agendar tu cita {"(En formato YYYY-mm-dd)"}
       </Text>
-    </Box>
+    </BotMensaje>
   );
 }
 
 export function MensajeSeleccionarHorario() {
   return (
-    <Box>
+    <BotMensaje>
       <Text>Estos son los horarios disponibles en la fecha elegida</Text>
-    </Box>
+    </BotMensaje>
   );
 }
 
@@ -136,7 +140,7 @@ export function MensajeListaHorarios() {
   let horarios_disponibles = NodoPregunta.opciones;
   //s
   return (
-    <Box>
+    <BotMensaje>
       <List type="ordered">
         {horarios_disponibles.map((t) => {
           return (
@@ -146,7 +150,7 @@ export function MensajeListaHorarios() {
           );
         })}
       </List>
-    </Box>
+    </BotMensaje>
   );
 }
 
@@ -154,34 +158,49 @@ export function MensajeCitaInformacion() {
   let { cita } = NodoPregunta.datos;
   let { terapeuta } = NodoPregunta.datos;
   return (
-    <Box>
+    <BotMensaje>
       <Text>
-        <Text span fw="bold">Fecha: </Text>{FormatUTCDateTime(cita.fecha)}
+        <Text span fw="bold">
+          Fecha:{" "}
+        </Text>
+        {FormatUTCDateTime(cita.fecha)}
       </Text>
       <Text>
-        <Text span fw="bold">Modalidad: </Text>{cita.modalidad}
+        <Text span fw="bold">
+          Modalidad:{" "}
+        </Text>
+        {capitalizeWord(cita.modalidad)}
       </Text>
       <Text>
-        <Text span fw="bold">Domicilio: </Text>{cita.domicilio}
+        <Text span fw="bold">
+          Domicilio:{" "}
+        </Text>
+        {cita.domicilio}
       </Text>
       <Text>
-        <Text span fw="bold">Nombre terapeuta: </Text>{terapeuta.usuario.nombre}
+        <Text span fw="bold">
+          Nombre terapeuta:{" "}
+        </Text>
+        {terapeuta.usuario.nombre}
       </Text>
       <Text>
-        <Text span fw="bold">Cedula terapeuta: </Text>{terapeuta.numero_cedula}
+        <Text span fw="bold">
+          Cedula terapeuta:{" "}
+        </Text>
+        {terapeuta.numero_cedula}
       </Text>
-    </Box>
+    </BotMensaje>
   );
 }
 
 export function MensajeCitaConfirmacion() {
   return (
-    <Box>
+    <BotMensaje>
       <Text>¡Perfecto! ¿Deseas guardar la cita?</Text>
       <List type="ordered">
         <List.Item key="consultorio">Si</List.Item>
         <List.Item key="domicilio">No (Volver al menu principal)</List.Item>
       </List>
-    </Box>
+    </BotMensaje>
   );
 }

@@ -44,7 +44,6 @@ export const PreguntaSeleccionarDomicilio = new NodoPregunta(
   },
   (
     <>
-      <Text>Ahora tienes que seleccionar el domicilio de la cita</Text>
       <MensajeSeleccionarDomicilio />
     </>
   ),
