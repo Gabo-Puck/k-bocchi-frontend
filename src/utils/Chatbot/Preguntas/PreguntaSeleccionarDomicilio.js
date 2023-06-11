@@ -11,6 +11,7 @@ import axios from "axios";
 import { PreguntaSeleccionarTerapeuta } from "./PreguntaSeleccionarTerapeuta";
 import { abrirMapa } from "../../../Components/Mapa";
 import { showNegativeFeedbackNotification } from "../../notificationTemplate";
+import { PreguntaSeleccionarFecha } from "./PreguntaSeleccionarFecha";
 
 //PreguntaSeleccionarDomicilio -> PreguntaSeleccionarFecha
 export const PreguntaSeleccionarDomicilio = new NodoPregunta(
@@ -39,7 +40,7 @@ export const PreguntaSeleccionarDomicilio = new NodoPregunta(
         domicilio: resultados.direccion,
       },
     });
-    // NodoPregunta.setPregunta(siguiente);
+    NodoPregunta.setPregunta(PreguntaSeleccionarFecha);
   },
   (
     <>

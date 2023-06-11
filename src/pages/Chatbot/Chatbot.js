@@ -84,6 +84,16 @@ export default function ChatBot() {
   // useEffect(() => {
   //   console.log(datos);
   // }, [datos]);
+  function handleEnter(e) {
+    if ((e.key === "Enter" || e.keyCode === 13) && refInput.current.value !== "") {
+      mandarMensaje();
+    }
+  }
+  function mandarMensaje() {
+    addMensaje(<Text children={refInput.current.value}></Text>);
+    preguntaActual.onSubmit(refInput.current.value);
+    refInput.current.value = "";
+  }
   return (
     <Stack w="100%" mih="100%" mah="100%" justify="center">
       <Stack mah="80%" mih="20%" w="100%">
@@ -98,6 +108,7 @@ export default function ChatBot() {
           w="100%"
           radius={0}
           onChange={({ target }) => {}}
+          onKeyUp={handleEnter}
         />
         <Button
           radius={0}
@@ -110,9 +121,7 @@ export default function ChatBot() {
             },
           }}
           onClick={() => {
-            addMensaje(<Text children={refInput.current.value}></Text>);
-            preguntaActual.onSubmit(refInput.current.value);
-            refInput.current.value = "";
+            mandarMensaje();
           }}
         >
           {pensando ? (

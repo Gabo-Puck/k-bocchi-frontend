@@ -2,6 +2,12 @@ export default class NodoPregunta {
   static addMensaje = null;
   static setPregunta = null;
   static opciones = [];
+  /**
+   * datos = {
+   *  cita: citaObject,
+   *  terapeuta: terapeutaObject
+   * }
+   */
   static datos = null;
   static setDatos(dato) {
     this.datos = { ...this.datos, ...dato };

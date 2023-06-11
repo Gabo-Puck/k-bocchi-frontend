@@ -9,8 +9,10 @@ import {
 import axios from "axios";
 import { PreguntaSeleccionarTerapeuta } from "./PreguntaSeleccionarTerapeuta";
 import { PreguntaSeleccionarDomicilio } from "./PreguntaSeleccionarDomicilio";
+import { PreguntaSeleccionarFecha } from "./PreguntaSeleccionarFecha";
 
-//PreguntaSeleccionarModalidad ->PreguntaSeleccionarDomicilio
+//PreguntaSeleccionarModalidad -> PreguntaSeleccionarDomicilio
+//PreguntaSeleccionarModalidad -> PreguntaSeleccionarFecha
 export const PreguntaSeleccionarModalidad = new NodoPregunta(
   null,
   null,
@@ -40,6 +42,8 @@ export const PreguntaSeleccionarModalidad = new NodoPregunta(
     switch (value) {
       case "1":
         console.log("consultorio");
+        setTerapeutaConsultorioDatos(NodoPregunta.datos.terapeuta);
+        NodoPregunta.setPregunta(PreguntaSeleccionarFecha);
         break;
       case "2":
         console.log("domicilio");
@@ -71,16 +75,20 @@ export const PreguntaSeleccionarModalidad = new NodoPregunta(
       terapeuta.nombre_del_consultorio !== ""
     ) {
       alert("Consultorio");
-      NodoPregunta.setDatos({
-        cita: {
-          ...NodoPregunta.datos.cita,
-          modalidad: "consultorio",
-          lat: terapeuta.lat,
-          lng: terapeuta.lng,
-          domicilio: terapeuta.domicilio,
-        },
-      });
+      setTerapeutaConsultorioDatos(terapeuta);
       return false;
     }
   }
 );
+
+function setTerapeutaConsultorioDatos(terapeuta) {
+  NodoPregunta.setDatos({
+    cita: {
+      ...NodoPregunta.datos.cita,
+      modalidad: "consultorio",
+      lat: terapeuta.lat,
+      lng: terapeuta.lng,
+      domicilio: terapeuta.domicilio,
+    },
+  });
+}

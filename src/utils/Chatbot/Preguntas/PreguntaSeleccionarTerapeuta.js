@@ -40,9 +40,8 @@ export const PreguntaSeleccionarTerapeuta = new NodoPregunta(
     </>
   ),
   async (value) => {
-    if (value <= 0 || value > NodoPregunta.opciones.length)
-      throw new Error("Opcion no identificada");
     let seleccionado = NodoPregunta.opciones[value - 1];
+    if (!seleccionado) throw new Error("Opcion no identificada");
     return seleccionado;
   }
 );

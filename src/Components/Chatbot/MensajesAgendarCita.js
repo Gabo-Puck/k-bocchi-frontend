@@ -6,6 +6,7 @@ import {
   PreguntaSeleccionarDomicilio,
   seleccionarUbicacion,
 } from "../../utils/Chatbot/Preguntas/PreguntaSeleccionarDomicilio";
+import { FormatUTCDateTime } from "../Comentario";
 
 export function MensajeBienvenidaAgendar() {
   return (
@@ -89,6 +90,98 @@ export function MensajeSeleccionarDomicilio() {
           </Button>
         </>
       )}
+    </Box>
+  );
+}
+
+export function MensajeFechasOpciones({ fechas }) {
+  return (
+    <Box>
+      <Text>
+        La fecha seleccionada no esta disponible. Las siguientes opciones son
+        las más cercanas a la elegida
+      </Text>
+      <List type="unordered">
+        {fechas.map((t) => {
+          return (
+            <List.Item key={`${t}`}>
+              <Text>{t.split("T")[0]}</Text>
+            </List.Item>
+          );
+        })}
+      </List>
+    </Box>
+  );
+}
+
+export function MensajeIngresarFecha() {
+  return (
+    <Box>
+      <Text>
+        Ingresa la fecha que deseas agendar tu cita {"(En formato YYYY-mm-dd)"}
+      </Text>
+    </Box>
+  );
+}
+
+export function MensajeSeleccionarHorario() {
+  return (
+    <Box>
+      <Text>Estos son los horarios disponibles en la fecha elegida</Text>
+    </Box>
+  );
+}
+
+export function MensajeListaHorarios() {
+  let horarios_disponibles = NodoPregunta.opciones;
+  //s
+  return (
+    <Box>
+      <List type="ordered">
+        {horarios_disponibles.map((t) => {
+          return (
+            <List.Item key={`${t.horario_formatted}`}>
+              <Text>{t.horario_formatted}</Text>
+            </List.Item>
+          );
+        })}
+      </List>
+    </Box>
+  );
+}
+
+export function MensajeCitaInformacion() {
+  let { cita } = NodoPregunta.datos;
+  let { terapeuta } = NodoPregunta.datos;
+  return (
+    <Box>
+      <Text>
+        <Text span fw="bold">Fecha: </Text>{FormatUTCDateTime(cita.fecha)}
+      </Text>
+      <Text>
+        <Text span fw="bold">Modalidad: </Text>{cita.modalidad}
+      </Text>
+      <Text>
+        <Text span fw="bold">Domicilio: </Text>{cita.domicilio}
+      </Text>
+      <Text>
+        <Text span fw="bold">Nombre terapeuta: </Text>{terapeuta.usuario.nombre}
+      </Text>
+      <Text>
+        <Text span fw="bold">Cedula terapeuta: </Text>{terapeuta.numero_cedula}
+      </Text>
+    </Box>
+  );
+}
+
+export function MensajeCitaConfirmacion() {
+  return (
+    <Box>
+      <Text>¡Perfecto! ¿Deseas guardar la cita?</Text>
+      <List type="ordered">
+        <List.Item key="consultorio">Si</List.Item>
+        <List.Item key="domicilio">No (Volver al menu principal)</List.Item>
+      </List>
     </Box>
   );
 }

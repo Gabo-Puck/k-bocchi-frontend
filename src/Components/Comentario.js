@@ -61,15 +61,15 @@ export default function Comentario({ comentario }) {
   );
 }
 
-function FormatUTCDateTime(date) {
+export function FormatUTCDateTime(date) {
   
   let date_comentario = new Date(date);
-
+  
   let formatDay = Intl.DateTimeFormat("es-MX", {
     dateStyle: "medium",
     timeStyle: "medium",
-
-    hourCycle: "h12",
+    hourCycle: "h23",
+    timeZone: "UTC",
   }).format(date_comentario);
   return formatDay;
 }
