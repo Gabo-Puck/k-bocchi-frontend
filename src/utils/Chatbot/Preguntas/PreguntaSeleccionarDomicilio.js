@@ -20,11 +20,14 @@ export const PreguntaSeleccionarDomicilio = new NodoPregunta(
   null,
   (e) => {
     console.log(e);
+    let { message } = e;
+
     let error = (
       <>
         <BotMensaje>
-          <Text>{e.message}</Text>
+          <Text>{message}</Text>
         </BotMensaje>
+        
         <MensajeSeleccionarDomicilio />
       </>
     );
@@ -49,10 +52,21 @@ export const PreguntaSeleccionarDomicilio = new NodoPregunta(
     </>
   ),
   async (value) => {
-    if (!value.direccion && !value.coords)
+    if (!value.direccion || !value.lat || !value.lng)
       throw new Error("Vuelve a seleccionar la dirección porfavor");
     console.log(NodoPregunta.datos.terapeuta);
-    return value;
+    try {
+      let { lat: latA, lng: lngA } = value;
+      let { id } = NodoPregunta.datos.terapeuta;
+      await axios.get(
+        `/citas/validarDomicilio/${id}?latA=${latA}&lngA=${lngA}`
+      );
+      return value;
+    } catch (err) {
+      if (!err) throw new Error("Algo ha salido mal :c");
+      let { status, data } = err.response;
+      throw { status, message: data };
+    }
   }
 );
 

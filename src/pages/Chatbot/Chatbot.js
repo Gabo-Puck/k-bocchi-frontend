@@ -62,6 +62,7 @@ export default function ChatBot() {
   const [datos, setDatos] = useState({});
   NodoPregunta.addMensaje = addMensaje;
   NodoPregunta.setPregunta = setPreguntaActual;
+  NodoPregunta.NodoInicial = PreguntaBienvenida;
   const usuarioId = useSelector(selectUsuarioId);
   useEffect(() => {
     if (!skip) {

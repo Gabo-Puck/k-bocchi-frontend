@@ -30,6 +30,7 @@ export const PreguntaConfirmacionAgendar = new NodoPregunta(
         <BotMensaje>
           <Text>{error.message}</Text>
         </BotMensaje>
+        
       </>
     );
     NodoPregunta.addMensaje(

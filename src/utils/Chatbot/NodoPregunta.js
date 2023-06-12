@@ -1,7 +1,10 @@
+import { MensajeVolver } from "../../Components/Chatbot/MensajeVolver";
+
 export default class NodoPregunta {
   static addMensaje = null;
   static setPregunta = null;
   static opciones = [];
+  static NodoInicial = null;
   /**
    * datos = {
    *  cita: citaObject,
@@ -31,12 +34,18 @@ export default class NodoPregunta {
     this.onInit = onInit;
   }
   async onSubmit(value) {
+    if(value==="#Volver"){
+      NodoPregunta.setPregunta(NodoPregunta.NodoInicial);
+      return;
+    }
     try {
+      
       let respuesta = await this.onEnvio(value);
       this.onCorrecto(respuesta);
     } catch (err) {
       console.log("MISTAKE:", err);
       this.onIncorrecto(err);
+      NodoPregunta.addMensaje(<MensajeVolver/>);
     }
   }
 }

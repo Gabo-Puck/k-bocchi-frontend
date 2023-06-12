@@ -1,5 +1,4 @@
 import { Box, Text } from "@mantine/core";
-import MensajeOpcionesCrud from "../../../Components/Chatbot/MensajeOpcionesCrud";
 import NodoPregunta from "../NodoPregunta";
 import {
   MensajeBienvenidaAgendar,
@@ -50,13 +49,18 @@ export const PreguntaAgendar = new NodoPregunta(
     </>
   ),
   async (value) => {
-    let response = await axios.get(
-      `/usuarios/fisioterapeutas/buscarNombre/${value}`
-    );
+    let response;
+    try {
+      response = await axios.get(
+        `/usuarios/fisioterapeutas/buscarNombre/${value}`
+      );
+    } catch (err) {
+      if (!err) throw { message: "Algo ha salido mal :c" };
+      throw { message: err.response.data };
+    }
     if (!response) throw new Error("Algo ha salido mal :c");
     if (response.data.length === 0)
       throw new Error("No se encontro un terapeuta con ese nombre");
-
     return response.data;
   }
 );

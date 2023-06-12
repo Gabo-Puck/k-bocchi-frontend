@@ -1,18 +1,9 @@
 import { Box, Text } from "@mantine/core";
-import MensajeOpcionesCrud from "../../../Components/Chatbot/MensajeOpcionesCrud";
 import NodoPregunta from "../NodoPregunta";
 import {
-  MensajeBienvenidaAgendar,
-  MensajeFechasOpciones,
-  MensajeIngresarFecha,
   MensajeListaHorarios,
-  MensajeNombre,
   MensajeSeleccionarHorario,
-  MensajeSeleccionarModalidad,
 } from "../../../Components/Chatbot/MensajesAgendarCita";
-import axios from "axios";
-import { PreguntaSeleccionarTerapeuta } from "./PreguntaSeleccionarTerapeuta";
-import { PreguntaSeleccionarDomicilio } from "./PreguntaSeleccionarDomicilio";
 import { PreguntaConfirmacionAgendar } from "./PreguntaConfirmacionAgendar";
 import BotMensaje from "../../../Components/Chatbot/BotMensaje";
 
@@ -27,6 +18,7 @@ export const PreguntaSeleccionarHora = new NodoPregunta(
         <BotMensaje>
           <Text>{error.message}</Text>
         </BotMensaje>
+        
       </>
     );
     NodoPregunta.addMensaje(
