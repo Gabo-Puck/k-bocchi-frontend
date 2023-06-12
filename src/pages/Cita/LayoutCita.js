@@ -6,8 +6,8 @@ import { Outlet } from "react-router-dom";
 export default function LayoutCita() {
   const [resultados, setResultados] = useState([]);
   return (
-    <Box mih="100%">
+    <>
       <Outlet />
-    </Box>
+    </>
   );
 }

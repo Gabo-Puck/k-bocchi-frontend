@@ -8,6 +8,7 @@ import {
   MensajeSeleccionarTerapeuta,
 } from "../../../Components/Chatbot/MensajesAgendarCita";
 import { PreguntaSeleccionarModalidad } from "./PreguntaSeleccionarModalidad";
+import BotMensaje from "../../../Components/Chatbot/BotMensaje";
 //PreguntaSeleccionarTerapeuta -> PreguntaSeleccionarModalidad
 export const PreguntaSeleccionarTerapeuta = new NodoPregunta(
   null,
@@ -16,9 +17,9 @@ export const PreguntaSeleccionarTerapeuta = new NodoPregunta(
     console.log(e);
     let error = (
       <>
-        <Box>
+        <BotMensaje>
           <Text>{e.message}</Text>
-        </Box>
+        </BotMensaje>
         <MensajeSeleccionarTerapeuta />
       </>
     );

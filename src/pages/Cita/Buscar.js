@@ -164,26 +164,24 @@ export default function Buscar() {
               {resultados.length == 0 ? (
                 <Text display="block">No hay resultados</Text>
               ) : (
-                <ScrollArea.Autosize h="63vh">
-                  <MediaQuery
-                    smallerThan="md"
-                    styles={{ justifyContent: "center" }}
+                <MediaQuery
+                  smallerThan="md"
+                  styles={{ justifyContent: "center" }}
+                >
+                  <Flex
+                    justify="flex-start"
+                    align="flex-start"
+                    wrap="wrap"
+                    gap="lg"
                   >
-                    <Flex
-                      justify="flex-start"
-                      align="flex-start"
-                      wrap="wrap"
-                      gap="lg"
-                    >
-                      {resultados.map((terapeuta) => (
-                        <TerapeutaResultado
-                          usuario={terapeuta}
-                          key={terapeuta.id}
-                        />
-                      ))}
-                    </Flex>
-                  </MediaQuery>
-                </ScrollArea.Autosize>
+                    {resultados.map((terapeuta) => (
+                      <TerapeutaResultado
+                        usuario={terapeuta}
+                        key={terapeuta.id}
+                      />
+                    ))}
+                  </Flex>
+                </MediaQuery>
               )}
             </Stack>
           </Grid.Col>

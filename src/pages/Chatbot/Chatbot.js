@@ -4,6 +4,7 @@ import {
   Flex,
   Grid,
   Loader,
+  Container,
   ScrollArea,
   Stack,
   Text,
@@ -77,10 +78,10 @@ export default function ChatBot() {
     // return ()=>{skip=false}
   }, [preguntaActual.pregunta, skip]);
   useEffect(() => {
-    refScrollArea.current.scrollTo({
-      top: refScrollArea.current.scrollHeight,
-      behavior: "smooth",
-    });
+    // refScrollArea.current.scrollTo({
+    //   top: refScrollArea.current.scrollHeight,
+    //   behavior: "smooth",
+    // });
   }, [mensajes]);
   // useEffect(() => {
   //   console.log(datos);
@@ -103,13 +104,11 @@ export default function ChatBot() {
     refInput.current.value = "";
   }
   return (
-    <Stack w="100%" mih="100%" mah="100%" justify="center">
-      <Stack mah="80%" mih="20%" w="100%">
-        <ScrollArea.Autosize offsetScrollbars mah="75vh" mih="75vh" viewportRef={refScrollArea}>
-          {mensajes.map((m) => m.element)}
-        </ScrollArea.Autosize>
-      </Stack>
-      <Flex w="100%">
+    <Flex direction="column" pl="12px" h="87vh">
+      <ScrollArea offsetScrollbars h="100%" viewportRef={refScrollArea}>
+        {mensajes.map((m) => m.element)}
+      </ScrollArea>
+      <Flex bg="transparent" sx={{ flex: "0" }}>
         <TextInput
           ref={refInput}
           placeholder="Escribe tu respuesta..."
@@ -139,6 +138,8 @@ export default function ChatBot() {
           )}
         </Button>
       </Flex>
-    </Stack>
+      {/* <div>1</div>
+      <div>2</div> */}
+    </Flex>
   );
 }

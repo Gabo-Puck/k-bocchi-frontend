@@ -19,6 +19,10 @@ import {
   Avatar,
   Menu,
   LoadingOverlay,
+  Container,
+  SimpleGrid,
+  Grid,
+  ScrollArea,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { socket } from "../socket";
@@ -100,7 +104,7 @@ export default function Layout() {
 
   function HeaderApp() {
     return (
-      <Header height={{ base: 50, md: 70 }} p="md">
+      <Header p="md">
         <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
           <MediaQuery largerThan="sm" styles={{ display: "none" }}>
             <Burger
@@ -145,17 +149,32 @@ export default function Layout() {
   return (
     <>
       <LoadingOverlay visible={!isConnected} overlayBlur={2} />
-      <AppShell
+      {/* <AppShell
         navbarOffsetBreakpoint="sm"
         asideOffsetBreakpoint="sm"
         header={<HeaderApp />}
-        mah="100vh"
-        mih="100vh"
+        mah="80vh"
+        mih="80vh"
         // navbar={<BarraNavegacion />}
         // footer={<FooterApp />}
-      >
-        <Outlet />
-      </AppShell>
+      ></AppShell> */}
+      <Flex h="100vh" direction="column">
+        <HeaderApp />
+        <ScrollArea h="90vh" offsetScrollbars>
+          <Outlet />
+        </ScrollArea>
+      </Flex>
+
+      {/* <Flex h="100vh" direction="column">
+        <Container
+          sx={{
+            flex: "1",
+          }}
+        >
+          1
+        </Container>
+        <Container>2</Container>
+      </Flex> */}
     </>
   );
 }

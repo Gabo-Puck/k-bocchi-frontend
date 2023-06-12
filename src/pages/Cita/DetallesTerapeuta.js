@@ -87,7 +87,7 @@ export default function DetallesTerapeuta() {
   }
   return (
     <>
-      <Grid gutter="xl" mih="63vh" mah="63vh">
+      <Grid gutter="xl" mih="63vh" w="100vw" mah="63vh">
         <Grid.Col md={4}>
           <ScrollArea.Autosize mah="80vh">
             <Card>

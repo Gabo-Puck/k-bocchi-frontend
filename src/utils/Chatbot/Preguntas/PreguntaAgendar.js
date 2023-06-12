@@ -8,6 +8,7 @@ import {
 import axios from "axios";
 import { PreguntaSeleccionarTerapeuta } from "./PreguntaSeleccionarTerapeuta";
 import { PreguntaSeleccionarModalidad } from "./PreguntaSeleccionarModalidad";
+import BotMensaje from "../../../Components/Chatbot/BotMensaje";
 
 //PreguntaAgendar -> PreguntaSeleccionarTerapeuta
 //PreguntaAgendar -> PreguntaSeleccionarModalidad
@@ -18,9 +19,9 @@ export const PreguntaAgendar = new NodoPregunta(
     console.log(e);
     let error = (
       <>
-        <Box>
+        <BotMensaje>
           <Text>{e.message}</Text>
-        </Box>
+        </BotMensaje>
         <MensajeNombre />
       </>
     );

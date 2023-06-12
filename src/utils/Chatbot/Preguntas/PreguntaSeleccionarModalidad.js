@@ -10,6 +10,7 @@ import axios from "axios";
 import { PreguntaSeleccionarTerapeuta } from "./PreguntaSeleccionarTerapeuta";
 import { PreguntaSeleccionarDomicilio } from "./PreguntaSeleccionarDomicilio";
 import { PreguntaSeleccionarFecha } from "./PreguntaSeleccionarFecha";
+import BotMensaje from "../../../Components/Chatbot/BotMensaje";
 
 //PreguntaSeleccionarModalidad -> PreguntaSeleccionarDomicilio
 //PreguntaSeleccionarModalidad -> PreguntaSeleccionarFecha
@@ -20,9 +21,9 @@ export const PreguntaSeleccionarModalidad = new NodoPregunta(
     console.log(e);
     let error = (
       <>
-        <Box>
+        <BotMensaje>
           <Text>{e.message}</Text>
-        </Box>
+        </BotMensaje>
         <MensajeSeleccionarModalidad />
       </>
     );

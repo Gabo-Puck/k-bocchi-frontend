@@ -12,6 +12,7 @@ import { PreguntaSeleccionarTerapeuta } from "./PreguntaSeleccionarTerapeuta";
 import { abrirMapa } from "../../../Components/Mapa";
 import { showNegativeFeedbackNotification } from "../../notificationTemplate";
 import { PreguntaSeleccionarFecha } from "./PreguntaSeleccionarFecha";
+import BotMensaje from "../../../Components/Chatbot/BotMensaje";
 
 //PreguntaSeleccionarDomicilio -> PreguntaSeleccionarFecha
 export const PreguntaSeleccionarDomicilio = new NodoPregunta(
@@ -21,9 +22,9 @@ export const PreguntaSeleccionarDomicilio = new NodoPregunta(
     console.log(e);
     let error = (
       <>
-        <Box>
+        <BotMensaje>
           <Text>{e.message}</Text>
-        </Box>
+        </BotMensaje>
         <MensajeSeleccionarDomicilio />
       </>
     );
@@ -50,6 +51,7 @@ export const PreguntaSeleccionarDomicilio = new NodoPregunta(
   async (value) => {
     if (!value.direccion && !value.coords)
       throw new Error("Vuelve a seleccionar la dirección porfavor");
+    console.log(NodoPregunta.datos.terapeuta);
     return value;
   }
 );

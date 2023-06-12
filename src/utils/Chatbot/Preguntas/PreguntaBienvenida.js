@@ -2,6 +2,7 @@ import { Box, Text } from "@mantine/core";
 import MensajeOpcionesCrud from "../../../Components/Chatbot/MensajeOpcionesCrud";
 import NodoPregunta from "../NodoPregunta";
 import { PreguntaAgendar } from "./PreguntaAgendar";
+import BotMensaje from "../../../Components/Chatbot/BotMensaje";
 
 
 //PreguntaBienvenida -> PreguntaAgendar
@@ -14,9 +15,9 @@ export const PreguntaBienvenida = new NodoPregunta(
       console.log(e);
       let error = (
         <>
-          <Box>
+          <BotMensaje>
             <Text>{e.message}</Text>
-          </Box>
+          </BotMensaje>
           <MensajeOpcionesCrud />
         </>
       );
