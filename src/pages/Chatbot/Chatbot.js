@@ -81,10 +81,10 @@ export default function ChatBot() {
     // return ()=>{skip=false}
   }, [preguntaActual.pregunta, skip]);
   useEffect(() => {
-    // refScrollArea.current.scrollTo({
-    //   top: refScrollArea.current.scrollHeight,
-    //   behavior: "smooth",
-    // });
+    refScrollArea.current.scrollTo({
+      top: refScrollArea.current.scrollHeight,
+      behavior: "smooth",
+    });
   }, [mensajes]);
   // useEffect(() => {
   //   console.log(datos);

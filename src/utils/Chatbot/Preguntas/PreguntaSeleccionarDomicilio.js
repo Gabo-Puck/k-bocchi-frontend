@@ -13,6 +13,7 @@ import { abrirMapa } from "../../../Components/Mapa";
 import { showNegativeFeedbackNotification } from "../../notificationTemplate";
 import { PreguntaSeleccionarFecha } from "./PreguntaSeleccionarFecha";
 import BotMensaje from "../../../Components/Chatbot/BotMensaje";
+import { PreguntaConfirmacionAgendar } from "./PreguntaConfirmacionAgendar";
 
 //PreguntaSeleccionarDomicilio -> PreguntaSeleccionarFecha
 export const PreguntaSeleccionarDomicilio = new NodoPregunta(
@@ -44,7 +45,12 @@ export const PreguntaSeleccionarDomicilio = new NodoPregunta(
         domicilio: resultados.direccion,
       },
     });
-    NodoPregunta.setPregunta(PreguntaSeleccionarFecha);
+    if(NodoPregunta.datos.cita.id){
+      NodoPregunta.setPregunta(PreguntaConfirmacionAgendar);
+    }else{
+      NodoPregunta.setPregunta(PreguntaSeleccionarFecha);
+
+    }
   },
   (
     <>

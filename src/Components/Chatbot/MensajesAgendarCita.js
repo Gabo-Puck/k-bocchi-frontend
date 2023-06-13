@@ -83,7 +83,7 @@ export function MensajeSeleccionarDomicilio() {
       ) : (
         <>
           <Button
-          color="blue-calm.4"
+            color="blue-calm.4"
             onClick={async () => {
               let domicilio = await seleccionarUbicacion();
               await PreguntaSeleccionarDomicilio.onSubmit(domicilio);
@@ -97,14 +97,12 @@ export function MensajeSeleccionarDomicilio() {
     </BotMensaje>
   );
 }
-
-export function MensajeFechasOpciones({ fechas }) {
+const defaultMessage =
+  "La fecha seleccionada no esta disponible. Las siguientes opciones son las más cercanas a la elegida";
+export function MensajeFechasOpciones({ fechas, mensaje = defaultMessage }) {
   return (
     <BotMensaje>
-      <Text>
-        La fecha seleccionada no esta disponible. Las siguientes opciones son
-        las más cercanas a la elegida
-      </Text>
+      {mensaje !== null ? <Text>{mensaje}</Text> : <></>}
       <List type="unordered">
         {fechas.map((t) => {
           return (

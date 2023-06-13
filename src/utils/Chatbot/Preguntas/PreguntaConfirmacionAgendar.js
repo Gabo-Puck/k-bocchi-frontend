@@ -5,7 +5,6 @@ import {
   MensajeBienvenidaAgendar,
   MensajeCitaConfirmacion,
   MensajeCitaInformacion,
-  MensajeFechasOpciones,
   MensajeIngresarFecha,
   MensajeListaHorarios,
   MensajeNombre,

@@ -4,7 +4,6 @@ import NodoPregunta from "../../utils/Chatbot/NodoPregunta";
 import { FormatUTCDateTime } from "../Comentario";
 
 export function MensajeElegirParametro() {
-
   const { terapeuta } = NodoPregunta.datos;
   return (
     <>
@@ -74,6 +73,52 @@ export function MensajeModificarBienvenida() {
       <BotMensaje>
         <Text>¡Bien! Estas son tus citas proximas</Text>
       </BotMensaje>
+    </>
+  );
+}
+
+export function MensajeModificarHora() {
+  let horarios = NodoPregunta.opciones;
+  return (
+    <>
+      <BotMensaje>
+        <Text>Elige uno de los horarios disponibles</Text>
+        <List type="ordered">
+          {horarios.map((h) => (
+            <List.Item key={`horario-${h.horario_formatted}`} mb="sm">
+              <Text>{h.horario_formatted}</Text>
+            </List.Item>
+          ))}
+        </List>
+      </BotMensaje>
+    </>
+  );
+}
+
+export function MensajeDecidirCambio() {
+  return (
+    <>
+      <BotMensaje>
+        <Text>¿Deseas elegir cambiar tu cita para otro día?</Text>
+        <List type="ordered">
+          <List.Item key="cambio-si">
+            <Text>Si</Text>
+          </List.Item>
+          <List.Item key="cambio-no">
+            <Text>No (Volver al menu principal)</Text>
+          </List.Item>
+        </List>
+      </BotMensaje>
+    </>
+  );
+}
+export function MensajeDecidir() {
+  return (
+    <>
+      <BotMensaje>
+        <Text>Parece que no hay cupo para citas este día</Text>
+      </BotMensaje>
+      <MensajeDecidirCambio />
     </>
   );
 }

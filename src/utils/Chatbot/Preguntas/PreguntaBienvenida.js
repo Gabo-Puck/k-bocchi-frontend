@@ -5,6 +5,7 @@ import { PreguntaAgendar } from "./PreguntaAgendar";
 import BotMensaje from "../../../Components/Chatbot/BotMensaje";
 import { PreguntaModificar, getFecha } from "./PreguntaModificar";
 import axios from "axios";
+import { PreguntaMenuModificar } from "./PreguntaMenuModificar";
 
 //PreguntaBienvenida -> PreguntaAgendar
 //PreguntaBienvenida -> PreguntaModificar
@@ -46,18 +47,34 @@ export const PreguntaBienvenida = new NodoPregunta(
         console.log("Modificar");
         let id = NodoPregunta.id_paciente;
         let fecha = getFecha(new Date());
+        let citas;
         try {
-          let citas = await axios.get(
+          citas = await axios.get(
             `/usuarios/pacientes/${id}/citas?fecha=${fecha}`
           );
-
-          NodoPregunta.opciones = citas.data;
-          return PreguntaModificar;
         } catch (err) {
           console.log(err);
-
           throw new Error("Algo ha salido mal :c");
         }
+        if (citas.data.length === 0) {
+          throw new Error("Disculpa, no tienes citas proximas 😓");
+        }
+        if (citas.data.length === 1) {
+          let { terapeuta_datos } = { ...citas.data[0] };
+          delete citas.data[0].terapeuta_datos;
+          NodoPregunta.setDatos({
+            cita: {
+              ...NodoPregunta.datos.cita,
+              ...citas.data[0],
+            },
+            terapeuta: {
+              ...terapeuta_datos,
+            },
+          });
+          return PreguntaMenuModificar;
+        }
+        NodoPregunta.opciones = citas.data;
+        return PreguntaModificar;
 
       case "3":
         console.log("Cancelar");
@@ -73,6 +90,7 @@ export const PreguntaBienvenida = new NodoPregunta(
       cita: {
         id_paciente: NodoPregunta.id_paciente,
       },
+      terapeuta: null,
     });
     return true;
   }
