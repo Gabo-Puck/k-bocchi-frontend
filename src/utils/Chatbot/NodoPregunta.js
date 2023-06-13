@@ -5,6 +5,7 @@ export default class NodoPregunta {
   static setPregunta = null;
   static opciones = [];
   static NodoInicial = null;
+  static id_paciente = null;
   /**
    * datos = {
    *  cita: citaObject,
@@ -34,18 +35,18 @@ export default class NodoPregunta {
     this.onInit = onInit;
   }
   async onSubmit(value) {
-    if(value==="#Volver"){
+    if (value === "#Volver") {
+      NodoPregunta.datos = null;
       NodoPregunta.setPregunta(NodoPregunta.NodoInicial);
       return;
     }
     try {
-      
       let respuesta = await this.onEnvio(value);
       this.onCorrecto(respuesta);
     } catch (err) {
       console.log("MISTAKE:", err);
       this.onIncorrecto(err);
-      NodoPregunta.addMensaje(<MensajeVolver/>);
+      NodoPregunta.addMensaje(<MensajeVolver />);
     }
   }
 }

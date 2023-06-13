@@ -30,7 +30,6 @@ export const PreguntaConfirmacionAgendar = new NodoPregunta(
         <BotMensaje>
           <Text>{error.message}</Text>
         </BotMensaje>
-        
       </>
     );
     NodoPregunta.addMensaje(
@@ -53,9 +52,16 @@ export const PreguntaConfirmacionAgendar = new NodoPregunta(
     try {
       switch (value) {
         case "1":
-          await axios.post("/citas", {
-            ...NodoPregunta.datos.cita,
-          });
+          if (NodoPregunta.datos.cita.id) {
+            await axios.patch("/citas", {
+              ...NodoPregunta.datos.cita,
+            });
+          } else {
+            await axios.post("/citas", {
+              ...NodoPregunta.datos.cita,
+            });
+          }
+          NodoPregunta.datos = null;
           NodoPregunta.addMensaje(
             <>
               <BotMensaje>
@@ -70,8 +76,9 @@ export const PreguntaConfirmacionAgendar = new NodoPregunta(
           throw new Error("Opcion no reconocida");
       }
     } catch (err) {
-      if (err.message) throw err;
-      throw new Error("Algo ha salido mal");
+      if (!err) throw new Error("Algo ha salido mal");
+      if (err.response) throw { message: err.response.data };
+      throw err;
     }
   }
   //   () => {}

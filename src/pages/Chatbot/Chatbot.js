@@ -60,10 +60,12 @@ export default function ChatBot() {
   const refScrollArea = useRef(null);
   const [preguntaActual, setPreguntaActual] = useState(PreguntaBienvenida);
   const [datos, setDatos] = useState({});
+  const usuarioId = useSelector(selectUsuarioId);
   NodoPregunta.addMensaje = addMensaje;
   NodoPregunta.setPregunta = setPreguntaActual;
   NodoPregunta.NodoInicial = PreguntaBienvenida;
-  const usuarioId = useSelector(selectUsuarioId);
+  NodoPregunta.id_paciente = usuarioId;
+
   useEffect(() => {
     if (!skip) {
       let res = preguntaActual.onInit();
