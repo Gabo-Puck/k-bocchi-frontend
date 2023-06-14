@@ -1,26 +1,17 @@
-import { Box, Text } from "@mantine/core";
-import MensajeOpcionesCrud from "../../../Components/Chatbot/MensajeOpcionesCrud";
+import { Text } from "@mantine/core";
 import NodoPregunta from "../NodoPregunta";
 import {
-  MensajeBienvenidaAgendar,
   MensajeCitaConfirmacion,
   MensajeCitaInformacion,
-  MensajeIngresarFecha,
-  MensajeListaHorarios,
-  MensajeNombre,
-  MensajeSeleccionarHorario,
-  MensajeSeleccionarModalidad,
-  confirmarAgendar,
+  confirmarEliminar,
 } from "../../../Components/Chatbot/MensajesAgendarCita";
 import axios from "axios";
-import { PreguntaSeleccionarTerapeuta } from "./PreguntaSeleccionarTerapeuta";
-import { PreguntaSeleccionarDomicilio } from "./PreguntaSeleccionarDomicilio";
 import { PreguntaBienvenida } from "./PreguntaBienvenida";
-import { type } from "@testing-library/user-event/dist/type";
 import BotMensaje from "../../../Components/Chatbot/BotMensaje";
+import { PreguntaReagendar } from "./PreguntaReagendar";
 
 //PreguntaSeleccionarModalidad ->PreguntaSeleccionarDomicilio
-export const PreguntaConfirmacionAgendar = new NodoPregunta(
+export const PreguntaConfirmacionEliminar = new NodoPregunta(
   null,
   null,
   (error) => {
@@ -35,7 +26,7 @@ export const PreguntaConfirmacionAgendar = new NodoPregunta(
     NodoPregunta.addMensaje(
       <>
         <MensajeCitaInformacion />
-        <MensajeCitaConfirmacion mensaje={confirmarAgendar}/>
+        <MensajeCitaConfirmacion mensaje={confirmarEliminar} />
       </>
     );
   },
@@ -45,31 +36,26 @@ export const PreguntaConfirmacionAgendar = new NodoPregunta(
   (
     <>
       <MensajeCitaInformacion />
-      <MensajeCitaConfirmacion />
+      <MensajeCitaConfirmacion mensaje={confirmarEliminar} />
     </>
   ),
   async (value) => {
     try {
       switch (value) {
         case "1":
-          if (NodoPregunta.datos.cita.id) {
-            await axios.patch("/citas", {
-              ...NodoPregunta.datos.cita,
-            });
-          } else {
-            await axios.post("/citas", {
-              ...NodoPregunta.datos.cita,
-            });
-          }
-          NodoPregunta.datos = null;
+          console.log("eliminando");
+          console.log(NodoPregunta.datos);
+          console.log(NodoPregunta.datos.cita.id);
+          let { id } = NodoPregunta.datos.cita;
+          await axios.delete(`/citas/${id}`);
           NodoPregunta.addMensaje(
             <>
               <BotMensaje>
-                <Text>¡Listo! He guardado tu cita 😉</Text>
+                <Text>¡Listo! He eliminado tu cita 😉</Text>
               </BotMensaje>
             </>
           );
-          return PreguntaBienvenida;
+          return PreguntaReagendar;
         case "2":
           return PreguntaBienvenida;
         default:

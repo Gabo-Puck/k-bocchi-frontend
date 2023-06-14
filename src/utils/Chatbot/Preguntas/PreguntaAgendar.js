@@ -8,6 +8,7 @@ import axios from "axios";
 import { PreguntaSeleccionarTerapeuta } from "./PreguntaSeleccionarTerapeuta";
 import { PreguntaSeleccionarModalidad } from "./PreguntaSeleccionarModalidad";
 import BotMensaje from "../../../Components/Chatbot/BotMensaje";
+import { resetDatos } from "./PreguntaBienvenida";
 
 //PreguntaAgendar -> PreguntaSeleccionarTerapeuta
 //PreguntaAgendar -> PreguntaSeleccionarModalidad
@@ -62,5 +63,8 @@ export const PreguntaAgendar = new NodoPregunta(
     if (response.data.length === 0)
       throw new Error("No se encontro un terapeuta con ese nombre");
     return response.data;
+  },
+  () => {
+    return resetDatos();
   }
 );

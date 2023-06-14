@@ -9,9 +9,10 @@ import {
   MensajeMostrarCitas,
 } from "../../../Components/Chatbot/MensajesModificarCita";
 import { PreguntaMenuModificar } from "./PreguntaMenuModificar";
+import { PreguntaConfirmacionEliminar } from "./PreguntaConfirmacionEliminar";
 
 //PreguntaModificar -> PreguntaMenuModificar
-export const PreguntaModificar = new NodoPregunta(
+export const PreguntaEliminar = new NodoPregunta(
   null,
   null,
   (e) => {
@@ -21,7 +22,7 @@ export const PreguntaModificar = new NodoPregunta(
         <BotMensaje>
           <Text>{e.message}</Text>
         </BotMensaje>
-        <MensajeMostrarCitas mensaje="Elije una cita para modificarla" />
+        <MensajeMostrarCitas mensaje="Elije una cita para eliminarla" />
       </>
     );
 
@@ -30,7 +31,6 @@ export const PreguntaModificar = new NodoPregunta(
   },
   (cita) => {
     console.log("bien");
-    // NodoPregunta.setPregunta(siguiente);
     let { terapeuta_datos } = { ...cita };
     delete cita.terapeuta_datos;
     NodoPregunta.setDatos({
@@ -42,12 +42,13 @@ export const PreguntaModificar = new NodoPregunta(
         ...terapeuta_datos,
       },
     });
-    NodoPregunta.setPregunta(PreguntaMenuModificar);
+    NodoPregunta.setPregunta(PreguntaConfirmacionEliminar);
+    // NodoPregunta.setPregunta(siguiente);
   },
   (
     <>
       <MensajeModificarBienvenida />
-      <MensajeMostrarCitas mensaje="Elije una cita para modificarla"/>
+      <MensajeMostrarCitas mensaje="Elije una cita para eliminarla" />
     </>
   ),
   async (value) => {
@@ -56,17 +57,3 @@ export const PreguntaModificar = new NodoPregunta(
     return seleccionado;
   }
 );
-export function getFecha(fecha) {
-  // Obtener la fecha actual
-
-  // Obtener el año, mes y día
-  let año = fecha.getFullYear();
-  let mes = String(fecha.getMonth() + 1).padStart(2, "0"); // El mes es base 0, por lo que se le suma 1
-  let día = String(fecha.getDate()).padStart(2, "0");
-
-  // Formatear la fecha en el formato YYYY-mm-dd
-  let fechaFormateada = `${año}-${mes}-${día}`;
-
-  console.log(fechaFormateada);
-  return fechaFormateada;
-}

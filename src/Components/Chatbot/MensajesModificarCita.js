@@ -32,12 +32,12 @@ export function MensajeElegirParametro() {
   );
 }
 
-export function MensajeMostrarCitas() {
+export function MensajeMostrarCitas({mensaje}) {
   const citas = NodoPregunta.opciones;
   return (
     <>
       <BotMensaje>
-        <Text>Elige una cita para modificarla</Text>
+        <Text>{mensaje}</Text>
         <List type="ordered">
           {citas.map((cita) => (
             <List.Item key={`cita-${cita.id}`} mb="sm">

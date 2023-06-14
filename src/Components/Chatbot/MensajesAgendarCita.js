@@ -191,10 +191,13 @@ export function MensajeCitaInformacion() {
   );
 }
 
-export function MensajeCitaConfirmacion() {
+export const confirmarAgendar = "¡Perfecto! ¿Deseas guardar la cita?";
+export const confirmarEliminar = "¡Perfecto! ¿Deseas eliminar la cita?";
+
+export function MensajeCitaConfirmacion({ mensaje }) {
   return (
     <BotMensaje>
-      <Text>¡Perfecto! ¿Deseas guardar la cita?</Text>
+      <Text>{mensaje}</Text>
       <List type="ordered">
         <List.Item key="consultorio">Si</List.Item>
         <List.Item key="domicilio">No (Volver al menu principal)</List.Item>
