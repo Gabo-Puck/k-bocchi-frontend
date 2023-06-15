@@ -30,6 +30,10 @@ export const PreguntaAgendar = new NodoPregunta(
   },
   (resultados) => {
     if (resultados.length === 1) {
+      if (resultados[0].dias_habiles === 0)
+        throw new Error(
+          "Lo lamento, este terapeuta no ha definido su horario de trabajo 😐"
+        );
       NodoPregunta.setDatos({
         terapeuta: resultados[0],
         cita: { ...NodoPregunta.datos.cita, id_terapeuta: resultados[0].id },

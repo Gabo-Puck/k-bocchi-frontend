@@ -17,7 +17,7 @@ export const PreguntaSeleccionarTerapeuta = new NodoPregunta(
         <BotMensaje>
           <Text>{e.message}</Text>
         </BotMensaje>
-        
+
         <MensajeSeleccionarTerapeuta />
       </>
     );
@@ -41,6 +41,10 @@ export const PreguntaSeleccionarTerapeuta = new NodoPregunta(
   async (value) => {
     let seleccionado = NodoPregunta.opciones[value - 1];
     if (!seleccionado) throw new Error("Opcion no identificada");
+    if (seleccionado.dias_habiles === 0)
+      throw new Error(
+        "Lo lamento, este terapeuta no ha definido su horario de trabajo 😐"
+      );
     return seleccionado;
   }
 );

@@ -1,6 +1,6 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { USUARIO_AUTORIZADO } from "../Actions/actionsUsuario";
+import { USUARIO_AUTORIZADO, USUARIO_LOGOUT } from "../Actions/actionsUsuario";
 import { FISIOTERAPEUTA, PACIENTE } from "../roles";
 import {
   AppShell,
@@ -37,11 +37,27 @@ function NavLinkBar({ to, label }) {
     </Navbar.Section>
   );
 }
-
+function ButtonLogout({ Child }) {
+  const { setNull } = useSesionExpiracion();
+  return (
+    <div
+      onClick={() => {
+        console.log("Adios");
+        setNull();
+      }}
+    >
+      {Child}
+    </div>
+  );
+}
 export default function Layout() {
   const [isConnected, setIsConnected] = useState(socket.connected);
+  const dispatch = useDispatch();
+  const theme = useMantineTheme();
+  const [opened, setOpened] = useState(false);
   const usuario = useSelector(selectUsuario);
-  const { sesionExpiracion, isExpirado, setMinutos, init } =
+  const navigate = useNavigate();
+  const { sesionExpiracion, isExpirado, setMinutos, init, isNull } =
     useSesionExpiracion();
   const { start, clear } = useTimeout(() => {
     console.log("Estas conectado :O");
@@ -65,14 +81,19 @@ export default function Layout() {
     };
   }, []);
   useEffect(() => {
-    start();
+    if (isNull()) {
+      dispatch({ type: USUARIO_LOGOUT });
+    } else {
+      start();
+    }
   }, [sesionExpiracion]);
 
-  const dispatch = useDispatch();
+  useEffect(() => {
+    if (isNull()) {
+      navigate("/");
+    }
+  }, [usuario]);
 
-  const theme = useMantineTheme();
-  
-  const [opened, setOpened] = useState(false);
   function BarraNavegacion() {
     return (
       <Navbar
@@ -138,7 +159,9 @@ export default function Layout() {
                     <Menu.Item component="li">{usuario.nombre}</Menu.Item>
                   </Link>
                   <Link>
-                    <Menu.Item component="li">Salir</Menu.Item>
+                    <ButtonLogout
+                      Child={<Menu.Item component="li">Salir</Menu.Item>}
+                    />
                   </Link>
                 </Menu.Dropdown>
               </Menu>

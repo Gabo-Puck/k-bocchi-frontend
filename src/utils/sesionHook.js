@@ -1,15 +1,15 @@
-import { useLocalStorage } from "@mantine/hooks";
+import { useLocalStorage, useSessionStorage } from "@mantine/hooks";
 import { useSelector } from "react-redux";
 import { selectUsuario } from "./usuarioHooks";
 const minutos = 10;
 const NOMBRE_LOCAL_STORAGE = "sesion-item";
 export const milisegundos = minutos * 60 * 1000;
-function getValoresIniciales(){
-  let sesionItem = localStorage.getItem(NOMBRE_LOCAL_STORAGE);
-  if(sesionItem===null){
-    return { fecha_expiracion: null, id: null }
-  }else{
-    return deserializeItem(sesionItem)
+function getValoresIniciales() {
+  let sesionItem = sessionStorage.getItem(NOMBRE_LOCAL_STORAGE);
+  if (sesionItem === null) {
+    return { fecha_expiracion: null, id: null };
+  } else {
+    return deserializeItem(sesionItem);
   }
 }
 function deserializeItem(sesionItem) {
@@ -19,7 +19,7 @@ function deserializeItem(sesionItem) {
 }
 export default function useSesionExpiracion() {
   const { id: id_usuario } = useSelector(selectUsuario);
-  const [sesionExpiracion, setSesionExpiracion] = useLocalStorage({
+  const [sesionExpiracion, setSesionExpiracion] = useSessionStorage({
     key: NOMBRE_LOCAL_STORAGE,
     defaultValue: getValoresIniciales(),
     serialize: (object) => {
@@ -55,5 +55,11 @@ export default function useSesionExpiracion() {
     if (sesionExpiracion.fecha_expiracion === null) return true;
     return fecha >= sesionExpiracion.fecha_expiracion;
   }
-  return { setMinutos, setNull, isExpirado, sesionExpiracion, init };
+
+  function isNull() {
+    return (
+      sesionExpiracion.fecha_expiracion === null || sesionExpiracion.id === null
+    );
+  }
+  return { setMinutos, setNull, isExpirado, sesionExpiracion, init,isNull };
 }
