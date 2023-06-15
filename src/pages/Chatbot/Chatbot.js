@@ -21,7 +21,8 @@ import NodoPregunta from "../../utils/Chatbot/NodoPregunta";
 import { PreguntaBienvenida } from "../../utils/Chatbot/Preguntas/PreguntaBienvenida";
 import { useSelector } from "react-redux";
 import UsuarioMensaje from "../../Components/Chatbot/UsuarioMensaje";
-const selectUsuarioId = (state) => state.usuario.paciente.id;
+import { selectPacienteId } from "../../utils/usuarioHooks";
+
 function useMensajes() {
   const [mensajes, setMensajes] = useState([
     { key: 0, element: <MensajeBienvenida /> },
@@ -60,7 +61,7 @@ export default function ChatBot() {
   const refScrollArea = useRef(null);
   const [preguntaActual, setPreguntaActual] = useState(PreguntaBienvenida);
   const [datos, setDatos] = useState({});
-  const usuarioId = useSelector(selectUsuarioId);
+  const usuarioId = useSelector(selectPacienteId);
   NodoPregunta.addMensaje = addMensaje;
   NodoPregunta.setPregunta = setPreguntaActual;
   NodoPregunta.NodoInicial = PreguntaBienvenida;

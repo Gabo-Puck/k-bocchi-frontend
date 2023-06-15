@@ -2,7 +2,7 @@ import logo from "./logo.svg";
 import "./App.css";
 import Home from "./pages/Home";
 import Root from "./routes/root";
-import Inicio from "./pages/Inicio";
+import Inicio, { fetchUsuario } from "./pages/Inicio";
 import { PrivateRoutes } from "./Components/PrivateRoutes";
 import {
   BrowserRouter as Router,
@@ -38,8 +38,17 @@ import Buscar from "./pages/Cita/Buscar";
 import DetallesTerapeuta from "./pages/Cita/DetallesTerapeuta";
 import ChatBot from "./pages/Chatbot/Chatbot";
 import Chat from "./pages/Chat";
+import useSesionExpiracion from "./utils/sesionHook";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUsuario } from "./utils/usuarioHooks";
+import axios from "axios";
+import { USUARIO_AUTORIZADO } from "./Actions/actionsUsuario";
 
 function App() {
+  let usuario = useSelector(selectUsuario);
+  let dispatch = useDispatch();
+  let { isExpirado } = useSesionExpiracion();
+
   return (
     <MantineProvider
       withGlobalStyles
@@ -234,14 +243,14 @@ function App() {
                   <Route index element={<Home />} />
                   <Route path="perfil" element={<Perfil />} />
                   <Route path="cita" element={<LayoutCita />}>
-                    <Route path="buscar" element={<Buscar />}/>
+                    <Route path="buscar" element={<Buscar />} />
                     <Route
                       path="terapeuta/:id"
                       element={<DetallesTerapeuta />}
                     />
                   </Route>
-                  <Route path="chatbot" element={<ChatBot/>}/>
-                  <Route path="chat" element={<Chat/>}/>
+                  <Route path="chatbot" element={<ChatBot />} />
+                  <Route path="chat" element={<Chat />} />
                 </Route>
               </Route>
               {/**Mediante el simbolo '*' podemos indicar que esta elemento se renderiza en cualquier ruta. Al estar al final solo se renderiza

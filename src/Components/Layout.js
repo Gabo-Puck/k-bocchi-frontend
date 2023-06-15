@@ -26,6 +26,8 @@ import {
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { socket } from "../socket";
+import { useTimeout } from "@mantine/hooks";
+import useSesionExpiracion, { milisegundos } from "../utils/sesionHook";
 const selectUsuario = (state) => state.usuario;
 
 function NavLinkBar({ to, label }) {
@@ -39,6 +41,12 @@ function NavLinkBar({ to, label }) {
 export default function Layout() {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const usuario = useSelector(selectUsuario);
+  const { sesionExpiracion, isExpirado, setMinutos, init } =
+    useSesionExpiracion();
+  const { start, clear } = useTimeout(() => {
+    console.log("Estas conectado :O");
+    setMinutos();
+  }, milisegundos);
   useEffect(() => {
     socket.connect();
     function onConnect() {
@@ -56,20 +64,14 @@ export default function Layout() {
       socket.off("disconnect", onDisconnect);
     };
   }, []);
+  useEffect(() => {
+    start();
+  }, [sesionExpiracion]);
+
   const dispatch = useDispatch();
-  const setPaciente = () => {
-    dispatch({
-      type: USUARIO_AUTORIZADO,
-      payload: { ...usuario, rol: PACIENTE },
-    });
-  };
+
   const theme = useMantineTheme();
-  const setFisio = () => {
-    dispatch({
-      type: USUARIO_AUTORIZADO,
-      payload: { ...usuario, rol: FISIOTERAPEUTA },
-    });
-  };
+  
   const [opened, setOpened] = useState(false);
   function BarraNavegacion() {
     return (

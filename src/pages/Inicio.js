@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { BsExclamationLg } from "react-icons/bs";
 import { RiSignalWifiErrorLine } from "react-icons/ri";
 import { FcGoogle } from "react-icons/fc";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { USUARIO_AUTORIZADO } from "../Actions/actionsUsuario";
 import axios from "axios";
 import { BACKEND_SERVER } from "../server";
@@ -34,7 +34,7 @@ import {
   isRequiredValidation,
   password_validation,
 } from "../utils/inputValidation";
-import { useDisclosure, useMediaQuery } from "@mantine/hooks";
+import { useDisclosure, useLocalStorage, useMediaQuery } from "@mantine/hooks";
 import { DisabledButton, EnabledButton } from "../Components/DynamicButtons";
 import { Notifications, notifications } from "@mantine/notifications";
 import {
@@ -45,8 +45,10 @@ import {
 } from "../utils/notificationTemplate";
 import { modals } from "@mantine/modals";
 import Layout from "../Components/Layout";
+import useSesionExpiracion from "../utils/sesionHook";
+import { selectUsuario } from "../utils/usuarioHooks";
 
-async function mandarCorreoRestablecer( email ) {
+async function mandarCorreoRestablecer(email) {
   try {
     await axios.post("/usuarios/solicitarReestablecerContrasena", {
       email: email,
@@ -137,6 +139,8 @@ function AvisoSeguridad() {
     </Stack>
   );
 }
+export const fetchUsuario = async ({ uid }) =>
+  await axios.get(`/usuarios/datos/${uid}`);
 export default function Inicio() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -146,6 +150,8 @@ export default function Inicio() {
   const [isLoadingGoogleAuth, setIsLoadingGoogleAuth] = useState(false);
   const [isBloqueada, setIsBloqueada] = useState(false);
   const [isValidandoCredenciales, setIsValidandoCredenciales] = useState(false);
+  const { isExpirado, sesionExpiracion, init } = useSesionExpiracion();
+  const usuario = useSelector(selectUsuario);
   const form = useForm({
     validateInputOnChange: true,
     validateInputOnBlur: true,
@@ -160,7 +166,6 @@ export default function Inicio() {
         executeValidation(value, [isRequiredValidation, email_validation]),
     },
   });
-  const getRol = async ({ uid }) => await axios.get(`/usuarios/datos/${uid}`);
 
   const abrirModalSeguridad = () => {
     modals.open({
@@ -216,6 +221,16 @@ export default function Inicio() {
     });
   };
   useEffect(() => {
+    if (usuario.id) {
+      init();
+    }
+  }, [usuario]);
+  useEffect(() => {
+    if (usuario.id) {
+      navigate("/app");
+    }
+  }, [sesionExpiracion]);
+  useEffect(() => {
     async function checkLogin() {
       try {
         setIsLoadingGoogleAuth(true);
@@ -227,13 +242,14 @@ export default function Inicio() {
 
           try {
             setIsLoadingGoogleAuth(true);
-            const response = (await getRol(firebaseUser)).data;
+            const response = (await fetchUsuario(firebaseUser)).data;
             const user = { ...response, ...firebaseUser };
-            navigate("/app");
+
             dispatch({ type: USUARIO_AUTORIZADO, payload: user });
           } catch (err) {
             console.log(err);
             navigate("/registro");
+
             dispatch({
               type: USUARIO_AUTORIZADO,
               payload: { isGmail: true, ...firebaseUser },
@@ -245,12 +261,25 @@ export default function Inicio() {
           // const token = credential.accessToken;
         } else {
           setIsLoadingGoogleAuth(false);
+          if (isExpirado()) {
+            // alert("Logeate porfavor");
+          } else {
+            // alert("Tas logeado carnal");
+
+            let { id } = sesionExpiracion;
+            const response = (await fetchUsuario({ uid: id })).data;
+            const user = { ...response };
+
+            dispatch({ type: USUARIO_AUTORIZADO, payload: user });
+            return;
+          }
         }
       } catch (err) {
         if (err) console.log(err);
       }
     }
     checkLogin();
+    console.log(localStorage);
   }, []);
   useEffect(() => setIsDisabled(!form.isValid()), [form.values]);
   const loginUsuario = async () => {
@@ -267,13 +296,12 @@ export default function Inicio() {
         type: USUARIO_AUTORIZADO,
         payload: { ...response.data },
       });
-      navigate("/app");
     } catch (errorResponse) {
       handleRespuestaLogin(errorResponse);
       setIsValidandoCredenciales(false);
     }
   };
-  return (
+  return isExpirado() ? (
     <>
       <Center mx="center" pos="relative" mih="90vh">
         <Stack w="90vw" pos="relative">
@@ -376,5 +404,7 @@ export default function Inicio() {
       </Center>
       {/* <Layout/> */}
     </>
+  ) : (
+    <LoadingOverlay visible={!isExpirado()} overlayBlur={2} />
   );
 }
