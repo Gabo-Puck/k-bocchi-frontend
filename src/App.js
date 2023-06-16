@@ -55,22 +55,22 @@ function App() {
       withNormalizeCSS
       theme={{
         globalStyles: (theme) => ({
-          body: { backgroundColor: "#fff", maxHeight: "100vh" },
+          body: { backgroundColor: theme.colors.background, maxHeight: "100vh" },
         }),
 
         colors: {
           background: [
-            "#F6F8FA",
-            "#F4F6F8",
-            "#F2F4F5",
-            "#EFF1F3",
-            "#EDEFF0",
-            "#EBECEE",
-            "#E9EAEB",
-            "#E6E8E9",
-            "#E3E5E8",
-            "#E0E3E6",
-            "#DCE1E6",
+            "#fff",
+            "#fff",
+            "#fff",
+            "#fff",
+            "#fff",
+            "#fff",
+            "#fff",
+            "#fff",
+            "#fff",
+            "#fff",
+            "#fff",
           ],
 
           "blue-empire": [

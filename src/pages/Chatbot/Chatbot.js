@@ -108,8 +108,18 @@ export default function ChatBot() {
     refInput.current.value = "";
   }
   return (
-    <Flex direction="column" pl="12px" h="87vh">
-      <ScrollArea offsetScrollbars h="100%" viewportRef={refScrollArea}>
+    <Flex id="XD" direction="column" pl="12px" h="95vh">
+      <ScrollArea
+        id="MDsd"
+        offsetScrollbars
+        h="95vh"
+        p={0}
+        viewportRef={refScrollArea}
+        styles={{
+          // root: { height: "100vh", padding: 0 },
+          viewport: { height: "100%", paddingBottom: 0 },
+        }}
+      >
         {mensajes.map((m) => m.element)}
       </ScrollArea>
       <Flex bg="transparent" sx={{ flex: "0" }}>

@@ -28,6 +28,7 @@ import { useEffect, useState } from "react";
 import { socket } from "../socket";
 import { useTimeout } from "@mantine/hooks";
 import useSesionExpiracion, { milisegundos } from "../utils/sesionHook";
+import BarraNavegacion from "./Navbar";
 const selectUsuario = (state) => state.usuario;
 
 function NavLinkBar({ to, label }) {
@@ -94,7 +95,7 @@ export default function Layout() {
     }
   }, [usuario]);
 
-  function BarraNavegacion() {
+  function BarraNavegacion2() {
     return (
       <Navbar
         className="Navbarbar"
@@ -155,7 +156,7 @@ export default function Layout() {
                   <Avatar radius="xl" />
                 </Menu.Target>
                 <Menu.Dropdown>
-                  <Link>
+                  <Link to="/app/perfil">
                     <Menu.Item component="li">{usuario.nombre}</Menu.Item>
                   </Link>
                   <Link>
@@ -183,9 +184,22 @@ export default function Layout() {
         // navbar={<BarraNavegacion />}
         // footer={<FooterApp />}
       ></AppShell> */}
-      <Flex h="100vh" direction="column">
-        <HeaderApp />
-        <ScrollArea h="90vh" offsetScrollbars>
+      <Flex h="100vh" w="100vw" gap="sm">
+        <BarraNavegacion />
+        <ScrollArea
+          sx={{
+            flex: "1",
+          }}
+          h="100vh"
+          m={0}
+          p={0}
+          styles={{
+            viewport: { height: "100%", margin: 0, paddingBottom: 0 },
+            root: { height: "100vh", margin: 0 },
+          }}
+          offsetScrollbars
+          py={0}
+        >
           <Outlet />
         </ScrollArea>
       </Flex>

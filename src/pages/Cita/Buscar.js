@@ -4,7 +4,7 @@ import {
   ScrollArea,
   Button,
   Center,
-  Chip,
+  Container,
   Flex,
   Grid,
   Loader,
@@ -123,32 +123,35 @@ export default function Buscar() {
     setSearchParams(serializarSearchParams(parametrosBusqueda));
   }, [parametrosBusqueda]);
   return (
-    <BusquedaTerapeutaContext.Provider
-      value={{ setResultados, parametrosBusqueda, setParametrosBusqueda }}
-    >
-      <Drawer
-        opened={opened}
-        onClose={close}
-        title="Filtros"
-        scrollAreaComponent={ScrollArea.Autosize}
+    <Container h="100vh" mx={0} pt="sm" fluid={true}>
+      <BusquedaTerapeutaContext.Provider
+        value={{ setResultados, parametrosBusqueda, setParametrosBusqueda }}
       >
-        <Filtros />
-      </Drawer>
-      <Stack>
-        <Grid>
-          <MediaQuery smallerThan="md" styles={{ display: "none" }}>
+        <Drawer
+          opened={opened}
+          onClose={close}
+          title="Filtros"
+          scrollAreaComponent={ScrollArea.Autosize}
+          position="right"
+        >
+          <Filtros />
+        </Drawer>
+        <Flex direction="column" h="100%">
+          {/* <MediaQuery smallerThan="md" styles={{ display: "none" }}>
             <Grid.Col span={3}>
               <FiltrosDropdown />
             </Grid.Col>
-          </MediaQuery>
-
-          <Grid.Col span="auto">
+          </MediaQuery> */}
+          <Flex
+            direction="column"
+            sx={{ justifyContent: "center", flex: "0 0 auto" }}
+          >
             <Center miw="70%">
-              <MediaQuery smallerThan="md" styles={{ width: "50%" }}>
+              <MediaQuery smallerThan="md">
                 <BarraBusquedaTerapeuta />
               </MediaQuery>
             </Center>
-            <MediaQuery largerThan="md" styles={{ display: "none" }}>
+            <Group>
               <Button
                 variant="subtle"
                 mt="md"
@@ -158,36 +161,52 @@ export default function Buscar() {
               >
                 Filtros
               </Button>
-            </MediaQuery>
+            </Group>
+          </Flex>
+          {/* <MediaQuery largerThan="md" styles={{ display: "none" }}>
+            </MediaQuery> */}
 
-            <Stack my="md" key="resultadosBusqueda">
-              {resultados.length == 0 ? (
-                <Text display="block">No hay resultados</Text>
-              ) : (
-                <MediaQuery
-                  smallerThan="md"
-                  styles={{ justifyContent: "center" }}
+          {resultados.length == 0 ? (
+            <Text
+              sx={{ justifyContent: "center", flex: "1 1 auto" }}
+              display="block"
+            >
+              No hay resultados
+            </Text>
+          ) : (
+            <MediaQuery
+              smallerThan="md"
+              sx={{ justifyContent: "center", flex: "1 1 auto" }}
+            >
+              <ScrollArea
+                h="100%"
+                w="100%"
+                styles={{
+                  viewport: {
+                    paddingBottom: 0,
+                  },
+                }}
+              >
+                <Flex
+                  justify="flex-start"
+                  align="flex-start"
+                  direction="row"
+                  wrap="wrap"
+                  gap="lg"
                 >
-                  <Flex
-                    justify="flex-start"
-                    align="flex-start"
-                    wrap="wrap"
-                    gap="lg"
-                  >
-                    {resultados.map((terapeuta) => (
-                      <TerapeutaResultado
-                        usuario={terapeuta}
-                        key={terapeuta.id}
-                      />
-                    ))}
-                  </Flex>
-                </MediaQuery>
-              )}
-            </Stack>
-          </Grid.Col>
-        </Grid>
-      </Stack>
-    </BusquedaTerapeutaContext.Provider>
+                  {resultados.map((terapeuta) => (
+                    <TerapeutaResultado
+                      usuario={terapeuta}
+                      key={terapeuta.id}
+                    />
+                  ))}
+                </Flex>
+              </ScrollArea>
+            </MediaQuery>
+          )}
+        </Flex>
+      </BusquedaTerapeutaContext.Provider>
+    </Container>
   );
 }
 
