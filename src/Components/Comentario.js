@@ -15,7 +15,8 @@ import {
   createStyles,
   rem,
 } from "@mantine/core";
-import { Resena } from "./TerapeutaResultado";
+import { Resena } from "./Resena";
+
 const useStyles = createStyles((theme) => ({
   comment: {
     padding: `${theme.spacing.lg} ${theme.spacing.xl}`,

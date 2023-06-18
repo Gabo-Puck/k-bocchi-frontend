@@ -1,108 +1,295 @@
-import { Navbar, Group, Code, ScrollArea, createStyles, rem } from '@mantine/core';
 import {
-  Md4GMobiledata
-} from 'react-icons/md';
+  ScrollArea,
+  Text,
+  Checkbox,
+  Center,
+  Table,
+  Button,
+} from "@mantine/core";
 
-import { LinksGroup } from '../Components/NavbarLinksGroup';
+import { useSelector } from "react-redux";
+import { selectUsuario } from "../utils/usuarioHooks";
+import {
+  SimpleGrid,
+  Skeleton,
+  Container,
+  Stack,
+  useMantineTheme,
+  px,
+} from "@mantine/core";
 
-import { UserButton } from '../Components/UserButton';
-
-const mockdata = [
-  { label: 'Dashboard', icon: Md4GMobiledata },
-  {
-    label: 'Market news',
-    icon: Md4GMobiledata,
-    initiallyOpened: true,
-    links: [
-      { label: 'Overview', link: '/' },
-      { label: 'Forecasts', link: '/' },
-      { label: 'Outlook', link: '/' },
-      { label: 'Real time', link: '/' },
-    ],
-  },
-  {
-    label: 'Releases',
-    icon: Md4GMobiledata,
-    links: [
-      { label: 'Upcoming releases', link: '/' },
-      { label: 'Previous releases', link: '/' },
-      { label: 'Releases schedule', link: '/' },
-    ],
-  },
-  { label: 'Analytics', icon: Md4GMobiledata },
-  { label: 'Contracts', icon: Md4GMobiledata },
-  { label: 'Settings', icon: Md4GMobiledata },
-  {
-    label: 'Security',
-    icon: Md4GMobiledata,
-    links: [
-      { label: 'Enable 2FA', link: '/' },
-      { label: 'Change password', link: '/' },
-      { label: 'Recovery codes', link: '/' },
-    ],
-  },
-];
-
-const useStyles = createStyles((theme) => ({
-  navbar: {
-    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.white,
-    paddingBottom: 0,
-  },
-
-  header: {
-    padding: theme.spacing.md,
-    paddingTop: 0,
-    marginLeft: `calc(${theme.spacing.md} * -1)`,
-    marginRight: `calc(${theme.spacing.md} * -1)`,
-    color: theme.colorScheme === 'dark' ? theme.white : theme.black,
-    borderBottom: `${rem(1)} solid ${
-      theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]
-    }`,
-  },
-
-  links: {
-    marginLeft: `calc(${theme.spacing.md} * -1)`,
-    marginRight: `calc(${theme.spacing.md} * -1)`,
-  },
-
-  linksInner: {
-    paddingTop: theme.spacing.xl,
-    paddingBottom: theme.spacing.xl,
-  },
-
-  footer: {
-    marginLeft: `calc(${theme.spacing.md} * -1)`,
-    marginRight: `calc(${theme.spacing.md} * -1)`,
-    borderTop: `${rem(1)} solid ${
-      theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]
-    }`,
-  },
-}));
+import { useForm } from "@mantine/form";
+import ContactIcon from "../Components/InfoPerfil";
+import { MdAlternateEmail } from "react-icons/md";
+import { BsFillTelephoneFill } from "react-icons/bs";
+import { useEffect, useState } from "react";
+import useMantenerSesion from "../utils/mantenerSesionHook";
+import { useDebouncedValue, useMediaQuery, randomId } from "@mantine/hooks";
+import { FISIOTERAPEUTA, PACIENTE } from "../roles";
+import { showNegativeFeedbackNotification } from "../utils/notificationTemplate";
+import { ResenaGeneral } from "../Components/ResenaGeneral";
+import axios from "axios";
+import { useRef } from "react";
+import HoraInput from "../Components/Inputs/HoraInput";
+import { useFormContext } from "react-hook-form";
 
 export default function Perfil() {
-  const { classes } = useStyles();
-  const links = mockdata.map((item) => <LinksGroup {...item} key={item.label} />);
+  const theme = useMantineTheme();
+  const usuario = useSelector(selectUsuario);
+  const horario = useState(null);
+  const estrellas = useState(null);
+  const big = useMediaQuery(`(min-width: ${theme.breakpoints.md})`);
+  function loadUsuarioFoto() {}
+  return (
+    <Container h="100vh" fluid>
+      <SimpleGrid h="100%" cols={2} breakpoints={[{ maxWidth: "md", cols: 1 }]}>
+        <Stack spacing="md" my="auto" h="100%" align="center" justify="center">
+          <Skeleton
+            height={big ? "40vh" : "35vh"}
+            width={big ? "40vh" : "35vh"}
+            mx="auto"
+            radius="50%"
+            animate={true}
+          />
+          <Text ta="center">{usuario.nombre}</Text>
+          <EstrellasUsuario />
+        </Stack>
+        <ScrollArea h="100%" py="md">
+          <Stack spacing="md" my="auto" justify="center" h="100%">
+            <ContactIcon
+              title="Correo"
+              description={usuario.email}
+              icon={MdAlternateEmail}
+            />
+            <ContactIcon
+              title="Telefono"
+              description={usuario.telefono}
+              icon={BsFillTelephoneFill}
+            />
+            <CheckboxMantenerSesion />
+            <HorarioUsuario />
+          </Stack>
+        </ScrollArea>
+      </SimpleGrid>
+    </Container>
+  );
+}
+
+function EstrellasUsuario() {
+  const usuario = useSelector(selectUsuario);
+  const [estrellas, setEstrellas] = useState(undefined);
+  useEffect(() => {
+    async function fetchEstrellas() {
+      if (usuario.rol !== FISIOTERAPEUTA) return;
+      try {
+        let {
+          terapeuta: { id },
+        } = usuario;
+        let { promedio } = (
+          await axios.get(`/usuarios/fisioterapeutas/resenas/${id}`)
+        ).data;
+
+        console.log(promedio);
+        setEstrellas(promedio);
+      } catch (err) {
+        if (err) {
+          showNegativeFeedbackNotification(
+            "No hemos podido cargar tus estrellas 😫"
+          );
+        }
+      }
+    }
+    fetchEstrellas();
+  }, []);
+  useEffect(() => {
+    console.log(estrellas);
+  }, [estrellas]);
+  if (usuario.rol === PACIENTE) return null;
+  return estrellas === undefined ? (
+    <Skeleton //Estrellas
+      height="5%"
+      width="70%"
+      mx="auto"
+      radius="md"
+      animate={true}
+    />
+  ) : (
+    <Center>
+      <ResenaGeneral estrellas={estrellas} />
+    </Center>
+  );
+}
+function HorarioUsuario() {
+  const usuario = useSelector(selectUsuario);
+  const [horario, setHorario] = useState(undefined);
+  useEffect(() => {
+    async function fetchHorario() {
+      if (usuario.rol !== FISIOTERAPEUTA) return;
+      try {
+        let {
+          terapeuta: { id },
+        } = usuario;
+        let { horario } = (
+          await axios.get(`/usuarios/fisioterapeutas/horario/${id}`)
+        ).data;
+
+        console.log(horario);
+        setHorario(horario);
+      } catch (err) {
+        if (err) {
+          showNegativeFeedbackNotification(
+            "No hemos podido cargar tu horario 😫"
+          );
+        }
+      }
+    }
+    fetchHorario();
+  }, []);
+  useEffect(() => {
+    console.log(horario);
+  }, [horario]);
+  if (usuario.rol === PACIENTE) return null;
+  return horario === undefined ? (
+    <Skeleton //Horario
+      height="65vh"
+      width="70vh"
+      mx="auto"
+      radius="md"
+      animate={true}
+    />
+  ) : (
+    <Center>
+      <TablaHorario horario={horario} />
+    </Center>
+  );
+}
+
+function getDiasOrdenados(horario) {
+  const dias = [
+    { dia: "domingo", output: "Domingo" },
+    { dia: "lunes", output: "Lunes" },
+    { dia: "martes", output: "Martes" },
+    { dia: "miercoles", output: "Miércoles" },
+    { dia: "jueves", output: "Jueves" },
+    { dia: "viernes", output: "Viernes" },
+    { dia: "sabado", output: "Sábado" },
+  ];
+  const diasOrdenados = dias.map((d, index) => {
+    let dia = horario.find((h) => h.dia === d.dia);
+    if (!dia) {
+      dia = {
+        ...dia,
+        dia: d.dia,
+        isTrabajado: false,
+      };
+    } else {
+      dia = {
+        ...dia,
+        dia: d.dia,
+        hora_inicio: formatFecha(dia.fecha_inicio),
+        hora_fin: formatFecha(dia.fecha_inicio),
+        isTrabajado: true,
+      };
+    }
+    return { dia, output: d.output };
+  });
+  return diasOrdenados;
+}
+
+function TablaHorario({ horario }) {
+  const diasOrdenados = getDiasOrdenados(horario);
+  const dias = diasOrdenados.map(({ dia }) => dia);
+  console.log({ dias });
+  const form = useForm({
+    initialValues: {
+      horarios: [...dias],
+    },
+  });
+  useEffect(() => {
+    console.log({ values: form.values });
+  }, [form.values]);
 
   return (
-    <Navbar height={800} width={{ sm: 300 }} p="md" className={classes.navbar}>
-      <Navbar.Section className={classes.header}>
-        <Group position="apart">
-          {/* <Logo width={rem(120)} /> */}
-          <Code sx={{ fontWeight: 700 }}>v3.1.2</Code>
-        </Group>
-      </Navbar.Section>
-
-      <Navbar.Section grow className={classes.links} component={ScrollArea}>
-        <div className={classes.linksInner}>{links}</div>
-      </Navbar.Section>
-
-      <Navbar.Section className={classes.footer}>
-        <UserButton
-          image="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80"
-          name="Ann Nullpointer"
-          email="anullpointer@yahoo.com"
+    <Stack align="end">
+      <Table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Dia</th>
+            <th>Inicio</th>
+            <th>Fin</th>
+          </tr>
+        </thead>
+        <tbody>
+          {diasOrdenados.map(({ dia, output }, index) => (
+            <FilaTablaHorario
+              dia={dia}
+              output={output}
+              form={form}
+              index={index}
+            />
+          ))}
+        </tbody>
+      </Table>
+      <div>
+        <Button variant="guardar">Guardar</Button>
+      </div>
+    </Stack>
+  );
+}
+function FilaTablaHorario({ dia, output, form, index }) {
+  // console.log({ dia });
+  return (
+    <tr key={output}>
+      <td width="10%">
+        {
+          <Checkbox
+            {...form.getInputProps(`horarios.${index}.isTrabajado`, {
+              type: "checkbox",
+            })}
+          />
+        }
+      </td>
+      <td width="30%">{output}</td>
+      <td width="30%">
+        <HoraInput
+          label=""
+          value={formatFecha(dia.fecha_inicio)}
+          disabled={!dia.isTrabajado}
+          inputName={`horarios.${index}.fecha_inicio`}
+          form={form}
         />
-      </Navbar.Section>
-    </Navbar>
+      </td>
+      <td width="30%">
+        <HoraInput
+          label=""
+          value={formatFecha(dia.fecha_fin)}
+          disabled={!dia.isTrabajado}
+          inputName={`horarios.${index}.fecha_fin`}
+          form={form}
+        />
+      </td>
+    </tr>
+  );
+}
+function formatFecha(fecha = "") {
+  return fecha.substring(0, 7);
+}
+function CheckboxMantenerSesion() {
+  const { isSesionAbierta, toggleSesionMantener, mantenerSesion } =
+    useMantenerSesion();
+  const [value, setValue] = useState(isSesionAbierta());
+  const [debounced] = useDebouncedValue(value, 200);
+  useEffect(() => {
+    toggleSesionMantener(debounced);
+  }, [debounced]);
+  return (
+    <Checkbox
+      checked={value}
+      onChange={({ currentTarget: { checked: value } }) => {
+        setValue(value);
+      }}
+      label="Mantener sesión iniciada"
+    />
   );
 }

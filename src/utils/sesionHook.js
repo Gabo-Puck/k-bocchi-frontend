@@ -1,6 +1,7 @@
 import { useLocalStorage, useSessionStorage } from "@mantine/hooks";
 import { useSelector } from "react-redux";
 import { selectUsuario } from "./usuarioHooks";
+import useMantenerSesion from "./mantenerSesionHook";
 const minutos = 10;
 const NOMBRE_LOCAL_STORAGE = "sesion-item";
 export const milisegundos = minutos * 60 * 1000;
@@ -19,6 +20,7 @@ function deserializeItem(sesionItem) {
 }
 export default function useSesionExpiracion() {
   const { id: id_usuario } = useSelector(selectUsuario);
+  const {isSesionAbierta,mantenerSesion} = useMantenerSesion();
   const [sesionExpiracion, setSesionExpiracion] = useSessionStorage({
     key: NOMBRE_LOCAL_STORAGE,
     defaultValue: getValoresIniciales(),
@@ -52,8 +54,12 @@ export default function useSesionExpiracion() {
   function isExpirado() {
     let fecha = new Date();
     console.log(sesionExpiracion);
+    if(isSesionAbierta()) return false;
     if (sesionExpiracion.fecha_expiracion === null) return true;
     return fecha >= sesionExpiracion.fecha_expiracion;
+  }
+  function getId(){
+    return sesionExpiracion.id||mantenerSesion.id;
   }
 
   function isNull() {
@@ -61,5 +67,5 @@ export default function useSesionExpiracion() {
       sesionExpiracion.fecha_expiracion === null || sesionExpiracion.id === null
     );
   }
-  return { setMinutos, setNull, isExpirado, sesionExpiracion, init,isNull };
+  return { setMinutos, setNull, isExpirado, sesionExpiracion, init,isNull,getId };
 }

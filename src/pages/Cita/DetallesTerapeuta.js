@@ -22,9 +22,9 @@ import { useParams } from "react-router-dom";
 import {
   BadgeModalidadTrabajo,
   RangoPrecio,
-  ResenaGeneral,
 } from "../../Components/TerapeutaResultado";
 import ListaComentarios from "../../Components/ListaComentarios";
+import { ResenaGeneral } from "../../Components/ResenaGeneral";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -85,11 +85,15 @@ export default function DetallesTerapeuta() {
   if (!terapeuta && !cargando) {
     return <Title order={2}>No encontrado</Title>;
   }
+  let promedio =
+    terapeuta.resenas.length === 0
+      ? null
+      : terapeuta.resenas[0].promedio;
   return (
     <>
-      <Grid gutter="xl" mih="63vh" w="100vw" mah="63vh">
-        <Grid.Col md={4}>
-          <ScrollArea.Autosize mah="80vh">
+      <Grid m={0} gutter="xl" w="100%" h="100vh">
+        <Grid.Col md={4} h="100%">
+          <ScrollArea h="100%">
             <Card>
               <Card.Section>
                 <Image
@@ -107,7 +111,7 @@ export default function DetallesTerapeuta() {
                     {terapeuta.usuario.nombre}
                   </Title>
                   <Flex w="100%" justify="center">
-                    <ResenaGeneral terapeuta={terapeuta} />
+                    <ResenaGeneral estrellas={promedio} />
                   </Flex>
                   <Flex w="100%" justify="center">
                     <Text c="dimmed">Cédula: {terapeuta.numero_cedula}</Text>
@@ -153,16 +157,16 @@ export default function DetallesTerapeuta() {
                 </Flex>
               </Card.Section>
             </Card>
-          </ScrollArea.Autosize>
+          </ScrollArea>
         </Grid.Col>
-        <Grid.Col md="auto">
-          <Stack>
+        <Grid.Col md="auto" h="100%">
+          <Stack h="100%">
             <Flex align="center">
               <Title order={3}>Comentarios</Title>
             </Flex>
-            <ScrollArea.Autosize h="70vh">
+            <ScrollArea h="100%">
               <ListaComentarios comentarios={terapeuta.comentarios} />
-            </ScrollArea.Autosize>
+            </ScrollArea>
           </Stack>
         </Grid.Col>
       </Grid>

@@ -16,6 +16,8 @@ import {
 } from "@mantine/core";
 import { FaChair } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { ResenaGeneral } from "./ResenaGeneral";
 const useStyles = createStyles((theme) => ({
   card: {
     backgroundColor:
@@ -52,6 +54,14 @@ const distanceFormatter = new Intl.NumberFormat("es-MX", {
 export default function TerapeutaResultado({ usuario }) {
   const { classes, theme } = useStyles();
   const navigate = useNavigate();
+  useEffect(() => {
+    console.log("Render:", usuario);
+  }, [usuario]);
+  let { terapeuta } = usuario;
+  let promedio =
+    usuario.terapeuta.resenas.length === 0
+      ? null
+      : usuario.terapeuta.resenas[0].promedio;
   return (
     <Card
       maw="300px"
@@ -79,7 +89,7 @@ export default function TerapeutaResultado({ usuario }) {
           <Text fz="lg" fw={500}>
             {usuario.nombre}
           </Text>
-          <ResenaGeneral terapeuta={usuario.terapeuta} />
+          <ResenaGeneral estrellas={promedio} />
         </Stack>
       </Card.Section>
 
@@ -139,32 +149,5 @@ export function BadgeModalidadTrabajo({ terapeuta, ...props }) {
         </Badge>
       )}
     </Flex>
-  );
-}
-
-export function ResenaGeneral({ terapeuta }) {
-  return (
-    <>
-      {terapeuta.resenas.length ? (
-        <Resena
-          value={terapeuta.resenas[0].promedio}
-        />
-      ) : (
-        <Text>Sin reseñas</Text>
-      )}
-    </>
-  );
-}
-
-export function Resena({ value }) {
-  return (
-    <Rating
-      value={value}
-      readOnly
-      fractions={3}
-      size="xs"
-      count={10}
-      color="green-nature"
-    />
   );
 }

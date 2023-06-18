@@ -68,6 +68,7 @@ export function LinksGroup({
   initiallyOpened,
   links,
   to = null,
+  onClick = null,
 }) {
   const { classes, theme } = useStyles();
   const navigate = useNavigate();
@@ -83,7 +84,7 @@ export function LinksGroup({
       key={link.label}
       onClick={(event) => {
         event.preventDefault();
-        navigate(link.link);
+        if (!onClick) navigate(link.link);
       }}
     >
       {link.label}

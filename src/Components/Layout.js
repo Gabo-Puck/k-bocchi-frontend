@@ -29,6 +29,8 @@ import { socket } from "../socket";
 import { useTimeout } from "@mantine/hooks";
 import useSesionExpiracion, { milisegundos } from "../utils/sesionHook";
 import BarraNavegacion from "./Navbar";
+import ButtonLogout from "./ButtonLogout";
+import useMantenerSesion from "../utils/mantenerSesionHook";
 const selectUsuario = (state) => state.usuario;
 
 function NavLinkBar({ to, label }) {
@@ -38,19 +40,7 @@ function NavLinkBar({ to, label }) {
     </Navbar.Section>
   );
 }
-function ButtonLogout({ Child }) {
-  const { setNull } = useSesionExpiracion();
-  return (
-    <div
-      onClick={() => {
-        console.log("Adios");
-        setNull();
-      }}
-    >
-      {Child}
-    </div>
-  );
-}
+
 export default function Layout() {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const dispatch = useDispatch();
@@ -60,6 +50,7 @@ export default function Layout() {
   const navigate = useNavigate();
   const { sesionExpiracion, isExpirado, setMinutos, init, isNull } =
     useSesionExpiracion();
+  const {isSesionAbierta,mantenerSesion,} = useMantenerSesion();
   const { start, clear } = useTimeout(() => {
     console.log("Estas conectado :O");
     setMinutos();
@@ -84,16 +75,17 @@ export default function Layout() {
   useEffect(() => {
     if (isNull()) {
       dispatch({ type: USUARIO_LOGOUT });
+
     } else {
       start();
     }
   }, [sesionExpiracion]);
 
   useEffect(() => {
-    if (isNull()) {
+    if (isNull()&&!isSesionAbierta()) {
       navigate("/");
     }
-  }, [usuario]);
+  }, [usuario,mantenerSesion]);
 
   function BarraNavegacion2() {
     return (

@@ -137,11 +137,7 @@ export default function Buscar() {
           <Filtros />
         </Drawer>
         <Flex direction="column" h="100%">
-          {/* <MediaQuery smallerThan="md" styles={{ display: "none" }}>
-            <Grid.Col span={3}>
-              <FiltrosDropdown />
-            </Grid.Col>
-          </MediaQuery> */}
+
           <Flex
             direction="column"
             sx={{ justifyContent: "center", flex: "0 0 auto" }}

@@ -10,11 +10,18 @@ import {
 } from "@mantine/core";
 import { useToggle } from "@mantine/hooks";
 import { MdSearch, MdChevronLeft, MdChevronRight } from "react-icons/md";
+import { SlLogout } from "react-icons/sl";
 import { FaBookMedical } from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
 import { LinksGroup } from "./NavbarLinksGroup";
 
 import { UserButton } from "./UserButton";
+import ButtonLogout from "./ButtonLogout";
+import { useSelector } from "react-redux";
+import { selectUsuario } from "../utils/usuarioHooks";
+import { capitalizeWord } from "../utils/capitalizeWord";
+import { PACIENTE } from "../roles";
+import { useNavigate } from "react-router-dom";
 
 const mockdata = [
   { label: "Buscar terapeuta", icon: MdSearch, to: "/app/cita/buscar" },
@@ -26,6 +33,7 @@ const mockdata = [
       { label: "Agendar", link: "/app/chatbot" },
       { label: "Emergencia", link: "/" },
     ],
+    rol: PACIENTE,
   },
 ];
 
@@ -36,6 +44,8 @@ const useStyles = createStyles((theme) => ({
     paddingBottom: 0,
     maxHeight: "100vh",
     minHeight: "100vh",
+    transition: "width 0.3s, flex-basis 0.3s"
+
   },
   buttonContainer: {
     position: "relative",
@@ -53,11 +63,13 @@ const useStyles = createStyles((theme) => ({
   },
   hidden: {
     // display:"none",
+    transition: "width 0.3s, flex-basis 0.3s",
     width: "0 !important",
     flexBasis: 0,
     padding: "0 !important",
     minWidth: "0 !important",
     overflow: "hidden",
+
   },
   box: {},
   boxTop: {
@@ -121,9 +133,13 @@ export default function BarraNavegacion() {
   let ref = useRef(null);
   const [width, setWidth] = useState(280);
   const [value, toggle] = useToggle();
-  const links = mockdata.map((item) => (
-    <LinksGroup {...item} key={item.label} />
-  ));
+  const usuario = useSelector(selectUsuario);
+  const navigate = useNavigate()
+  const links = mockdata.map((item) =>
+    item.rol === usuario.rol || item.rol === undefined ? (
+      <LinksGroup {...item} key={item.label} />
+    ) : null
+  );
   useEffect(() => console.log({ value }), [value]);
   return (
     <div className={classes.navbarContainer}>
@@ -167,10 +183,12 @@ export default function BarraNavegacion() {
 
         <Navbar.Section className={classes.footer}>
           <UserButton
-            image="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80"
-            name="Ann Nullpointer"
-            email="anullpointer@yahoo.com"
+            image={usuario.foto_perfil}
+            name={usuario.nombre}
+            email={capitalizeWord(usuario.rol)}
+            onClick={()=>navigate("/app/perfil")}
           />
+          <ButtonLogout Child={<LinksGroup icon={SlLogout} label="Salir" />} />
         </Navbar.Section>
       </Navbar>
     </div>

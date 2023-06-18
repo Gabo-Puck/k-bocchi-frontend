@@ -33,7 +33,6 @@ import { DatosConsultorio } from "./pages/Registro/DatosConsultorio";
 import { ModalsProvider } from "@mantine/modals";
 import CambiarContrasena from "./pages/CambiarContrasena";
 import LayoutCita from "./pages/Cita/LayoutCita";
-import ListaTerapeutas from "./Components/ListaTerapeutas";
 import Buscar from "./pages/Cita/Buscar";
 import DetallesTerapeuta from "./pages/Cita/DetallesTerapeuta";
 import ChatBot from "./pages/Chatbot/Chatbot";
@@ -55,8 +54,41 @@ function App() {
       withNormalizeCSS
       theme={{
         globalStyles: (theme) => ({
-          body: { backgroundColor: theme.colors.background, maxHeight: "100vh" },
+          body: {
+            backgroundColor: theme.colors.background,
+            maxHeight: "100vh",
+          },
         }),
+        components: {
+          Button: {
+            styles: (theme, { variant }) => ({
+              root: {
+                borderRadius: theme.radius.xs,
+              },
+            }),
+            variants: {
+              guardar: (theme) => ({
+                root: {
+                  backgroundColor: theme.colors["blue-calm"][7],
+                  color: theme.white,
+                  ...theme.fn.hover({
+                    backgroundColor: theme.colors["blue-calm"][7],
+                  }),
+                },
+              }),
+            },
+          },
+          Checkbox: {
+            styles: (theme, { variant }) => ({
+              input: {
+                ":checked": {
+                  backgroundColor: theme.colors["green-nature"][5],
+                  borderColor: theme.colors["green-nature"][5],
+                },
+              },
+            }),
+          },
+        },
 
         colors: {
           background: [
