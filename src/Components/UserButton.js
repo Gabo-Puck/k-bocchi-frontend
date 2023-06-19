@@ -26,7 +26,6 @@ const useStyles = createStyles((theme) => ({
 
 export function UserButton({ image, name, email, icon, ...others }) {
   const { classes } = useStyles();
-
   return (
     <UnstyledButton className={classes.user} {...others}>
       <Group>

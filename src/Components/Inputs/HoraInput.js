@@ -1,6 +1,9 @@
 import { Input } from "@mantine/core";
-import { useId } from "@mantine/hooks";
+import { useId, useShallowEffect } from "@mantine/hooks";
+import { useEffect, useState } from "react";
 import { IMaskInput, useIMask, IMask } from "react-imask";
+import getValueFromPath from "../GetValueFromPath";
+
 const maskOptions = {
   overwrite: true,
   autofix: true,
@@ -22,24 +25,45 @@ const maskOptions = {
     },
   },
 };
-export default function HoraInput({ label, form, inputName, ...props }) {
+export default function HoraInput({
+  label,
+  form,
+  inputName,
+  propName,
+  value,
+  error,
+  ...props
+}) {
   const id = useId();
-  const { ref, } = useIMask(maskOptions, {
-    onAccept: (s) => {
-      console.log({ accept: s });
-    },
-    onComplete: (s) => {
-      console.log({ complete: s });
-    },
-  });
+  // const [value, setValue] = useState(getValueFromPath(form.values, inputName));
+  // const previousValue = usePrevious(value);
+  // useShallowEffect(() => {
+  //   console.log(inputName, getValueFromPath(form.values, inputName));
+  //   let x = form.validateField(inputName);
+  //   console.log({ e: form.errors, x });
+
+  //   setTypedValue(getValueFromPath(form.values, inputName));
+  //   return () => form.clearFieldError(inputName);
+  // }, [getValueFromPath(form.values, inputName)]);
+  useEffect(() => {
+
+    // setValue(getValueFromPath(form.values, inputName));
+  }, []);
+  const { ref, setValue, setTypedValue, setUnmaskedValue } = useIMask(
+    maskOptions,
+    {
+      onAccept: (s, l) => {
+        form.setFieldValue(inputName, s);
+      },
+      onComplete: (s) => {
+        // console.log({ complete: s });
+        // console.log(inputName);
+      },
+    }
+  );
   return (
-    <Input.Wrapper id={id} label={label} required maw={320} mx="auto">
-      <Input
-        ref={ref}
-        id={id}
-        placeholder="00:00"
-        {...form.getInputProps(inputName)}
-      />
+    <Input.Wrapper id={id} label={label} required maw={320} mx="auto" error={error}>
+      <Input ref={ref} id={id} placeholder="00:00" value={getValueFromPath(form.values, inputName)} {...props}/>
     </Input.Wrapper>
   );
 }

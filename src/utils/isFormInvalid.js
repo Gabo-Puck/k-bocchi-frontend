@@ -8,7 +8,7 @@
 export const executeValidation = (value, validations) => {
   for (let index = 0; index < validations.length; index++) {
     let result = validations[index](value);
-    console.log(result);
+    // console.log(result);
     if (result) return result;
   }
   return null;

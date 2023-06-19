@@ -5,6 +5,8 @@ import {
   Center,
   Table,
   Button,
+  Alert,
+  Title,
 } from "@mantine/core";
 
 import { useSelector } from "react-redux";
@@ -22,9 +24,15 @@ import { useForm } from "@mantine/form";
 import ContactIcon from "../Components/InfoPerfil";
 import { MdAlternateEmail } from "react-icons/md";
 import { BsFillTelephoneFill } from "react-icons/bs";
+import { FiAlertCircle } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import useMantenerSesion from "../utils/mantenerSesionHook";
-import { useDebouncedValue, useMediaQuery, randomId } from "@mantine/hooks";
+import {
+  useDebouncedValue,
+  useMediaQuery,
+  randomId,
+  useShallowEffect,
+} from "@mantine/hooks";
 import { FISIOTERAPEUTA, PACIENTE } from "../roles";
 import { showNegativeFeedbackNotification } from "../utils/notificationTemplate";
 import { ResenaGeneral } from "../Components/ResenaGeneral";
@@ -32,6 +40,13 @@ import axios from "axios";
 import { useRef } from "react";
 import HoraInput from "../Components/Inputs/HoraInput";
 import { useFormContext } from "react-hook-form";
+import {
+  isRequired,
+  isRequiredValidation,
+  isTiempo,
+} from "../utils/inputValidation";
+import { executeValidation } from "../utils/isFormInvalid";
+import getValueFromPath from "../Components/GetValueFromPath";
 
 export default function Perfil() {
   const theme = useMantineTheme();
@@ -51,7 +66,7 @@ export default function Perfil() {
             radius="50%"
             animate={true}
           />
-          <Text ta="center">{usuario.nombre}</Text>
+          <Title order={4} ta="center">{usuario.nombre}</Title>
           <EstrellasUsuario />
         </Stack>
         <ScrollArea h="100%" py="md">
@@ -181,13 +196,15 @@ function getDiasOrdenados(horario) {
         ...dia,
         dia: d.dia,
         isTrabajado: false,
+        hora_inicio: "",
+        hora_fin: "",
       };
     } else {
       dia = {
         ...dia,
         dia: d.dia,
-        hora_inicio: formatFecha(dia.fecha_inicio),
-        hora_fin: formatFecha(dia.fecha_inicio),
+        hora_inicio: formatFecha(dia.hora_inicio),
+        hora_fin: formatFecha(dia.hora_fin),
         isTrabajado: true,
       };
     }
@@ -197,54 +214,168 @@ function getDiasOrdenados(horario) {
 }
 
 function TablaHorario({ horario }) {
+  const theme = useMantineTheme();
+  const big = useMediaQuery(`(min-width: ${theme.breakpoints.xs})`);
   const diasOrdenados = getDiasOrdenados(horario);
   const dias = diasOrdenados.map(({ dia }) => dia);
+  const [errorNumeroDias, setErrorNumeroDias] = useState();
   console.log({ dias });
   const form = useForm({
+    validateInputOnChange: false,
+    validateInputOnBlur: false,
     initialValues: {
       horarios: [...dias],
+      numeroDias: horario.length,
+    },
+    validate: {
+      horarios: {
+        hora_inicio: (value, values, path) =>
+          !values.horarios[path.split(".")[1]].isTrabajado
+            ? null
+            : executeValidation(value, [
+                isRequiredValidation,
+                isTiempo,
+                (value) => {
+                  //[horarios,index,prop]
+                  let pathSplit = path.split(".");
+                  let index = pathSplit[1];
+                  let hora_inicio = crearFechaFromTiempo(value);
+                  let { hora_fin } = values.horarios[index];
+                  hora_fin = crearFechaFromTiempo(hora_fin);
+                  // if (
+                  //   form.validateField(`${pathSplit[0]}.${pathSplit[1]}.hora_fin`)
+                  //     .hasError
+                  // )
+                  //   return null;
+                  if (hora_inicio >= hora_fin)
+                    return "La fecha de inicio tiene que ser menor";
+
+                  return null;
+                },
+              ]),
+        hora_fin: (value, values, path) =>
+          !values.horarios[path.split(".")[1]].isTrabajado
+            ? null
+            : executeValidation(value, [
+                isRequiredValidation,
+                isTiempo,
+                (value) => {
+                  //[horarios,index,prop]
+                  let pathSplit = path.split(".");
+                  let index = pathSplit[1];
+                  let hora_fin = crearFechaFromTiempo(value);
+                  let { hora_inicio } = values.horarios[index];
+                  hora_inicio = crearFechaFromTiempo(hora_inicio);
+                  // if (
+                  //   form.validateField(`${pathSplit[0]}.${pathSplit[1]}.hora_inicio`)
+                  //     .hasError
+                  // )
+                  //   return null;
+                  if (hora_fin <= hora_inicio)
+                    return "La fecha de fin tiene que ser mayor";
+
+                  return null;
+                },
+              ]),
+      },
+      numeroDias: (value, values) => {
+        if (value <= 0) return "Por lo menos agrega un día a tu horario. Si no lo haces, ¡tus pacientes no podrán agendar citas contigo! ¿O a caso no quieres chambear?🤨";
+        return null;
+      },
     },
   });
   useEffect(() => {
     console.log({ values: form.values });
   }, [form.values]);
+  // useEffect(() => {
+  //   console.log({ errors: form.errors });
+  //   // return () => form.clearErrors()
+  //   setErrorNumeroDias(form.errors.numeroDias);
+  // }, [form.errors]);
+  useShallowEffect(() => {
+    // return () => form.clearErrors()
+    setErrorNumeroDias(form.validateField("numeroDias").error);
+  }, [form.values.numeroDias]);
 
   return (
-    <Stack align="end">
-      <Table>
-        <thead>
-          <tr>
-            <th></th>
-            <th>Dia</th>
-            <th>Inicio</th>
-            <th>Fin</th>
-          </tr>
-        </thead>
-        <tbody>
-          {diasOrdenados.map(({ dia, output }, index) => (
-            <FilaTablaHorario
-              dia={dia}
-              output={output}
-              form={form}
-              index={index}
-            />
-          ))}
-        </tbody>
-      </Table>
+    <Stack align="end" w="100%">
+      <Title order={3} ta="center" w="100%">Tu horario</Title>
+      {errorNumeroDias && (
+        <Alert
+          icon={<FiAlertCircle size="1rem" />}
+          title="¡Atención!"
+          color="blue-calm.3"
+          w="100%"
+        >
+          {errorNumeroDias}
+        </Alert>
+      )}
+      <ScrollArea w={"100%"}>
+        <Table w={big?"100%":"125%"}>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Dia</th>
+              <th>Inicio</th>
+              <th>Fin</th>
+            </tr>
+          </thead>
+          <tbody>
+            {diasOrdenados.map(({ dia, output }, index) => (
+              <FilaTablaHorario
+                dia={dia}
+                output={output}
+                form={form}
+                index={index}
+                key={index}
+              />
+            ))}
+          </tbody>
+        </Table>
+      </ScrollArea>
       <div>
-        <Button variant="guardar">Guardar</Button>
+        <Button variant="guardar" disabled={!form.isValid()}>
+          Guardar
+        </Button>
       </div>
     </Stack>
   );
 }
 function FilaTablaHorario({ dia, output, form, index }) {
   // console.log({ dia });
+  const horario_inicio = `horarios.${index}.hora_inicio`;
+  const horario_fin = `horarios.${index}.hora_fin`;
+  const isTrabajado = `horarios.${index}.isTrabajado`;
+  const horario = `horarios.${index}`;
+  const [{ error: errorInicio, hasError: hasErrorInicio }, setErrorInicio] =
+    useState({ error: null, hasError: null });
+  const [{ error: errorFin, hasError: hasErrorFin }, setErrorFin] = useState({
+    error: null,
+    hasError: null,
+  });
+  useShallowEffect(() => {
+    // console.log(inputName, getValueFromPath(form.values, inputName));
+    setErrorInicio(form.validateField(horario_inicio));
+    setErrorFin(form.validateField(horario_fin));
+    // console.log({ error_inicio, error_fin });
+    // return () => {
+    //   form.clearFieldError(horario_fin);
+    //   form.clearFieldError(horario_inicio);
+    // };
+  }, [getValueFromPath(form.values, horario)]);
+  useShallowEffect(() => {
+    let numeroDias = form.values.horarios.filter(
+      (d) => d.isTrabajado === true
+    ).length;
+    form.setFieldValue("numeroDias", numeroDias);
+  }, [getValueFromPath(form.values, isTrabajado)]);
+
   return (
     <tr key={output}>
       <td width="10%">
         {
           <Checkbox
-            {...form.getInputProps(`horarios.${index}.isTrabajado`, {
+            {...form.getInputProps(isTrabajado, {
               type: "checkbox",
             })}
           />
@@ -254,26 +385,28 @@ function FilaTablaHorario({ dia, output, form, index }) {
       <td width="30%">
         <HoraInput
           label=""
-          value={formatFecha(dia.fecha_inicio)}
-          disabled={!dia.isTrabajado}
-          inputName={`horarios.${index}.fecha_inicio`}
+          disabled={!getValueFromPath(form.values, isTrabajado)}
+          inputName={horario_inicio}
+          propName={`horarios.${index}`}
           form={form}
+          error={errorInicio}
         />
       </td>
       <td width="30%">
         <HoraInput
           label=""
-          value={formatFecha(dia.fecha_fin)}
-          disabled={!dia.isTrabajado}
-          inputName={`horarios.${index}.fecha_fin`}
+          disabled={!getValueFromPath(form.values, isTrabajado)}
+          inputName={horario_fin}
+          propName={`horarios.${index}`}
           form={form}
+          error={errorFin}
         />
       </td>
     </tr>
   );
 }
 function formatFecha(fecha = "") {
-  return fecha.substring(0, 7);
+  return fecha.substring(0, 5);
 }
 function CheckboxMantenerSesion() {
   const { isSesionAbierta, toggleSesionMantener, mantenerSesion } =
@@ -292,4 +425,9 @@ function CheckboxMantenerSesion() {
       label="Mantener sesión iniciada"
     />
   );
+}
+
+function crearFechaFromTiempo(tiempo, fecha = new Date()) {
+  let hora = new Date(`${fecha.toDateString()} ${tiempo}:00`);
+  return hora;
 }

@@ -18,10 +18,12 @@ export const isEmailAvailable = async ({email}) => {
 
 export const isTiempo = (value) =>{
   if(!/^([0-1]\d|2[0-3]):[0-5]\d$/.test(value.toString())){
-    return "La fecha tiene que estar en formato HH:mm";
+    return "Tienes que especificar la fecha";
   }
   return null;
 }
+
+
 
 export const isPhoneValidation = (value) =>{
   if(!/^\d{10}$/.test(value.toString()))
