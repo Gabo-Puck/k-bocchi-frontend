@@ -32,9 +32,10 @@ import {
   useMediaQuery,
   randomId,
   useShallowEffect,
+  useForceUpdate,
 } from "@mantine/hooks";
 import { FISIOTERAPEUTA, PACIENTE } from "../roles";
-import { showNegativeFeedbackNotification } from "../utils/notificationTemplate";
+import { showNegativeFeedbackNotification, showPositiveFeedbackNotification } from "../utils/notificationTemplate";
 import { ResenaGeneral } from "../Components/ResenaGeneral";
 import axios from "axios";
 import { useRef } from "react";
@@ -66,7 +67,9 @@ export default function Perfil() {
             radius="50%"
             animate={true}
           />
-          <Title order={4} ta="center">{usuario.nombre}</Title>
+          <Title order={4} ta="center">
+            {usuario.nombre}
+          </Title>
           <EstrellasUsuario />
         </Stack>
         <ScrollArea h="100%" py="md">
@@ -137,6 +140,8 @@ function EstrellasUsuario() {
 function HorarioUsuario() {
   const usuario = useSelector(selectUsuario);
   const [horario, setHorario] = useState(undefined);
+  const [forceRender,setForceRender] = useState({render:false});
+
   useEffect(() => {
     async function fetchHorario() {
       if (usuario.rol !== FISIOTERAPEUTA) return;
@@ -159,7 +164,11 @@ function HorarioUsuario() {
       }
     }
     fetchHorario();
-  }, []);
+  }, [forceRender]);
+  function forceUpdate(){
+    setHorario(undefined);
+    setForceRender({render:true});
+  }
   useEffect(() => {
     console.log(horario);
   }, [horario]);
@@ -174,7 +183,7 @@ function HorarioUsuario() {
     />
   ) : (
     <Center>
-      <TablaHorario horario={horario} />
+      <TablaHorario horario={horario} forceUpdate={forceUpdate}/>
     </Center>
   );
 }
@@ -213,12 +222,14 @@ function getDiasOrdenados(horario) {
   return diasOrdenados;
 }
 
-function TablaHorario({ horario }) {
+function TablaHorario({ horario,forceUpdate }) {
   const theme = useMantineTheme();
+  const usuario = useSelector(selectUsuario);
   const big = useMediaQuery(`(min-width: ${theme.breakpoints.xs})`);
   const diasOrdenados = getDiasOrdenados(horario);
   const dias = diasOrdenados.map(({ dia }) => dia);
   const [errorNumeroDias, setErrorNumeroDias] = useState();
+  const [isGuardando, setIsGuardando] = useState(false);
   console.log({ dias });
   const form = useForm({
     validateInputOnChange: false,
@@ -279,10 +290,25 @@ function TablaHorario({ horario }) {
               ]),
       },
       numeroDias: (value, values) => {
-        if (value <= 0) return "Por lo menos agrega un día a tu horario. Si no lo haces, ¡tus pacientes no podrán agendar citas contigo! ¿O a caso no quieres chambear?🤨";
+        if (value <= 0)
+          return "Por lo menos agrega un día a tu horario. Si no lo haces, ¡tus pacientes no podrán agendar citas contigo! ¿O a caso no quieres chambear?🤨";
         return null;
       },
     },
+    transformValues: (values) => ({
+      ...values,
+      horarios: values.horarios
+        .filter((d) => d.isTrabajado === true)
+        .map((d) => {
+          let dia = {...d};
+          delete dia.isTrabajado;
+          return {
+            ...dia,
+            hora_inicio: `${dia.hora_inicio}:00`,
+            hora_fin: `${dia.hora_fin}:00`,
+          };
+        }),
+    }),
   });
   useEffect(() => {
     console.log({ values: form.values });
@@ -296,52 +322,87 @@ function TablaHorario({ horario }) {
     // return () => form.clearErrors()
     setErrorNumeroDias(form.validateField("numeroDias").error);
   }, [form.values.numeroDias]);
-
+  const handleSubmit = async (value) => {
+    setIsGuardando(true);
+    console.log({ final: value });
+    let { horarios: horario } = value;
+    try {
+      // console.log(usuario);
+      let {
+        terapeuta: { id: id_terapeuta },
+      } = usuario;
+      let body = {
+        id_terapeuta,
+        horario,
+      };
+      await axios.patch("/usuarios/fisioterapeutas/horario", body);
+      showPositiveFeedbackNotification("Perfecto. ¡Se ha modificado tu horario! 😊")
+      forceUpdate();
+      console.log({ body });
+    } catch (err) {
+      console.log(err);
+      if (err) showNegativeFeedbackNotification(err.response.data);
+    }
+    setIsGuardando(false);
+  };
+  const handleError = (value) => {
+    console.log({ error: value });
+  };
   return (
-    <Stack align="end" w="100%">
-      <Title order={3} ta="center" w="100%">Tu horario</Title>
-      {errorNumeroDias && (
-        <Alert
-          icon={<FiAlertCircle size="1rem" />}
-          title="¡Atención!"
-          color="blue-calm.3"
-          w="100%"
-        >
-          {errorNumeroDias}
-        </Alert>
-      )}
-      <ScrollArea w={"100%"}>
-        <Table w={big?"100%":"125%"}>
-          <thead>
-            <tr>
-              <th></th>
-              <th>Dia</th>
-              <th>Inicio</th>
-              <th>Fin</th>
-            </tr>
-          </thead>
-          <tbody>
-            {diasOrdenados.map(({ dia, output }, index) => (
-              <FilaTablaHorario
-                dia={dia}
-                output={output}
-                form={form}
-                index={index}
-                key={index}
-              />
-            ))}
-          </tbody>
-        </Table>
-      </ScrollArea>
-      <div>
-        <Button variant="guardar" disabled={!form.isValid()}>
-          Guardar
-        </Button>
-      </div>
-    </Stack>
+    <form onSubmit={form.onSubmit(handleSubmit, handleError)}>
+      <Stack align="end" w="100%">
+        <Title order={3} ta="center" w="100%">
+          Tu horario
+        </Title>
+        {errorNumeroDias && (
+          <Alert
+            icon={<FiAlertCircle size="1rem" />}
+            title="¡Atención!"
+            color="blue-calm.3"
+            w="100%"
+          >
+            {errorNumeroDias}
+          </Alert>
+        )}
+        <ScrollArea w={"100%"}>
+          <Table w={big ? "100%" : "125%"}>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Dia</th>
+                <th>Inicio</th>
+                <th>Fin</th>
+              </tr>
+            </thead>
+            <tbody>
+              {diasOrdenados.map(({ dia, output }, index) => (
+                <FilaTablaHorario
+                  dia={dia}
+                  output={output}
+                  form={form}
+                  index={index}
+                  key={index}
+                  disabled={isGuardando}
+                />
+              ))}
+            </tbody>
+          </Table>
+        </ScrollArea>
+        <div>
+          <Button
+            variant="guardar"
+            type="submit"
+            disabled={!form.isValid() || !form.isDirty()}
+            loading={isGuardando}
+          >
+            Guardar
+          </Button>
+        </div>
+      </Stack>
+    </form>
   );
 }
-function FilaTablaHorario({ dia, output, form, index }) {
+function FilaTablaHorario({ dia, output, form, index, disabled }) {
   // console.log({ dia });
   const horario_inicio = `horarios.${index}.hora_inicio`;
   const horario_fin = `horarios.${index}.hora_fin`;
@@ -385,7 +446,7 @@ function FilaTablaHorario({ dia, output, form, index }) {
       <td width="30%">
         <HoraInput
           label=""
-          disabled={!getValueFromPath(form.values, isTrabajado)}
+          disabled={!getValueFromPath(form.values, isTrabajado) || disabled}
           inputName={horario_inicio}
           propName={`horarios.${index}`}
           form={form}
@@ -395,7 +456,7 @@ function FilaTablaHorario({ dia, output, form, index }) {
       <td width="30%">
         <HoraInput
           label=""
-          disabled={!getValueFromPath(form.values, isTrabajado)}
+          disabled={!getValueFromPath(form.values, isTrabajado) || disabled}
           inputName={horario_fin}
           propName={`horarios.${index}`}
           form={form}
