@@ -7,6 +7,7 @@ import {
   createStyles,
 } from "@mantine/core";
 import { MdChevronRight } from "react-icons/md";
+import ImagenAvatar, { ImagenAvatarActual } from "./ImagenAvatar";
 
 const useStyles = createStyles((theme) => ({
   user: {
@@ -22,14 +23,18 @@ const useStyles = createStyles((theme) => ({
           : theme.colors.gray[0],
     },
   },
+  avatarObject: {
+    border: `0.1em solid ${theme.colors["blue-calm"][0]}`,
+  },
 }));
 
 export function UserButton({ image, name, email, icon, ...others }) {
   const { classes } = useStyles();
+  console.log({image});
   return (
     <UnstyledButton className={classes.user} {...others}>
       <Group>
-        <Avatar src={image} radius="xl" />
+        <ImagenAvatarActual  image={image} classes={classes}/>
 
         <div style={{ flex: 1 }}>
           <Text size="sm" weight={500}>

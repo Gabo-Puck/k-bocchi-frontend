@@ -7,6 +7,7 @@ import {
   Button,
   Alert,
   Title,
+  Avatar,
 } from "@mantine/core";
 
 import { useSelector } from "react-redux";
@@ -35,7 +36,10 @@ import {
   useForceUpdate,
 } from "@mantine/hooks";
 import { FISIOTERAPEUTA, PACIENTE } from "../roles";
-import { showNegativeFeedbackNotification, showPositiveFeedbackNotification } from "../utils/notificationTemplate";
+import {
+  showNegativeFeedbackNotification,
+  showPositiveFeedbackNotification,
+} from "../utils/notificationTemplate";
 import { ResenaGeneral } from "../Components/ResenaGeneral";
 import axios from "axios";
 import { useRef } from "react";
@@ -48,24 +52,19 @@ import {
 } from "../utils/inputValidation";
 import { executeValidation } from "../utils/isFormInvalid";
 import getValueFromPath from "../Components/GetValueFromPath";
+import FotoPerfil from "../Components/FotoPerfil";
 
 export default function Perfil() {
   const theme = useMantineTheme();
   const usuario = useSelector(selectUsuario);
-  const horario = useState(null);
-  const estrellas = useState(null);
   const big = useMediaQuery(`(min-width: ${theme.breakpoints.md})`);
-  function loadUsuarioFoto() {}
   return (
     <Container h="100vh" fluid>
       <SimpleGrid h="100%" cols={2} breakpoints={[{ maxWidth: "md", cols: 1 }]}>
         <Stack spacing="md" my="auto" h="100%" align="center" justify="center">
-          <Skeleton
+          <FotoPerfil
             height={big ? "40vh" : "35vh"}
             width={big ? "40vh" : "35vh"}
-            mx="auto"
-            radius="50%"
-            animate={true}
           />
           <Title order={4} ta="center">
             {usuario.nombre}
@@ -140,7 +139,7 @@ function EstrellasUsuario() {
 function HorarioUsuario() {
   const usuario = useSelector(selectUsuario);
   const [horario, setHorario] = useState(undefined);
-  const [forceRender,setForceRender] = useState({render:false});
+  const [forceRender, setForceRender] = useState({ render: false });
 
   useEffect(() => {
     async function fetchHorario() {
@@ -165,9 +164,9 @@ function HorarioUsuario() {
     }
     fetchHorario();
   }, [forceRender]);
-  function forceUpdate(){
+  function forceUpdate() {
     setHorario(undefined);
-    setForceRender({render:true});
+    setForceRender({ render: true });
   }
   useEffect(() => {
     console.log(horario);
@@ -183,7 +182,7 @@ function HorarioUsuario() {
     />
   ) : (
     <Center>
-      <TablaHorario horario={horario} forceUpdate={forceUpdate}/>
+      <TablaHorario horario={horario} forceUpdate={forceUpdate} />
     </Center>
   );
 }
@@ -222,7 +221,7 @@ function getDiasOrdenados(horario) {
   return diasOrdenados;
 }
 
-function TablaHorario({ horario,forceUpdate }) {
+function TablaHorario({ horario, forceUpdate }) {
   const theme = useMantineTheme();
   const usuario = useSelector(selectUsuario);
   const big = useMediaQuery(`(min-width: ${theme.breakpoints.xs})`);
@@ -300,7 +299,7 @@ function TablaHorario({ horario,forceUpdate }) {
       horarios: values.horarios
         .filter((d) => d.isTrabajado === true)
         .map((d) => {
-          let dia = {...d};
+          let dia = { ...d };
           delete dia.isTrabajado;
           return {
             ...dia,
@@ -336,7 +335,9 @@ function TablaHorario({ horario,forceUpdate }) {
         horario,
       };
       await axios.patch("/usuarios/fisioterapeutas/horario", body);
-      showPositiveFeedbackNotification("Perfecto. ¡Se ha modificado tu horario! 😊")
+      showPositiveFeedbackNotification(
+        "Perfecto. ¡Se ha modificado tu horario! 😊"
+      );
       forceUpdate();
       console.log({ body });
     } catch (err) {
@@ -492,3 +493,5 @@ function crearFechaFromTiempo(tiempo, fecha = new Date()) {
   let hora = new Date(`${fecha.toDateString()} ${tiempo}:00`);
   return hora;
 }
+
+

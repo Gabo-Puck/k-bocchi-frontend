@@ -1,6 +1,7 @@
 import {
   USUARIO_AUTORIZADO,
   USUARIO_LOGOUT,
+  USUARIO_ACTUALIZAR
 } from "../../Actions/actionsUsuario";
 
 const initialState = {
@@ -20,6 +21,12 @@ export default function usuarioReducer(state = initialState, action) {
       return {
         ...initialState,
       };
+    case USUARIO_ACTUALIZAR:{
+      return {
+        ...state,
+        ...action.payload
+      }
+    }
     default:
       return state;
   }
