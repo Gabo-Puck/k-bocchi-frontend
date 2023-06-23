@@ -87,23 +87,6 @@ export default function Layout() {
     }
   }, [usuario,mantenerSesion]);
 
-  function BarraNavegacion2() {
-    return (
-      <Navbar
-        className="Navbarbar"
-        hiddenBreakpoint="sm"
-        hidden={!opened}
-        width={{ sm: 150, lg: 200 }}
-      >
-        <Link to="perfil">
-          <NavLinkBar label="Registro" to="/registro" />
-        </Link>
-        <Link to="perfil">
-          <NavLinkBar label="Perfil" to="perfil" />
-        </Link>
-      </Navbar>
-    );
-  }
 
   function FooterApp() {
     return (

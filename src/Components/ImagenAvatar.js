@@ -8,7 +8,16 @@ import { useSelector } from "react-redux";
 import { selectUsuario } from "../utils/usuarioHooks";
 
 const ImagenAvatar = React.forwardRef(
-  ({ height, width, image, classes, onLoaded = () => {} }, refParent) => {
+  (
+    {
+      height,
+      width,
+      image,
+      classes = { avatarObject: "" },
+      onLoaded = () => {},
+    },
+    refParent
+  ) => {
     const [file, setFile] = useState();
     // const { classes, cx } = useStyles();
     async function loadFotoPerfil() {

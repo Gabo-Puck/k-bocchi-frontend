@@ -42,6 +42,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectUsuario } from "./utils/usuarioHooks";
 import axios from "axios";
 import { USUARIO_AUTORIZADO } from "./Actions/actionsUsuario";
+import BitacoraGeneral from "./pages/Bitacora/BitacoraGeneral";
 
 function App() {
   let usuario = useSelector(selectUsuario);
@@ -159,6 +160,19 @@ function App() {
             "#00E782",
             "#00DA7B",
           ],
+          "blue-calmer":[
+            "#FDFDFF",
+            "#EEF4FF",
+            "#DFEBFF",
+            "#D2E2FF",
+            "#C4DAFF",
+            "#B6D2FF",
+            "#A9C9FF",
+            "#9DC1FF",
+            "#90BAFF",
+            "#84B2FF",
+            "#79ABFF"
+          ]
         },
       }}
     >
@@ -273,7 +287,9 @@ function App() {
               >
                 <Route path="/app" element={<Layout />}>
                   <Route index element={<Home />} />
+                  {/* TODOS */}
                   <Route path="perfil" element={<Perfil />} />
+                  <Route path="chat" element={<Chat />} />
                   <Route path="cita" element={<LayoutCita />}>
                     <Route path="buscar" element={<Buscar />} />
                     <Route
@@ -281,8 +297,20 @@ function App() {
                       element={<DetallesTerapeuta />}
                     />
                   </Route>
-                  <Route path="chatbot" element={<ChatBot />} />
-                  <Route path="chat" element={<Chat />} />
+                  {/* PACIENTE */}
+                  <Route
+                    path="paciente"
+                    element={<PrivateRoutes authRol={[PACIENTE]} />}
+                  >
+                    <Route path="chatbot" element={<ChatBot />} />
+                  </Route>
+                  {/* FISIOTERAPEUTA */}
+                  <Route
+                    path="terapeuta"
+                    element={<PrivateRoutes authRol={[FISIOTERAPEUTA]} />}
+                  >
+                    <Route path="bitacora" element={<BitacoraGeneral/>}/>
+                  </Route>
                 </Route>
               </Route>
               {/**Mediante el simbolo '*' podemos indicar que esta elemento se renderiza en cualquier ruta. Al estar al final solo se renderiza

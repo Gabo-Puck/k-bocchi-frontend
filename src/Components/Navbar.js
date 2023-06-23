@@ -20,20 +20,26 @@ import ButtonLogout from "./ButtonLogout";
 import { useSelector } from "react-redux";
 import { selectUsuario } from "../utils/usuarioHooks";
 import { capitalizeWord } from "../utils/capitalizeWord";
-import { PACIENTE } from "../roles";
+import { FISIOTERAPEUTA, PACIENTE } from "../roles";
 import { useNavigate } from "react-router-dom";
 
-const mockdata = [
+const navbarItems = [
   { label: "Buscar terapeuta", icon: MdSearch, to: "/app/cita/buscar" },
   {
     label: "Cita",
     icon: FaBookMedical,
     initiallyOpened: true,
     links: [
-      { label: "Agendar", link: "/app/chatbot" },
+      { label: "Agendar", link: "/app/paciente/chatbot" },
       { label: "Emergencia", link: "/" },
     ],
     rol: PACIENTE,
+  },
+  {
+    label: "Bitácora",
+    icon: FaBookMedical,
+    rol: FISIOTERAPEUTA,
+    to: "terapeuta/bitacora"
   },
 ];
 
@@ -57,6 +63,7 @@ const useStyles = createStyles((theme) => ({
     right: 0,
     padding: "0",
     transform: "translate(100%, 0)",
+    zIndex: 100
   },
   hiddenButton: {
     // right: -12,
@@ -135,7 +142,7 @@ export default function BarraNavegacion() {
   const [value, toggle] = useToggle();
   const usuario = useSelector(selectUsuario);
   const navigate = useNavigate()
-  const links = mockdata.map((item) =>
+  const links = navbarItems.map((item) =>
     item.rol === usuario.rol || item.rol === undefined ? (
       <LinksGroup {...item} key={item.label} />
     ) : null

@@ -53,11 +53,12 @@ import {
 import { executeValidation } from "../utils/isFormInvalid";
 import getValueFromPath from "../Components/GetValueFromPath";
 import FotoPerfil from "../Components/FotoPerfil";
+import { useXs } from "../utils/mediaQueryHooks";
 
 export default function Perfil() {
   const theme = useMantineTheme();
   const usuario = useSelector(selectUsuario);
-  const big = useMediaQuery(`(min-width: ${theme.breakpoints.md})`);
+  const big = useXs();
   return (
     <Container h="100vh" fluid>
       <SimpleGrid h="100%" cols={2} breakpoints={[{ maxWidth: "md", cols: 1 }]}>
@@ -224,7 +225,7 @@ function getDiasOrdenados(horario) {
 function TablaHorario({ horario, forceUpdate }) {
   const theme = useMantineTheme();
   const usuario = useSelector(selectUsuario);
-  const big = useMediaQuery(`(min-width: ${theme.breakpoints.xs})`);
+  const big = useXs();
   const diasOrdenados = getDiasOrdenados(horario);
   const dias = diasOrdenados.map(({ dia }) => dia);
   const [errorNumeroDias, setErrorNumeroDias] = useState();
