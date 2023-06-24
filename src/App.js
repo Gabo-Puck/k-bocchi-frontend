@@ -43,6 +43,7 @@ import { selectUsuario } from "./utils/usuarioHooks";
 import axios from "axios";
 import { USUARIO_AUTORIZADO } from "./Actions/actionsUsuario";
 import BitacoraGeneral from "./pages/Bitacora/BitacoraGeneral";
+import BitacoraPaciente from "./pages/Bitacora/BitacoraPaciente";
 
 function App() {
   let usuario = useSelector(selectUsuario);
@@ -309,7 +310,10 @@ function App() {
                     path="terapeuta"
                     element={<PrivateRoutes authRol={[FISIOTERAPEUTA]} />}
                   >
-                    <Route path="bitacora" element={<BitacoraGeneral/>}/>
+                    <Route path="bitacora">
+                      <Route index  element={<BitacoraGeneral/>}/>
+                      <Route path=":id" element={<BitacoraPaciente/>}/>
+                    </Route>
                   </Route>
                 </Route>
               </Route>

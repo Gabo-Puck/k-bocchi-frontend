@@ -11,7 +11,7 @@ import {
 import { useToggle } from "@mantine/hooks";
 import { MdSearch, MdChevronLeft, MdChevronRight } from "react-icons/md";
 import { SlLogout } from "react-icons/sl";
-import { FaBookMedical } from "react-icons/fa";
+import { FaBookMedical, FaComment } from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
 import { LinksGroup } from "./NavbarLinksGroup";
 
@@ -39,7 +39,12 @@ const navbarItems = [
     label: "Bitácora",
     icon: FaBookMedical,
     rol: FISIOTERAPEUTA,
-    to: "terapeuta/bitacora"
+    to: "terapeuta/bitacora",
+  },
+  {
+    label: "Chat",
+    icon: FaComment,
+    to: "/app/chat",
   },
 ];
 
@@ -50,8 +55,7 @@ const useStyles = createStyles((theme) => ({
     paddingBottom: 0,
     maxHeight: "100vh",
     minHeight: "100vh",
-    transition: "width 0.3s, flex-basis 0.3s"
-
+    transition: "width 0.3s, flex-basis 0.3s",
   },
   buttonContainer: {
     position: "relative",
@@ -63,7 +67,7 @@ const useStyles = createStyles((theme) => ({
     right: 0,
     padding: "0",
     transform: "translate(100%, 0)",
-    zIndex: 100
+    zIndex: 100,
   },
   hiddenButton: {
     // right: -12,
@@ -76,7 +80,6 @@ const useStyles = createStyles((theme) => ({
     padding: "0 !important",
     minWidth: "0 !important",
     overflow: "hidden",
-
   },
   box: {},
   boxTop: {
@@ -141,7 +144,7 @@ export default function BarraNavegacion() {
   const [width, setWidth] = useState(280);
   const [value, toggle] = useToggle();
   const usuario = useSelector(selectUsuario);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const links = navbarItems.map((item) =>
     item.rol === usuario.rol || item.rol === undefined ? (
       <LinksGroup {...item} key={item.label} />
@@ -193,7 +196,7 @@ export default function BarraNavegacion() {
             image={usuario.foto_perfil}
             name={usuario.nombre}
             email={capitalizeWord(usuario.rol)}
-            onClick={()=>navigate("/app/perfil")}
+            onClick={() => navigate("/app/perfil")}
           />
           <ButtonLogout Child={<LinksGroup icon={SlLogout} label="Salir" />} />
         </Navbar.Section>

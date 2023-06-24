@@ -1,6 +1,7 @@
 import { createStyles } from "@mantine/core";
 import { formatearFecha } from "../../utils/fechas";
 import ImagenAvatar from "../ImagenAvatar";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
   filaConCitaHoy: {
@@ -9,7 +10,7 @@ const useStyles = createStyles((theme) => ({
   filaRegular: {
     // paddingTop: `${theme.spacing.xl} !important`,
     // paddingBottom: `${theme.spacing.xl} !important`,
-    
+
     height: "5em",
   },
   avatarObject: {
@@ -18,6 +19,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 export default function PacienteFila({ paciente }) {
+  const navigate = useNavigate();
   const {
     ultima_cita: [cita],
     has_cita_hoy,
@@ -26,7 +28,9 @@ export default function PacienteFila({ paciente }) {
   return (
     <tr
       onClick={() => {
-        alert(JSON.stringify(paciente));
+        // alert(JSON.stringify(paciente));
+        console.log({paciente});
+        navigate(`${paciente.id}`);
       }}
     >
       <td
