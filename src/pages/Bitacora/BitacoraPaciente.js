@@ -7,6 +7,7 @@ import GrupoNotas from "../../Components/Bitacora/GrupoNotas";
 import BitacoraPacientePlaceholder from "../../Components/Bitacora/BitacoraPacientePlaceholder";
 import Bitacora from "../../Components/Bitacora/Bitacora";
 import { useParams } from "react-router-dom";
+import { useListState } from "@mantine/hooks";
 
 export default function BitacoraPaciente() {
   const [notas, setNotas] = useState();
@@ -20,7 +21,7 @@ export default function BitacoraPaciente() {
       let notas = await axios.get(
         `/notas/terapeuta/${id}?id_paciente=${pacienteId}`
       );
-      setNotas(notas.data)
+      setNotas(notas.data);
     } catch (err) {
       console.log(err);
     }
@@ -31,7 +32,7 @@ export default function BitacoraPaciente() {
   }, []);
   return (
     <Container h="100vh" py="lg" fluid>
-      <Bitacora notas={notas} />
-    </Container >
+      <Bitacora notas={notas} setNotas={setNotas} />
+    </Container>
   );
 }

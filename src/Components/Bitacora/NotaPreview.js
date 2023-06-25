@@ -15,20 +15,36 @@ import {
   UnstyledButton,
   Menu,
   Affix,
+  Textarea,
+  TextInput,
 } from "@mantine/core";
 import {
+  FormatDate,
   FormatUTCDateTime,
   FormatUTCTime,
   formatearFecha,
 } from "../../utils/fechas";
 import { HiEllipsisVertical } from "react-icons/hi2";
-import React, { forwardRef, useRef, useState } from "react";
+import React, { forwardRef, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectUsuario } from "../../utils/usuarioHooks";
 import ImagenAvatar from "../ImagenAvatar";
 import { useSm } from "../../utils/mediaQueryHooks";
 import { modals } from "@mantine/modals";
 import { MdEdit, MdOutlineDelete } from "react-icons/md";
+import { useForm } from "@mantine/form";
+import { executeValidation } from "../../utils/isFormInvalid";
+import {
+  isLongitudMinima,
+  isRequiredValidation,
+} from "../../utils/inputValidation";
+import axios from "axios";
+import { showNotification } from "@mantine/notifications";
+import {
+  showErrorConexionNotification,
+  showNegativeFeedbackNotification,
+  showPositiveFeedbackNotification,
+} from "../../utils/notificationTemplate";
 
 const useStyles = createStyles((theme) => ({
   marcadorAutor: {
@@ -47,7 +63,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export default function NotaPreview({ nota }) {
+export default function NotaPreview({ nota, setNotas }) {
   const {
     terapeuta: { id },
   } = useSelector(selectUsuario);
@@ -57,6 +73,10 @@ export default function NotaPreview({ nota }) {
   const { usuario } = terapeuta_datos;
   const isAutor = id === cita.id_terapeuta;
   const sm = useSm();
+  const ref = useRef();
+  useEffect(() => {
+    ref.current.loadFotoPerfil();
+  }, [nota]);
   return (
     <>
       <Paper
@@ -69,7 +89,7 @@ export default function NotaPreview({ nota }) {
         px="sm"
         py="xs"
         onClick={({ stopPropagation }) => {
-          alert(JSON.stringify(nota));
+          // alert(JSON.stringify(nota));
           mostrarNotaCompleta(nota);
         }}
       >
@@ -84,7 +104,7 @@ export default function NotaPreview({ nota }) {
               <Title order={3}>{nota.titulo}</Title>
             </Flex>
 
-            {<MenuOpciones nota={nota} />}
+            {<MenuOpciones nota={nota} setNotas={setNotas} />}
           </Flex>
 
           <Container w="100%">
@@ -107,7 +127,7 @@ export default function NotaPreview({ nota }) {
           <Divider mb={0} />
 
           <Flex justify="space-between" align="center">
-            <ImagenAvatar image={usuario.foto_perfil} />
+            <ImagenAvatar image={usuario.foto_perfil} ref={ref} />
             <Title m={0} order={4} ta="end" style={{ flex: "1 1 auto" }}>
               {FormatUTCTime(nota.fecha_edicion)}
             </Title>
@@ -125,7 +145,7 @@ const Icono = forwardRef(({ ...others }, ref) => {
     </UnstyledButton>
   );
 });
-function MenuOpciones({ nota }) {
+function MenuOpciones({ nota, setNotas }) {
   const {
     terapeuta: { id },
   } = useSelector(selectUsuario);
@@ -136,13 +156,13 @@ function MenuOpciones({ nota }) {
   };
   const handleEditar = (event) => {
     event.stopPropagation();
-    alert("Editar");
-    mostrarNotaEditar(nota);
+    // alert("Editar");
+    mostrarNotaEditar(nota, setNotas);
   };
   const handleEliminar = (event) => {
     event.stopPropagation();
-    alert("Eliminar");
-    mostrarNotaEditar(nota);
+    // alert("Eliminar");
+    mostrarNotaEliminar(nota, setNotas);
   };
   return (
     isAutor && (
@@ -176,8 +196,16 @@ function mostrarNotaCompleta(nota) {
   });
 }
 
-function mostrarNotaEditar(nota) {}
-function mostrarNotaEliminar(nota) {}
+function mostrarNotaEditar(nota, setNotas) {
+  modals.open({
+    children: <NotaEditar nota={nota} setNotas={setNotas} />,
+  });
+}
+function mostrarNotaEliminar(nota, setNotas) {
+  modals.open({
+    children: <NotaEditar nota={nota} setNotas={setNotas} />,
+  });
+}
 
 function NotaCompleta({ nota }) {
   const {
@@ -240,6 +268,172 @@ function NotaCompleta({ nota }) {
   );
 }
 
+function addTop(nota, setNotas, grupoPrevio) {
+  setNotas((notas) => {
+    let notasNew = { ...notas };
+    let fecha = FormatDate(nota.fecha_edicion);
+    notasNew[grupoPrevio] = notasNew[grupoPrevio].filter(
+      (n) => n.id !== nota.id
+    );
+    notasNew[fecha].unshift(nota);
+    return notasNew;
+  });
+}
+function erase(nota, setNotas) {
+  setNotas((notas) => {
+    let notasNew = { ...notas };
+    let fecha = FormatDate(nota.fecha_edicion);
+    notasNew[fecha] = notasNew[fecha].filter((n) => n.id !== nota.id);
+    return notasNew;
+  });
+}
+
+function NotaEditar({ nota, setNotas }) {
+  const {
+    terapeuta: { id },
+  } = useSelector(selectUsuario);
+  const { cita } = nota;
+  const { terapeuta_datos } = cita;
+  const { usuario } = terapeuta_datos;
+  const [guardando, setIsGuardando] = useState(false);
+  const handleSubmit = async () => {
+    setIsGuardando(true);
+    let { id: idNota } = nota;
+    try {
+      let notaContent = form.values;
+      let { data: notaModificada } = await axios.patch("/notas", {
+        id: idNota,
+        id_terapeuta: id,
+        nota: notaContent,
+      });
+      // console.log({ notaModificada });
+      let grupoPrevio = FormatDate(nota.fecha_edicion);
+      addTop(notaModificada, setNotas, grupoPrevio);
+      showPositiveFeedbackNotification(
+        "Perfecto, se ha modificado la nota correctamente 😀"
+      );
+
+      modals.closeAll();
+    } catch (err) {
+      if (err) {
+        let {
+          response: { data },
+        } = err;
+        showNegativeFeedbackNotification(data);
+      }
+      console.log(err);
+    }
+    setIsGuardando(false);
+  };
+  const form = useForm({
+    initialValues: {
+      titulo: nota.titulo,
+      diagnostico: nota.diagnostico,
+      observaciones: nota.observaciones,
+      tratamiento: nota.tratamiento,
+      evolucion: nota.evolucion,
+      id_cita: cita.id,
+    },
+    validate: {
+      titulo: (value) =>
+        executeValidation(value, [
+          isRequiredValidation,
+          (value) => isLongitudMinima(value, 3, "caracteres"),
+        ]),
+      diagnostico: (value) =>
+        executeValidation(value, [
+          isRequiredValidation,
+          (value) => isLongitudMinima(value, 3, "caracteres"),
+        ]),
+      evolucion: (value) =>
+        executeValidation(value, [
+          isRequiredValidation,
+          (value) => isLongitudMinima(value, 3, "caracteres"),
+        ]),
+      observaciones: (value) =>
+        executeValidation(value, [
+          isRequiredValidation,
+          (value) => isLongitudMinima(value, 3, "caracteres"),
+        ]),
+      tratamiento: (value) =>
+        executeValidation(value, [
+          isRequiredValidation,
+          (value) => isLongitudMinima(value, 3, "caracteres"),
+        ]),
+    },
+
+    validateInputOnChange: true,
+    validateInputOnBlur: true,
+  });
+  return (
+    <>
+      <Stack pos="relative">
+        <TextInput
+          placeholder="Introduce el titulo"
+          {...form.getInputProps("titulo")}
+        />
+        <Flex align="center" gap="sm" w="100%">
+          <Box>
+            <ImagenAvatar image={usuario.foto_perfil} />
+          </Box>
+          <Text>
+            <Text span fw="bold">
+              Autor:{" "}
+            </Text>
+            {usuario.nombre}
+          </Text>
+        </Flex>
+        <Divider />
+        <Container w="100%">
+          <Stack spacing="xs" w="100%">
+            <Textarea
+              label={<LabelNota label="Diagnostico" />}
+              {...form.getInputProps("diagnostico")}
+            />
+            <Textarea
+              label={<LabelNota label="Observaciones" />}
+              {...form.getInputProps("observaciones")}
+            />
+            <Textarea
+              label={<LabelNota label="Tratamiento" />}
+              {...form.getInputProps("tratamiento")}
+            />
+            <Textarea
+              label={<LabelNota label="Evolución" />}
+              {...form.getInputProps("evolucion")}
+            />
+          </Stack>
+        </Container>
+        <Divider />
+        <Stack spacing={0}>
+          <NotaFechas nota={nota} />
+        </Stack>
+        <Divider />
+        <Flex w="100%" justify="end" gap="md">
+          <Button
+            onClick={() => {
+              modals.closeAll();
+            }}
+            variant="cerrar"
+          >
+            Cancelar
+          </Button>
+          <Button
+            disabled={!form.isValid() || !form.isDirty()}
+            onClick={() => {
+              handleSubmit();
+            }}
+            variant="guardar"
+            loading={guardando}
+          >
+            Guardar
+          </Button>
+        </Flex>
+      </Stack>
+    </>
+  );
+}
+
 function NotaFechas({ nota }) {
   let fechaCreacion = `${formatearFecha(
     nota.fecha_creacion
@@ -257,7 +451,7 @@ function NotaFechas({ nota }) {
       </Text>
       <Text c="dimmed" fz="xs">
         <Text span fw="bold">
-          Modificado: {" "}
+          Modificado:{" "}
         </Text>
         {fechaEdicion}
       </Text>
@@ -277,19 +471,22 @@ function NotaTitulo({ nota }) {
 function ContenidoCompleto({ label, contenido, ...props }) {
   return (
     <Text {...props}>
-      <Text span fw="bold" c="gray">
-        {label}:
-      </Text>
+      <LabelNota label={label} />
       <Text>{contenido}</Text>
+    </Text>
+  );
+}
+function LabelNota({ label }) {
+  return (
+    <Text span fw="bold" c="gray">
+      {label}:
     </Text>
   );
 }
 function ContenidoPreview({ label, contenido }) {
   return (
     <Text lineClamp={2}>
-      <Text span fw="bold" c="gray">
-        {label}:
-      </Text>
+      <LabelNota label={label} />
       <Text>{contenido}</Text>
     </Text>
   );

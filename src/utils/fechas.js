@@ -65,9 +65,15 @@ export function FormatUTCTime(date) {
 export function FormatUTCDate(date) {
   let d = new Date(date);
   let formateDate = Intl.DateTimeFormat("es-MX", {
-    timeStyle: "medium",
+    dateStyle: "medium",
     hourCycle: "h23",
     timeZone: "UTC",
   }).format(d);
   return formateDate;
+}
+export function FormatDate(date) {
+  let fecha = new Date(date);
+  return `${fecha.getUTCFullYear()}-${(fecha.getUTCMonth() + 1)
+    .toString()
+    .padStart(2, "0")}-${fecha.getUTCDate().toString().padStart(2, "0")}`;
 }
