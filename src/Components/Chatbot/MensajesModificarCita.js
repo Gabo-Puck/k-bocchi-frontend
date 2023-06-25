@@ -1,7 +1,8 @@
 import { List, Text } from "@mantine/core";
 import BotMensaje from "./BotMensaje";
 import NodoPregunta from "../../utils/Chatbot/NodoPregunta";
-import { FormatUTCDateTime } from "../Comentario";
+import { FormatUTCDateTime } from "../../utils/fechas";
+
 
 export function MensajeElegirParametro() {
   const { terapeuta } = NodoPregunta.datos;

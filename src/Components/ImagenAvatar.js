@@ -18,6 +18,7 @@ const ImagenAvatar = React.forwardRef(
     },
     refParent
   ) => {
+  
     const [file, setFile] = useState();
     // const { classes, cx } = useStyles();
     async function loadFotoPerfil() {
@@ -51,8 +52,8 @@ const ImagenAvatar = React.forwardRef(
       <>
         {file === undefined ? (
           <Skeleton
-            height={height}
-            width={width}
+            height={height||"3em"}
+            width={width||"3em"}
             mx="auto"
             radius="50%"
             animate={true}

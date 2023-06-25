@@ -20,15 +20,17 @@ export default function BitacoraPaciente() {
       let notas = await axios.get(
         `/notas/terapeuta/${id}?id_paciente=${pacienteId}`
       );
+      setNotas(notas.data)
     } catch (err) {
       console.log(err);
     }
   }
+
   useEffect(() => {
     fetchNotas();
   }, []);
   return (
-    <Container h="100vh" my="lg" fluid>
+    <Container h="100vh" py="lg" fluid>
       <Bitacora notas={notas} />
     </Container >
   );

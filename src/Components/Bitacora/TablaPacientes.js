@@ -19,7 +19,7 @@ export default function TablaPacientes({ pacientes }) {
         fontSize="md"
         withBorder
         highlightOnHover
-        withColumnBorders
+        // withColumnBorders
         pos="relative"
       >
         <thead>

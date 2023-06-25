@@ -42,3 +42,32 @@ export function formatearFecha(fecha) {
     return fechaComparar.toLocaleDateString(undefined, opciones);
   }
 }
+
+export function FormatUTCDateTime(date) {
+  let dt = new Date(date);
+  let formatDateTime = Intl.DateTimeFormat("es-MX", {
+    dateStyle: "medium",
+    timeStyle: "medium",
+    hourCycle: "h23",
+    timeZone: "UTC",
+  }).format(dt);
+  return formatDateTime;
+}
+export function FormatUTCTime(date) {
+  let t = new Date(date);
+  let formatTime = Intl.DateTimeFormat("es-MX", {
+    timeStyle: "medium",
+    hourCycle: "h23",
+    timeZone: "UTC",
+  }).format(t);
+  return formatTime;
+}
+export function FormatUTCDate(date) {
+  let d = new Date(date);
+  let formateDate = Intl.DateTimeFormat("es-MX", {
+    timeStyle: "medium",
+    hourCycle: "h23",
+    timeZone: "UTC",
+  }).format(d);
+  return formateDate;
+}

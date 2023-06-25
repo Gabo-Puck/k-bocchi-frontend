@@ -16,6 +16,7 @@ import {
   rem,
 } from "@mantine/core";
 import { Resena } from "./Resena";
+import { FormatUTCDateTime } from "../utils/fechas";
 
 const useStyles = createStyles((theme) => ({
   comment: {
@@ -62,16 +63,4 @@ export default function Comentario({ comentario }) {
   );
 }
 
-export function FormatUTCDateTime(date) {
-  
-  let date_comentario = new Date(date);
-  
-  let formatDay = Intl.DateTimeFormat("es-MX", {
-    dateStyle: "medium",
-    timeStyle: "medium",
-    hourCycle: "h23",
-    timeZone: "UTC",
-  }).format(date_comentario);
-  return formatDay;
-}
 

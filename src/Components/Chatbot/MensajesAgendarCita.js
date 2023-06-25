@@ -6,9 +6,9 @@ import {
   PreguntaSeleccionarDomicilio,
   seleccionarUbicacion,
 } from "../../utils/Chatbot/Preguntas/PreguntaSeleccionarDomicilio";
-import { FormatUTCDateTime } from "../Comentario";
 import BotMensaje from "./BotMensaje";
 import { capitalizeWord } from "../../utils/capitalizeWord";
+import { FormatUTCDateTime } from "../../utils/fechas";
 
 export function MensajeBienvenidaAgendar() {
   return (

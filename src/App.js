@@ -78,6 +78,15 @@ function App() {
                   }),
                 },
               }),
+              cerrar: (theme) => ({
+                root: {
+                  backgroundColor: theme.colors["cyan-opaque"][7],
+                  color: theme.white,
+                  ...theme.fn.hover({
+                    backgroundColor: theme.colors["cyan-opaque"][9],
+                  }),
+                },
+              }),
             },
           },
           Checkbox: {
