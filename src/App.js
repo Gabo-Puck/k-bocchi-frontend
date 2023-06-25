@@ -87,6 +87,15 @@ function App() {
                   }),
                 },
               }),
+              danger: (theme) => ({
+                root: {
+                  backgroundColor: theme.colors["red"][6],
+                  color: theme.white,
+                  ...theme.fn.hover({
+                    backgroundColor: theme.colors["red"][7],
+                  }),
+                },
+              }),
             },
           },
           Checkbox: {
@@ -170,7 +179,7 @@ function App() {
             "#00E782",
             "#00DA7B",
           ],
-          "blue-calmer":[
+          "blue-calmer": [
             "#FDFDFF",
             "#EEF4FF",
             "#DFEBFF",
@@ -181,8 +190,21 @@ function App() {
             "#9DC1FF",
             "#90BAFF",
             "#84B2FF",
-            "#79ABFF"
-          ]
+            "#79ABFF",
+          ],
+          "green-calm": [
+            "#F3FFFA",
+            "#E0FFF3",
+            "#CEFFEC",
+            "#BCFFE5",
+            "#ABFFDE",
+            "#9AFFD7",
+            "#8AFFD1",
+            "#7AFFCB",
+            "#6BFFC5",
+            "#5CFFBF",
+            "#4EFFBA",
+          ],
         },
       }}
     >
@@ -320,8 +342,8 @@ function App() {
                     element={<PrivateRoutes authRol={[FISIOTERAPEUTA]} />}
                   >
                     <Route path="bitacora">
-                      <Route index  element={<BitacoraGeneral/>}/>
-                      <Route path=":id" element={<BitacoraPaciente/>}/>
+                      <Route index element={<BitacoraGeneral />} />
+                      <Route path=":id" element={<BitacoraPaciente />} />
                     </Route>
                   </Route>
                 </Route>

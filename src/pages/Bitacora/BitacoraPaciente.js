@@ -2,12 +2,10 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { selectUsuario } from "../../utils/usuarioHooks";
 import { useEffect, useState } from "react";
-import { Container, Flex } from "@mantine/core";
-import GrupoNotas from "../../Components/Bitacora/GrupoNotas";
-import BitacoraPacientePlaceholder from "../../Components/Bitacora/BitacoraPacientePlaceholder";
+import { Container } from "@mantine/core";
 import Bitacora from "../../Components/Bitacora/Bitacora";
 import { useParams } from "react-router-dom";
-import { useListState } from "@mantine/hooks";
+import { FormatDate, formatearFecha } from "../../utils/fechas";
 
 export default function BitacoraPaciente() {
   const [notas, setNotas] = useState();
@@ -18,10 +16,20 @@ export default function BitacoraPaciente() {
       terapeuta: { id },
     } = usuario;
     try {
-      let notas = await axios.get(
+      let { data: notas } = await axios.get(
         `/notas/terapeuta/${id}?id_paciente=${pacienteId}`
       );
-      setNotas(notas.data);
+      let keys = Object.keys(notas);
+      //Checamos si en la respuesta existe una propiedad con la fecha de hoy
+      if (!keys.find((k) => formatearFecha(k) === "Hoy")) {
+        notas[FormatDate()] = [];
+        notas = {
+          [FormatDate()]: [],
+          ...notas,
+        };
+      }
+      console.log({ notas });
+      setNotas(notas);
     } catch (err) {
       console.log(err);
     }
@@ -32,7 +40,7 @@ export default function BitacoraPaciente() {
   }, []);
   return (
     <Container h="100vh" py="lg" fluid>
-      <Bitacora notas={notas} setNotas={setNotas} />
+      <Bitacora notas={notas} setNotas={setNotas} pacienteId={pacienteId} />
     </Container>
   );
 }
