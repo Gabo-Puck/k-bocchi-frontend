@@ -55,6 +55,9 @@ function App() {
       withGlobalStyles
       withNormalizeCSS
       theme={{
+        breakpoints:{
+          xml: "88em"
+        },
         globalStyles: (theme) => ({
           body: {
             backgroundColor: theme.colors.background,

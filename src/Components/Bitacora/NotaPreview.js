@@ -53,9 +53,22 @@ export default function NotaPreview({ nota, setNotas, pacienteId }) {
     <>
       <Paper
         pos="relative"
-        
-        miw="35%"
-        maw={!sm ? "100%" : "44%"}
+        w={{
+          xl:"14%",
+          xml:"19%",
+          lg:"24%",
+          md:"30%",
+          sm:"46%",
+          xs:"100%"
+        }}
+        miw={{
+          xl:"14%",
+          xml:"19%",
+          lg:"24%",
+          md:"30%",
+          sm:"46%",
+          xs:"100%"
+        }}
         shadow="md"
         withBorder
         px="sm"

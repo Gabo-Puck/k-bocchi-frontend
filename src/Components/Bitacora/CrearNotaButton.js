@@ -8,6 +8,7 @@ import {
 } from "@mantine/core";
 import { AiOutlineFileAdd } from "react-icons/ai";
 import { mostrarNotaCrear } from "./MostrarNotasModals";
+import { useSm } from "../../utils/mediaQueryHooks";
 const useStyles = createStyles((theme) => ({
   botonAgregarNota: {
     padding: theme.spacing.lg,
@@ -21,6 +22,8 @@ const useStyles = createStyles((theme) => ({
 export default function CrearNotaButton({ setNotas,pacienteId }) {
   const theme = useMantineTheme();
   const { classes, cx } = useStyles();
+  const sm = useSm();
+
   return (
     <UnstyledButton
       component={Stack}
@@ -29,6 +32,22 @@ export default function CrearNotaButton({ setNotas,pacienteId }) {
       className={classes.botonAgregarNota}
       onClick={() => {
         mostrarNotaCrear(setNotas,pacienteId);
+      }}
+      w={{
+        xl:"14%",
+        xml:"19%",
+        lg:"24%",
+        md:"30%",
+        sm:"46%",
+        xs:"100%"
+      }}
+      miw={{
+        xl:"14%",
+        xml:"19%",
+        lg:"24%",
+        md:"30%",
+        sm:"46%",
+        xs:"100%"
       }}
     >
       <AiOutlineFileAdd size="2.4em" />

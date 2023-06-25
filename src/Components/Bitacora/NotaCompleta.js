@@ -31,7 +31,7 @@ export default function NotaCompleta({ nota }) {
             </Text>
           </Flex>
           <Divider />
-          <Container>
+          <Container w="100%">
             <Text component={Stack} spacing="xs">
               <ContenidoCompleto
                 label="Diagnostico"
