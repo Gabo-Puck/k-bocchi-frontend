@@ -82,6 +82,15 @@ function App() {
                   }),
                 },
               }),
+              siguiente: (theme) => ({
+                root: {
+                  backgroundColor: theme.colors["green-nature"][8],
+                  color: theme.white,
+                  ...theme.fn.hover({
+                    backgroundColor: theme.colors["green-nature"][9],
+                  }),
+                },
+              }),
               configuracion: (theme) => ({
                 root: {
                   backgroundColor: theme.colors["blue-empire"][4],

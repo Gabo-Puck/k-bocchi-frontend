@@ -9,9 +9,13 @@ export default function BitacoraCargada({ crearGrupos, notas, controles }) {
   return (
     <Stack w="100%" h="100%">
       {controles}
-      <Stack w="100%" h="100%" spacing="5em">
-        {grupos}
-      </Stack>
+      {grupos.length === 0 ? (
+        <div>Vacio</div>
+      ) : (
+        <Stack w="100%" h="100%" spacing="5em">
+          {grupos}
+        </Stack>
+      )}
     </Stack>
   );
 }
