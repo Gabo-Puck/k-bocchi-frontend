@@ -43,6 +43,7 @@ import { selectUsuario } from "./utils/usuarioHooks";
 import axios from "axios";
 import { USUARIO_AUTORIZADO } from "./Actions/actionsUsuario";
 import BitacoraGeneral from "./pages/Bitacora/BitacoraGeneral";
+import BitacoraTerapeuta from "./pages/Bitacora/BitacoraTerapeuta";
 import BitacoraPaciente from "./pages/Bitacora/BitacoraPaciente";
 
 function App() {
@@ -78,6 +79,15 @@ function App() {
                   color: theme.white,
                   ...theme.fn.hover({
                     backgroundColor: theme.colors["blue-calm"][7],
+                  }),
+                },
+              }),
+              configuracion: (theme) => ({
+                root: {
+                  backgroundColor: theme.colors["blue-empire"][4],
+                  color: theme.white,
+                  ...theme.fn.hover({
+                    backgroundColor: theme.colors["blue-empire"][5],
                   }),
                 },
               }),
@@ -338,6 +348,9 @@ function App() {
                     element={<PrivateRoutes authRol={[PACIENTE]} />}
                   >
                     <Route path="chatbot" element={<ChatBot />} />
+                    <Route path="bitacora">
+                      <Route index element={<BitacoraPaciente />} />
+                    </Route>
                   </Route>
                   {/* FISIOTERAPEUTA */}
                   <Route
@@ -346,7 +359,7 @@ function App() {
                   >
                     <Route path="bitacora">
                       <Route index element={<BitacoraGeneral />} />
-                      <Route path=":id" element={<BitacoraPaciente />} />
+                      <Route path=":id" element={<BitacoraTerapeuta />} />
                     </Route>
                   </Route>
                 </Route>

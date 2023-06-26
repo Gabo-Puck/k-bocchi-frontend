@@ -1,15 +1,16 @@
 import { Box, Divider, Flex, Group, Stack, Title } from "@mantine/core";
 import NotaPreview from "./NotaPreview";
 import CrearNotaButton from "./CrearNotaButton";
+import NotaPreviewTerapeuta from "./NotaPreviewTerapeuta";
 
-export default function GrupoNotas({ grupo, header, setNotas, pacienteId }) {
+export default function GrupoNotas({
+  grupo,
+  header,
+  crearNotas
+}) {
   if (grupo.length === 0 && header != "Hoy") return <></>;
-  let notas;
-  if (header === "Hoy") {
-    notas = crearNotasHoy(grupo, setNotas, pacienteId);
-  } else {
-    notas = crearNotas(grupo, setNotas, pacienteId);
-  }
+  let notas = crearNotas(header,grupo);
+  
   return (
     <Stack w="100%">
       <Title order={2} p={0}>
@@ -22,15 +23,4 @@ export default function GrupoNotas({ grupo, header, setNotas, pacienteId }) {
     </Stack>
   );
 }
-function crearNotas(notas, setNotas, pacienteId) {
-  return notas.map((nota) => (
-    <NotaPreview nota={nota} setNotas={setNotas} pacienteId={pacienteId} />
-  ));
-}
-function crearNotasHoy(notas, setNotas, pacienteId) {
-  let notasCreadas = notas.map((nota) => (
-    <NotaPreview nota={nota} setNotas={setNotas} pacienteId={pacienteId} />
-  ));
-  notasCreadas.push(<CrearNotaButton setNotas={setNotas} pacienteId={pacienteId} />);
-  return notasCreadas;
-}
+

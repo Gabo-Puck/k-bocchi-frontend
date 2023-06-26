@@ -17,81 +17,58 @@ import { useSm } from "../../utils/mediaQueryHooks";
 import { MenuOpciones } from "./MenuOpciones";
 import { mostrarNotaCompleta } from "./MostrarNotasModals";
 import LabelNota from "./LabelNota";
+import NotaPreviewPaciente from "./NotaPreviewPaciente";
 
-const useStyles = createStyles((theme) => ({
-  marcadorAutor: {
-    backgroundColor: theme.colors["cyan-opaque"],
-  },
-  marcadorNueva: {
-    backgroundColor: theme.colors["green-nature"],
-  },
-  marcadorRegular: {
-    backgroundColor: theme.colors["blue-empire"][4],
-  },
-  marcador: {
-    borderRadius: "50%",
-    height: "0.8em",
-    width: "0.8em",
-  },
-}));
-
-export default function NotaPreview({ nota, setNotas, pacienteId }) {
-  const {
-    terapeuta: { id },
-  } = useSelector(selectUsuario);
-  const { classes, cx } = useStyles();
+export default function NotaPreview({
+  nota,
+  setNotas,
+  pacienteId,
+  encabezado,
+  onClick = (nota, setNotas) => {},
+}) {
   const { cita } = nota;
   const { terapeuta_datos } = cita;
   const { usuario } = terapeuta_datos;
-  const isAutor = id === cita.id_terapeuta;
-  const sm = useSm();
   const ref = useRef();
   useEffect(() => {
     ref.current.loadFotoPerfil();
   }, [nota]);
   return (
-    <>
+    <Container
+      p={0}
+      m={0}
+      w={{
+        xl: "14%",
+        xml: "19%",
+        lg: "24%",
+        md: "30%",
+        sm: "46%",
+        xs: "100%",
+      }}
+      miw={{
+        xl: "14%",
+        xml: "19%",
+        lg: "24%",
+        md: "30%",
+        sm: "46%",
+        xs: "100%",
+      }}
+    >
       <Paper
         pos="relative"
-        w={{
-          xl:"14%",
-          xml:"19%",
-          lg:"24%",
-          md:"30%",
-          sm:"46%",
-          xs:"100%"
-        }}
-        miw={{
-          xl:"14%",
-          xml:"19%",
-          lg:"24%",
-          md:"30%",
-          sm:"46%",
-          xs:"100%"
-        }}
+        w="100%"
         shadow="md"
         withBorder
         px="sm"
         py="xs"
         onClick={({ stopPropagation }) => {
           // alert(JSON.stringify(nota));
-          mostrarNotaCompleta(nota,setNotas);
+          onClick(nota, setNotas);
+          // mostrarNotaCompleta(nota, setNotas);
         }}
       >
         <Stack spacing="sm">
-          <Flex align="center" justify="space-between">
-            <Flex align="center" gap="0.3em" w="100%">
-              <Marcador
-                className={
-                  isAutor ? classes.marcadorAutor : classes.marcadorRegular
-                }
-              />
-              <Title order={3}>{nota.titulo}</Title>
-            </Flex>
-
-            {<MenuOpciones nota={nota} setNotas={setNotas} />}
-          </Flex>
-
+          {encabezado}
           <Container w="100%">
             <Text component={Stack} spacing="xs">
               <ContenidoPreview
@@ -119,23 +96,19 @@ export default function NotaPreview({ nota, setNotas, pacienteId }) {
           </Flex>
         </Stack>
       </Paper>
-    </>
+    </Container>
   );
 }
 
 function ContenidoPreview({ label, contenido }) {
   return (
-    <Text lineClamp={2}>
+    <Text style={{ wordWrap: "break-word", width: "90%" }}>
       <LabelNota label={label} />
-      <Text>{contenido}</Text>
+      <Text lineClamp={2}>{contenido}</Text>
     </Text>
   );
 }
 
-function Marcador({ className }) {
-  const { classes, cx } = useStyles();
-  return <div className={cx(classes.marcador, className)}></div>;
-}
 // function Preview({nota}){
 //     return ()
 // }

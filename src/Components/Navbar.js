@@ -42,6 +42,12 @@ const navbarItems = [
     to: "terapeuta/bitacora",
   },
   {
+    label: "Bitácora",
+    icon: FaBookMedical,
+    rol: PACIENTE,
+    to: "paciente/bitacora",
+  },
+  {
     label: "Chat",
     icon: FaComment,
     to: "/app/chat",

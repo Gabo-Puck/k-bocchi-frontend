@@ -1,13 +1,10 @@
-import BitacoraPaciente from "../../pages/Bitacora/BitacoraPaciente";
-import BitacoraPacienteCargada from "./BitacoraPacienteCargada";
-import BitacoraPacientePlaceholder from "./BitacoraPacientePlaceholder";
+import BitacoraCargada from "./BitacoraCargada";
+import BitacoraPlaceholder from "./BitacoraPlaceholder";
 
-export default function Bitacora({
-  notas,
-  setNotas,
-  pacienteId,
-}) {
-  if (notas === undefined) return <BitacoraPacientePlaceholder />;
-  if (notas.length === 0) return <div>Vacío</div>;
-  return <BitacoraPacienteCargada notas={notas} setNotas={setNotas} pacienteId={pacienteId}  />;
+//Este componente recibe las notas de la bitacora de un paciente
+//Y se enecarga de los estados de carga, vacío y mostrado de bitacora
+export default function Bitacora({ notas, crearGrupos,controles }) {
+  if (notas === undefined) return <BitacoraPlaceholder />;
+  if (Object.keys(notas).length === 0) return <div>Vacío</div>;
+  return <BitacoraCargada crearGrupos={crearGrupos} notas={notas} controles={controles} />;
 }

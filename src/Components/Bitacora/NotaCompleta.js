@@ -1,24 +1,21 @@
 import { useSelector } from "react-redux";
 import { selectUsuario } from "../../utils/usuarioHooks";
 import { Box, Button, Container, Divider, Flex, Stack, Text } from "@mantine/core";
-import NotaTitulo from "./NotaTitulo";
+import NotaTituloTerapeuta from "./NotaTituloTerapeuta";
 import ImagenAvatar from "../ImagenAvatar";
 import ContenidoCompleto from "./ContenidoCompleto";
 import NotaFechas from "./NotaFechas";
 import { modals } from "@mantine/modals";
 
-export default function NotaCompleta({ nota,setNotas }) {
-    const {
-      terapeuta: { id },
-    } = useSelector(selectUsuario);
+export default function NotaCompleta({ nota,setNotas,encabezado }) {
     const { cita } = nota;
     const { terapeuta_datos } = cita;
     const { usuario } = terapeuta_datos;
-  
+
     return (
       <>
         <Stack pos="relative">
-          <NotaTitulo nota={nota} setNotas={setNotas}/>
+          {encabezado}
           <Flex align="center" gap="sm">
             <Box>
               <ImagenAvatar image={usuario.foto_perfil} />

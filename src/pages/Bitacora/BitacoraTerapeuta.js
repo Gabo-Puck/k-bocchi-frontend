@@ -9,17 +9,29 @@ import { FormatDate, formatearFecha } from "../../utils/fechas";
 import GrupoNotas from "../../Components/Bitacora/GrupoNotas";
 import NotaPreviewTerapeuta from "../../Components/Bitacora/NotaPreviewTerapeuta";
 import CrearNotaButton from "../../Components/Bitacora/CrearNotaButton";
-import NotaPreviewPaciente from "../../Components/Bitacora/NotaPreviewPaciente";
-import ControlesBitacoraPaciente from "../../Components/Bitacora/ControlesBitacoraPaciente";
 
-export default function BitacoraPaciente() {
+
+export default function BitacoraTerapeuta() {
   const [notas, setNotas] = useState();
-  const {
-    paciente: { id: id_paciente },
-  } = useSelector(selectUsuario);
+  const { id: pacienteId } = useParams();
+  const usuario = useSelector(selectUsuario);
   async function fetchNotas() {
+    let {
+      terapeuta: { id },
+    } = usuario;
     try {
-      let { data: notas } = await axios.get(`/notas/paciente/${id_paciente}`);
+      let { data: notas } = await axios.get(
+        `/notas/terapeuta/${id}?id_paciente=${pacienteId}`
+      );
+      let keys = Object.keys(notas);
+      //Checamos si en la respuesta existe una propiedad con la fecha de hoy
+      if (!keys.find((k) => formatearFecha(k) === "Hoy")) {
+        notas[FormatDate()] = [];
+        notas = {
+          [FormatDate()]: [],
+          ...notas,
+        };
+      }
       console.log({ notas });
       setNotas(notas);
     } catch (err) {
@@ -34,7 +46,6 @@ export default function BitacoraPaciente() {
     <Container h="100vh" py="lg" fluid>
       <Bitacora
         notas={notas}
-        controles={<ControlesBitacoraPaciente/>}
         crearGrupos={(notas) => {
           return Object.keys(notas).map((header) => (
             <GrupoNotas
@@ -51,12 +62,17 @@ export default function BitacoraPaciente() {
   //Esta función permite crear las notas de preview para la bitacora de terapeuta
   function crearNotas(encabezado, grupo) {
     let notasCreadas = grupo.map((nota) => (
-      <NotaPreviewPaciente
+      <NotaPreviewTerapeuta
         nota={nota}
         setNotas={setNotas}
-        pacienteId={id_paciente}
+        pacienteId={pacienteId}
       />
     ));
+    if (encabezado === "Hoy") {
+      notasCreadas.push(
+        <CrearNotaButton setNotas={setNotas} pacienteId={pacienteId} />
+      );
+    }
     return notasCreadas;
   }
 }

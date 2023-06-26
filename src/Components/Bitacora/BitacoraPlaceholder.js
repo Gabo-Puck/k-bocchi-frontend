@@ -1,6 +1,6 @@
 import { Container, Flex, Group, Paper, Skeleton, Stack } from "@mantine/core";
 
-export default function BitacoraPacientePlaceholder() {
+export default function BitacoraPlaceholder() {
   const grupos = crearGrupos(2, 6);
   return (
     <Stack w="100%" h="100%" spacing="5em">
