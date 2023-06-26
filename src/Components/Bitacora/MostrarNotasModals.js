@@ -5,9 +5,9 @@ import NotaCrear from "./NotaCrear";
 import { ScrollArea, Title } from "@mantine/core";
 import NotaEliminar from "./NotaEliminar";
 
-export function mostrarNotaCompleta(nota) {
+export function mostrarNotaCompleta(nota,setNotas) {
   modals.open({
-    children: <NotaCompleta nota={nota} />,
+    children: <NotaCompleta nota={nota} setNotas={setNotas}/>,
     withCloseButton: false,
   });
 }

@@ -75,7 +75,7 @@ export default function NotaPreview({ nota, setNotas, pacienteId }) {
         py="xs"
         onClick={({ stopPropagation }) => {
           // alert(JSON.stringify(nota));
-          mostrarNotaCompleta(nota);
+          mostrarNotaCompleta(nota,setNotas);
         }}
       >
         <Stack spacing="sm">

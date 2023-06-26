@@ -7,7 +7,7 @@ import ContenidoCompleto from "./ContenidoCompleto";
 import NotaFechas from "./NotaFechas";
 import { modals } from "@mantine/modals";
 
-export default function NotaCompleta({ nota }) {
+export default function NotaCompleta({ nota,setNotas }) {
     const {
       terapeuta: { id },
     } = useSelector(selectUsuario);
@@ -18,7 +18,7 @@ export default function NotaCompleta({ nota }) {
     return (
       <>
         <Stack pos="relative">
-          <NotaTitulo nota={nota} />
+          <NotaTitulo nota={nota} setNotas={setNotas}/>
           <Flex align="center" gap="sm">
             <Box>
               <ImagenAvatar image={usuario.foto_perfil} />
