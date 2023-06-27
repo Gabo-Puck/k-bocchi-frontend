@@ -37,25 +37,25 @@ export default function NotaPreview({
     <Container
       p={0}
       m={0}
+      className="ayuda"
       w={{
-        xl: "14%",
-        xml: "19%",
-        lg: "24%",
-        md: "30%",
-        sm: "46%",
-        xs: "100%",
+        xl: "14% !important",
+        xml: "19% !important",
+        lg: "24% !important",
+        md: "30% !important",
+        sm: "46% !important",
+        xsm: "100% !important",
       }}
       miw={{
-        xl: "14%",
-        xml: "19%",
-        lg: "24%",
-        md: "30%",
-        sm: "46%",
-        xs: "100%",
+        xl: "14% !important",
+        xml: "19% !important",
+        lg: "24% !important",
+        md: "30% !important",
+        sm: "46% !important",
+        xsm: "100% !important",
       }}
     >
       <Paper
-        pos="relative"
         w="100%"
         shadow="md"
         withBorder

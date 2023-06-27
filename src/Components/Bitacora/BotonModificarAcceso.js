@@ -19,7 +19,7 @@ import { useSelector } from "react-redux";
 import { selectUsuario } from "../../utils/usuarioHooks";
 import { showNegativeFeedbackNotification } from "../../utils/notificationTemplate";
 import { ImInfo } from "react-icons/im";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ImagenAvatar from "../ImagenAvatar";
 const useStyles = createStyles((theme) => ({
   seleccionado: {
@@ -54,11 +54,17 @@ function mostrarTerapeutas() {
     children: <CuerpoModalAcceso />,
     size: "md",
     centered: false,
+    withinPortal: true,
   });
 }
 function CuerpoModalAcceso() {
   const [seleccion, setSeleccion] = useState();
   const ref = useRef();
+  const navigate = useNavigate();
+  function handleClick() {
+    navigate(`/app/paciente/bitacora/modificar/acceso/${seleccion}`)
+    modals.closeAll();
+  }
   return (
     <>
       <Stack mah="70vh">
@@ -67,7 +73,7 @@ function CuerpoModalAcceso() {
         </Text>
         <SeleccionarTerapeuta setSeleccion={setSeleccion} />
         <Flex justify="end">
-          <Button variant="siguiente" disabled={seleccion === undefined}>
+          <Button variant="siguiente" disabled={seleccion === undefined} onClick={handleClick}>
             Modificar
           </Button>
         </Flex>

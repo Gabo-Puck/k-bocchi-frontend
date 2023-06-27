@@ -45,6 +45,7 @@ import { USUARIO_AUTORIZADO } from "./Actions/actionsUsuario";
 import BitacoraGeneral from "./pages/Bitacora/BitacoraGeneral";
 import BitacoraTerapeuta from "./pages/Bitacora/BitacoraTerapeuta";
 import BitacoraPaciente from "./pages/Bitacora/BitacoraPaciente";
+import BitacoraModificarAcceso from "./pages/Bitacora/BitacoraModificarAcceso";
 
 function App() {
   let usuario = useSelector(selectUsuario);
@@ -56,8 +57,9 @@ function App() {
       withGlobalStyles
       withNormalizeCSS
       theme={{
-        breakpoints:{
-          xml: "88em"
+        breakpoints: {
+          xml: "88em",
+          xsm: "2em",
         },
         globalStyles: (theme) => ({
           body: {
@@ -230,15 +232,15 @@ function App() {
         },
       }}
     >
-      <ModalsProvider
-        modalProps={{
-          centered: true,
-        }}
-      >
-        <Notifications />
-        <div className="App">
-          {/**Router es un componente que permite crear un enrutador para la aplicacion. Además soporta los controles de anterior y siguiente del navegador */}
-          <BrowserRouter>
+      <Notifications />
+      <div className="App">
+        {/**Router es un componente que permite crear un enrutador para la aplicacion. Además soporta los controles de anterior y siguiente del navegador */}
+        <BrowserRouter>
+          <ModalsProvider
+            modalProps={{
+              centered: true,
+            }}
+          >
             {/**Routes permite definir en donde se empezaran a definir las rutas de la aplicacion, asi como la ruta donde empezaran*/}
             <Routes>
               {/**Route es componente que permite asociar una ruta a un componente, de forma que cuando se este en esa ruta se mostrara dicho componente */}
@@ -359,6 +361,10 @@ function App() {
                     <Route path="chatbot" element={<ChatBot />} />
                     <Route path="bitacora">
                       <Route index element={<BitacoraPaciente />} />
+                      <Route
+                        path="modificar/acceso/:id"
+                        element={<BitacoraModificarAcceso />}
+                      />
                     </Route>
                   </Route>
                   {/* FISIOTERAPEUTA */}
@@ -382,9 +388,9 @@ function App() {
               />
               <Route path="*" element={<PaginaError />} />
             </Routes>
-          </BrowserRouter>
-        </div>
-      </ModalsProvider>
+          </ModalsProvider>
+        </BrowserRouter>
+      </div>
     </MantineProvider>
   );
 }
