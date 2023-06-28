@@ -43,20 +43,17 @@ export default function BitacoraModificarAcceso() {
       //       },
       //     ],
       //   });
-      let array = Object.keys(notasObtenidas).map((value) => [
-        ...notasObtenidas[value],
-      ]);
-      array = fusionarArreglos(...array);
-
-      let a = array
-        .filter(({ isCompartida }) => isCompartida)
-        .map(({ id }) => id);
+      // let array = Object.keys(notasObtenidas).map((value) => [
+      //   ...notasObtenidas[value],
+      // ]);
+      // array = fusionarArreglos(...array);
+      let array = notasObtenidas.map(({notas})=>notas).filter(({isCompartida})=>isCompartida).map(({id})=>({id}))
       setGrafoCompartir({
         id: id_paciente,
         terapeutas: [
           {
             id: id_terapeuta,
-            notas_compartidas: a.map((id) => ({ id })),
+            notas_compartidas: array,
           },
         ],
       });
@@ -85,9 +82,9 @@ export default function BitacoraModificarAcceso() {
           />
         }
         crearGrupos={(notas) => {
-          return Object.keys(notas).map((header) => (
+          return notas.map(({header,notas}) => (
             <GrupoNotas
-              grupo={notas[header]}
+              grupo={notas}
               header={formatearFecha(header)}
               crearNotas={crearNotas}
             />

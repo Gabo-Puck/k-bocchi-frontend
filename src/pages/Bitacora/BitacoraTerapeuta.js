@@ -23,14 +23,14 @@ export default function BitacoraTerapeuta() {
       let { data: notas } = await axios.get(
         `/notas/terapeuta/${id}?id_paciente=${pacienteId}`
       );
-      let keys = Object.keys(notas);
+      
       //Checamos si en la respuesta existe una propiedad con la fecha de hoy
-      if (!keys.find((k) => formatearFecha(k) === "Hoy")) {
-        notas[FormatDate()] = [];
-        notas = {
-          [FormatDate()]: [],
-          ...notas,
-        };
+      if (!notas.find(({header}) => formatearFecha(header) === "Hoy")) {
+        // notas[FormatDate()] = [];
+        notas.unshift({
+          header: FormatDate(),
+          notas:[]
+        })
       }
       console.log({ notas });
       setNotas(notas);
@@ -47,9 +47,9 @@ export default function BitacoraTerapeuta() {
       <Bitacora
         notas={notas}
         crearGrupos={(notas) => {
-          return Object.keys(notas).map((header) => (
+          return notas.map(({notas,header}) => (
             <GrupoNotas
-              grupo={notas[header]}
+              grupo={notas}
               header={formatearFecha(header)}
               crearNotas={crearNotas}
             />

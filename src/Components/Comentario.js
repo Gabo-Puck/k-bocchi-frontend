@@ -48,8 +48,13 @@ export default function Comentario({ comentario }) {
         <div>
           <Text fz="sm">{comentario.comentario_paciente.usuario.nombre}</Text>
           <Text fz="xs" c="dimmed">
-            {FormatUTCDateTime(comentario.fecha)}
+            Creado: {FormatUTCDateTime(comentario.fecha_creacion)}
           </Text>
+          {comentario.fecha_edicion && (
+            <Text fz="xs" c="dimmed">
+              Editado: {FormatUTCDateTime(comentario.fecha_edicion)}
+            </Text>
+          )}
           <Resena value={comentario.comentario_paciente.resenas[0].estrellas} />
         </div>
       </Group>
@@ -62,5 +67,3 @@ export default function Comentario({ comentario }) {
     </Paper>
   );
 }
-
-

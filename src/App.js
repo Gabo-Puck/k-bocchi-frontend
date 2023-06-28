@@ -84,6 +84,15 @@ function App() {
                   }),
                 },
               }),
+              seleccionar: (theme) => ({
+                root: {
+                  backgroundColor: theme.colors["blue-calm"][8],
+                  color: theme.white,
+                  ...theme.fn.hover({
+                    backgroundColor: theme.colors["blue-calm"][9],
+                  }),
+                },
+              }),
               siguiente: (theme) => ({
                 root: {
                   backgroundColor: theme.colors["green-nature"][8],

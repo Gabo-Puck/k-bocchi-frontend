@@ -25,6 +25,8 @@ import {
 } from "../../Components/TerapeutaResultado";
 import ListaComentarios from "../../Components/ListaComentarios";
 import { ResenaGeneral } from "../../Components/ResenaGeneral";
+import BotonAgregarComentario from "../../Components/Comentarios/BotonAgregarComentario";
+import ControlResena from "../../Components/Comentarios/ControlResena";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -59,13 +61,14 @@ export default function DetallesTerapeuta() {
   const [cargando, setCargando] = useState(true);
   const [encontrado, setEncontrado] = useState(false);
   const [terapeuta, setTerapeuta] = useState(null);
-  //
+  const [comentarios, setComentarios] = useState(null);
   const { classes, theme } = useStyles();
   const cargarDatos = async () => {
     setCargando(true);
     try {
       let { data } = await axios.get(`/usuarios/fisioterapeutas/${id}`);
       setTerapeuta(data);
+      setComentarios(data.comentarios);
       setEncontrado(true);
     } catch (err) {
       if (!err) {
@@ -86,9 +89,7 @@ export default function DetallesTerapeuta() {
     return <Title order={2}>No encontrado</Title>;
   }
   let promedio =
-    terapeuta.resenas.length === 0
-      ? null
-      : terapeuta.resenas[0].promedio;
+    terapeuta.resenas.length === 0 ? null : terapeuta.resenas[0].promedio;
   return (
     <>
       <Grid m={0} gutter="xl" w="100%" h="100vh">
@@ -164,8 +165,15 @@ export default function DetallesTerapeuta() {
             <Flex align="center">
               <Title order={3}>Comentarios</Title>
             </Flex>
+            <Flex>
+              <ControlResena id_terapeuta={id}/>
+              <BotonAgregarComentario
+                id_terapeuta={id}
+                setComentarios={setComentarios}
+              />
+            </Flex>
             <ScrollArea h="100%">
-              <ListaComentarios comentarios={terapeuta.comentarios} />
+              <ListaComentarios comentarios={comentarios} />
             </ScrollArea>
           </Stack>
         </Grid.Col>

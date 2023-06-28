@@ -36,9 +36,9 @@ export default function BitacoraPaciente() {
         notas={notas}
         controles={<ControlesBitacoraPaciente/>}
         crearGrupos={(notas) => {
-          return Object.keys(notas).map((header) => (
+          return notas.map(({notas,header}) => (
             <GrupoNotas
-              grupo={notas[header]}
+              grupo={notas}
               header={formatearFecha(header)}
               crearNotas={crearNotas}
             />
