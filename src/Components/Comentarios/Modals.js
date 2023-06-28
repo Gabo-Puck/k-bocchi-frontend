@@ -4,44 +4,68 @@ import CrearComentario from "./CrearComentario";
 import EditarComentario from "./EditarComentario";
 import CrearResena from "./CrearResena";
 import EditarResena from "./EditarResena";
-export const mostrarModalCrearComentario = ({
+export const mostrarModalCrearComentario = (
   setComentarios,
   id_terapeuta,
-}) => {
+  onClick,
+) => {
   modals.open({
     title: <Title order={3}>Añadir comentario</Title>,
     children: (
       <CrearComentario
         id_terapeuta={id_terapeuta}
         setComentarios={setComentarios}
+        onClick={onClick}
       />
     ),
   });
 };
-export const mostrarModalEditarcomentario = ({
-  setComentarios,
-  id_terapeuta,
-}) => {
+export const mostrarModalEditarcomentario = (
+  comentario,
+  onClick,
+) => {
   modals.open({
     title: <Title order={3}>Editar comentario</Title>,
     children: (
       <EditarComentario
-        id_terapeuta={id_terapeuta}
-        setComentarios={setComentarios}
+        comentario={comentario}
+        onClick={onClick}
       />
     ),
   });
 };
 
-export const mostrarModalCrearResena = ({ setResena, id_terapeuta }) => {
+export const mostrarModalCrearResena = (
+  id_terapeuta,
+  setResena,
+  onClick
+) => {
   modals.open({
     title: <Title order={3}>Agregar resena</Title>,
-    children: <CrearResena setResena={setResena} id_terapeuta={id_terapeuta} />,
+    children: (
+      <CrearResena
+        setResena={setResena}
+        id_terapeuta={id_terapeuta}
+        onClick={onClick}
+      />
+    ),
   });
 };
-export const mostrarModalEditarResena = ({resena, setResena, id_terapeuta }) => {
+export const mostrarModalEditarResena = (
+  resena,
+  setResena,
+  id_terapeuta,
+  onClick
+) => {
   modals.open({
     title: <Title order={3}>Editar resena</Title>,
-    children: <EditarResena resena={resena} setResena={setResena} id_terapeuta={id_terapeuta} />,
+    children: (
+      <EditarResena
+        resena={resena}
+        setResena={setResena}
+        id_terapeuta={id_terapeuta}
+        onClick={onClick}
+      />
+    ),
   });
 };

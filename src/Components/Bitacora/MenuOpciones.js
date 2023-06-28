@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { selectUsuario } from "../../utils/usuarioHooks";
 import { mostrarNotaEditar, mostrarNotaEliminar } from "./MostrarNotasModals";
 import { forwardRef } from "react";
+import { Icono } from "../Opciones";
 
 export function MenuOpciones({ nota, setNotas }) {
   const {
@@ -47,10 +48,4 @@ export function MenuOpciones({ nota, setNotas }) {
     )
   );
 }
-const Icono = forwardRef(({ ...others }, ref) => {
-  return (
-    <UnstyledButton ref={ref} {...others}>
-      <Group>{<HiEllipsisVertical size="1rem" />}</Group>
-    </UnstyledButton>
-  );
-});
+

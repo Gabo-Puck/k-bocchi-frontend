@@ -18,7 +18,7 @@ import {
 } from "@mantine/core";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   BadgeModalidadTrabajo,
   RangoPrecio,
@@ -27,6 +27,10 @@ import ListaComentarios from "../../Components/ListaComentarios";
 import { ResenaGeneral } from "../../Components/ResenaGeneral";
 import BotonAgregarComentario from "../../Components/Comentarios/BotonAgregarComentario";
 import ControlResena from "../../Components/Comentarios/ControlResena";
+import { set } from "react-hook-form";
+import { modals } from "@mantine/modals";
+import { useSelector } from "react-redux";
+import { selectUsuario } from "../../utils/usuarioHooks";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -62,9 +66,13 @@ export default function DetallesTerapeuta() {
   const [encontrado, setEncontrado] = useState(false);
   const [terapeuta, setTerapeuta] = useState(null);
   const [comentarios, setComentarios] = useState(null);
+  const [reload, setReload] = useState(true);
+  const navigate = useNavigate();
   const { classes, theme } = useStyles();
+  const usuario = useSelector(selectUsuario);
   const cargarDatos = async () => {
     setCargando(true);
+    setTerapeuta(undefined);
     try {
       let { data } = await axios.get(`/usuarios/fisioterapeutas/${id}`);
       setTerapeuta(data);
@@ -80,7 +88,7 @@ export default function DetallesTerapeuta() {
   };
   useEffect(() => {
     cargarDatos();
-  }, []);
+  }, [reload]);
   //
   if (!terapeuta && cargando) {
     return <LoadingOverlay visible={cargando} />;
@@ -165,15 +173,36 @@ export default function DetallesTerapeuta() {
             <Flex align="center">
               <Title order={3}>Comentarios</Title>
             </Flex>
-            <Flex>
-              <ControlResena id_terapeuta={id}/>
-              <BotonAgregarComentario
-                id_terapeuta={id}
-                setComentarios={setComentarios}
-              />
+            <Flex gap="md">
+              {usuario.paciente && (
+                <>
+                  <ControlResena
+                    id_terapeuta={id}
+                    onClickCrear={function () {
+                      setReload((rel) => !rel);
+                      modals.closeAll();
+                    }}
+                    onClickEditar={function () {
+                      setReload((rel) => !rel);
+                      modals.closeAll();
+                    }}
+                  />
+                  <BotonAgregarComentario
+                    id_terapeuta={id}
+                    setComentarios={setComentarios}
+                    onClickCrear={function () {
+                      setReload((rel) => !rel);
+                      modals.closeAll();
+                    }}
+                  />
+                </>
+              )}
             </Flex>
             <ScrollArea h="100%">
-              <ListaComentarios comentarios={comentarios} />
+              <ListaComentarios comentarios={comentarios} onClick={()=>{
+                setReload((rel)=>!rel);
+                modals.closeAll()
+              }}/>
             </ScrollArea>
           </Stack>
         </Grid.Col>

@@ -8,7 +8,8 @@ import axios from "axios";
 
 export default function BotonAgregarComentario({
   id_terapeuta,
-  setComentarios = () => {},
+  setComentarios,
+  onClickCrear,
   children,
 }) {
   const usuario = useSelector(selectUsuario);
@@ -17,7 +18,9 @@ export default function BotonAgregarComentario({
     if (usuario.paciente) fetchPermisos();
   }, []);
   if (!usuario.paciente) return;
-  const { paciente:{id} } = usuario;
+  const {
+    paciente: { id },
+  } = usuario;
   async function fetchPermisos() {
     try {
       let { data: permisos } = await axios.get(
@@ -28,7 +31,7 @@ export default function BotonAgregarComentario({
       } else {
         setHabilitar(false);
       }
-      return
+      return;
     } catch (error) {
       if (!error) return;
       let {
@@ -37,12 +40,12 @@ export default function BotonAgregarComentario({
       showNegativeFeedbackNotification(data);
       console.log(error);
     }
-    setHabilitar(null)
+    setHabilitar(null);
   }
   const handleClick = () => {
-    mostrarModalCrearComentario({ id_terapeuta, setComentarios });
+    mostrarModalCrearComentario(setComentarios, id_terapeuta, onClickCrear);
   };
   if (habilitar === undefined) return <Skeleton h="1em" w="3em" />;
-  if (!habilitar) return <>{ children }</>;
+  if (!habilitar) return <>{children}</>;
   return <Button onClick={handleClick}>Agregar comentario</Button>;
 }

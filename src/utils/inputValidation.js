@@ -42,7 +42,11 @@ export const isRequiredValidation = (value) => {
 };
 
 export const isLongitudMinima = (value,min,mensaje)=>{
-  if(value.trim().length<min) return `Este campo requiere minimo ${min} ${mensaje}`
+  if(value.trim().length<min) return `Por lo menos tiene que ser ${min} ${mensaje}`
+  return null;
+}
+export const isLongitudMaxima = (value,max,mensaje)=>{
+  if(value.trim().length>max) return `Maximo tiene que ser ${max} ${mensaje}`
   return null;
 }
 

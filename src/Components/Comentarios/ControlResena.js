@@ -17,6 +17,8 @@ const CREAR = "crear";
 export default function ControlResena({
   id_terapeuta,
   children,
+  onClickEditar = function(){},
+  onClickCrear = function(){},
 }) {
   const {
     paciente: { id: id_paciente },
@@ -37,7 +39,7 @@ export default function ControlResena({
         setHabilitar(CREAR);
         return;
       } else if (permisos.editarResena === 1) {
-        setResena(permisos.resena)
+        setResena(permisos.resena);
         setHabilitar(EDITAR);
         return;
       }
@@ -52,10 +54,15 @@ export default function ControlResena({
     }
   }
   const handleClickEditar = () => {
-    mostrarModalEditarResena({ resena, id_terapeuta, setResena });
+    mostrarModalEditarResena(
+      resena,
+      setResena,
+      id_terapeuta,
+      onClickEditar,
+    );
   };
   const handleClickCrear = () => {
-    mostrarModalCrearResena({ id_terapeuta, setResena });
+    mostrarModalCrearResena(id_terapeuta, setResena, onClickCrear);
   };
   if (habilitar === undefined) return <Skeleton h="1em" w="3em" />;
   if (habilitar === CREAR)
