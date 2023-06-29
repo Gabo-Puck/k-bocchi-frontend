@@ -18,6 +18,7 @@ import { FaChair } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { ResenaGeneral } from "./ResenaGeneral";
+import Imagen from "./Imagen";
 const useStyles = createStyles((theme) => ({
   card: {
     backgroundColor:
@@ -73,15 +74,8 @@ export default function TerapeutaResultado({ usuario }) {
       p="md"
       className={classes.card}
     >
-      <Card.Section>
-        <Image
-          src={
-            usuario.foto_perfil ||
-            "https://album.mediaset.es/eimg/2022/11/08/espana-cantera-de-medicos-de-europa_42d6.png?w=1200"
-          }
-          alt={"title"}
-          height={180}
-        />
+      <Card.Section >
+        <Imagen height="40vh" image={usuario.foto_perfil}/>
       </Card.Section>
 
       <Card.Section className={classes.section} mt="md">

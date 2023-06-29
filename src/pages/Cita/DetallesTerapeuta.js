@@ -31,6 +31,7 @@ import { set } from "react-hook-form";
 import { modals } from "@mantine/modals";
 import { useSelector } from "react-redux";
 import { selectUsuario } from "../../utils/usuarioHooks";
+import Imagen from "../../Components/Imagen";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -105,14 +106,7 @@ export default function DetallesTerapeuta() {
           <ScrollArea h="100%">
             <Card>
               <Card.Section>
-                <Image
-                  src={
-                    terapeuta.usuario.foto_perfil ||
-                    "https://album.mediaset.es/eimg/2022/11/08/espana-cantera-de-medicos-de-europa_42d6.png?w=1200"
-                  }
-                  alt={"title"}
-                  height={200}
-                />
+                <Imagen image={terapeuta.usuario.foto_perfil} height="40vh"/>
               </Card.Section>
               <Card.Section className={classes.section}>
                 <Group p="xl" pt="md">
