@@ -1,6 +1,6 @@
 import { Avatar, Skeleton, createStyles } from "@mantine/core";
 import React, { useState, useEffect } from "react";
-import { getDownloadURL, ref } from "firebase/storage";
+import { getDownloadURL, getMetadata, ref } from "firebase/storage";
 import { useForceUpdate } from "@mantine/hooks";
 import { storage } from "../firebase";
 import axios from "axios";
@@ -31,6 +31,7 @@ const ImagenAvatar = React.forwardRef(
         setFile(undefined);
         let imageRef = ref(storage, image);
         let reference = await getDownloadURL(imageRef);
+    
         //   await axios.get(reference)
         setFile(reference);
       } catch (err) {

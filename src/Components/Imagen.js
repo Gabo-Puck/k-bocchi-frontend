@@ -51,10 +51,8 @@ const Imagen = React.forwardRef(
       <>
         {file === undefined ? (
           <Skeleton
-            height={height || "3em"}
-            width={width || "3em"}
-            mx="auto"
-            radius="50%"
+            height={height || "100%"}
+            width={width || "100%"}
             animate={true}
           />
         ) : (

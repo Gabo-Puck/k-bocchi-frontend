@@ -6,32 +6,59 @@ import {
   ScrollArea,
   Stack,
   Center,
+  Flex,
 } from "@mantine/core";
 import { useEffect, useRef, useState } from "react";
 import { useListState } from "@mantine/hooks";
 import { socket } from "../socket";
 import { useSelector } from "react-redux";
 import { modals } from "@mantine/modals";
+import ListaChats from "../Components/Chat/ListaChats";
+import { showNegativeFeedbackNotification } from "../utils/notificationTemplate";
+import { selectUsuario } from "../utils/usuarioHooks";
+import axios from "axios";
+import Mensajes from "../Components/Chat/Mensajes";
+import ChatArea from "../Components/Chat/ChatArea";
 
-const selectUsuario = (state) => state.usuario;
 export default function Chat() {
-  const [usuariosConectados, handlers] = useListState([]);
-  const filter = (id) => handlers.filter((item) => item.id !== id);
+  // const [usuariosConectados, handlers] = useListState([]);
+  // const filter = (id) => handlers.filter((item) => item.id !== id);
+  const [chats, setChats] = useState();
+  const { id: id_usuario } = useSelector(selectUsuario);
+  const [chatItem, setChatItem] = useState();
+  async function fetchChats() {
+    try {
+      let { data: chats } = await axios.get(`/mensajes/chats/${id_usuario}`);
+      setChats(chats);
+    } catch (err) {
+      console.log(err);
+      if (err) {
+        let {
+          response: { data },
+        } = err;
+        showNegativeFeedbackNotification(data);
+      }
+    }
+  }
   useEffect(() => {
-    socket.emit("chat:entrar");
+    // socket.emit("chat:entrar");
     function onUsuarioConectado(usuario) {
-      handlers.append(usuario);
+      console.log({ usuario });
+      // handlers.append(usuario);
     }
     function onUsuarioDesconectado({ id }) {
-      let usuarios = filter(id);
-      handlers.setState(usuarios);
+      // let usuarios = filter(id);
+      // handlers.setState(usuarios);
+      console.log({ id });
     }
     function onUsuarioLista(lista) {
-      handlers.setState(lista);
+      // handlers.setState(lista);
+      console.log({ lista });
     }
     socket.on("usuario:conectado", onUsuarioConectado);
     socket.on("usuario:desconectado", onUsuarioDesconectado);
     socket.on("usuario:lista", onUsuarioLista);
+    fetchChats();
     return () => {
       socket.off("usuario:lista", onUsuarioLista);
       socket.off("usuario:conectado", onUsuarioConectado);
@@ -40,121 +67,20 @@ export default function Chat() {
   }, []);
   return (
     <>
-      <Box>
-        <ListaUsuarios usuarios={usuariosConectados} />
-      </Box>
-    </>
-  );
-}
+      <Flex mih="100vh" mah="100vh" w="100%" style={{boxSizing:"border-box"}}>
+        {/* <ListaUsuarios usuarios={usuariosConectados} /> */}
+        <ListaChats
+          chats={chats}
+          chatItem={chatItem}
+          onClick={(item) => {
+            // alert(JSON.stringify(item))
 
-function ListaUsuarios({ usuarios }) {
-  const usuarioActivo = useSelector(selectUsuario);
-  return (
-    <Table>
-      <thead>
-        <tr>
-          <th>Usuario</th>
-        </tr>
-      </thead>
-      <tbody>
-        {usuarios.map((usuario) =>
-          usuarioActivo.id === usuario.id ? null : (
-            <UsuarioItem key={usuario.id} usuario={usuario} />
-          )
-        )}
-      </tbody>
-    </Table>
-  );
-}
-
-function UsuarioItem({ usuario }) {
-  function openModal() {
-    modals.open({
-      title: `Conversacion con: ${usuario.nombre}`,
-      children: <Conversacion destinatario={usuario} />,
-      size: "md",
-      scrollAreaComponent: ScrollArea.Autosize,
-    });
-  }
-  return (
-    <tr onClick={openModal}>
-      <td>{usuario.nombre}</td>
-    </tr>
-  );
-}
-
-function Conversacion({ destinatario }) {
-  const [mensajesTemporales, handlers] = useListState([]);
-  const [mensaje, setMensaje] = useState("");
-  const refScrollArea = useRef(null);
-  useEffect(() => {
-    function onMensajesRecibido(msg) {
-      if (msg.from === destinatario.id) handlers.append(msg);
-    }
-    socket.on("mensajes:recibido", onMensajesRecibido);
-
-    return () => {
-      socket.off("mensajes:recibido", onMensajesRecibido);
-    };
-  }, []);
-  useEffect(
-    () =>
-      refScrollArea.current.scrollTo({
-        top: refScrollArea.current.scrollHeight,
-        behavior: "smooth",
-      }),
-    [mensajesTemporales]
-  );
-  function mandarMensaje(e) {
-    if ((e.key === "Enter" || e.keyCode === 13) && mensaje !== "") {
-      socket.emit("mensajes:enviar", {
-        to: destinatario.id,
-        contenido: mensaje,
-      });
-      handlers.append({
-        nombre: "Tú",
-        contenido: mensaje,
-        fecha: new Date().toISOString().slice(0, 19).replace("T", " "),
-      });
-
-      setMensaje("");
-    }
-  }
-  return (
-    <Box h="45vh" mah="45vh">
-      <Stack h="90%">
-        <ScrollArea.Autosize h="100%" viewportRef={refScrollArea}>
-          {mensajesTemporales.map((m) => (
-            <Mensaje mensaje={m} />
-          ))}
-        </ScrollArea.Autosize>
-      </Stack>
-      <Center>
-        <TextInput
-          w="90%"
-          value={mensaje}
-          onChange={({ target }) => {
-            setMensaje(target.value);
+            setChatItem(item);
           }}
-          onKeyUp={mandarMensaje}
         />
-      </Center>
-    </Box>
-  );
-}
-
-function Mensaje({ mensaje }) {
-  return (
-    <>
-      <Text mb="md" style={{ wordWrap: "break-word", width: "90%" }}>
-        <Text span fw="bold">
-          {mensaje.nombre}
-        </Text>
-        : {mensaje.contenido}{" "}
-        <Text span fz="sm" c="dimmed">
-          {mensaje.fecha}
-        </Text>
-      </Text>
+        <ChatArea chatItem={chatItem} />
+      </Flex>
     </>
   );
 }
+

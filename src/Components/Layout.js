@@ -160,7 +160,6 @@ export default function Layout() {
         // footer={<FooterApp />}
       ></AppShell> */}
       <Flex h="100vh" w="100vw" gap="sm">
-        <BarraNavegacion />
         <ScrollArea
           sx={{
             flex: "1",
@@ -177,6 +176,7 @@ export default function Layout() {
         >
           <Outlet />
         </ScrollArea>
+        <BarraNavegacion /> 
       </Flex>
 
       {/* <Flex h="100vh" direction="column">

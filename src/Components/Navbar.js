@@ -61,6 +61,24 @@ const useStyles = createStyles((theme) => ({
     paddingBottom: 0,
     maxHeight: "100vh",
     minHeight: "100vh",
+    
+  },
+  hidden: {
+    // display:"none",
+    width: "0 !important",
+    flexBasis: 0,
+    padding: "0 !important",
+    minWidth: "0 !important",
+    overflow: "hidden",
+    transition: "width 0.3s, flex-basis 0.3s",
+  },
+  active: {
+    // display:"none",
+    width: 280,
+    flexBasis: 0,
+    padding: "0 !important",
+    minWidth: "0 !important",
+    overflow: "hidden",
     transition: "width 0.3s, flex-basis 0.3s",
   },
   buttonContainer: {
@@ -70,38 +88,29 @@ const useStyles = createStyles((theme) => ({
   showButton: {
     position: "absolute",
     top: 0,
-    right: 0,
+    left: -16,
     padding: "0",
-    transform: "translate(100%, 0)",
+    transform: "translate(0, 0)",
     zIndex: 100,
   },
   hiddenButton: {
     // right: -12,
-  },
-  hidden: {
-    // display:"none",
-    transition: "width 0.3s, flex-basis 0.3s",
-    width: "0 !important",
-    flexBasis: 0,
-    padding: "0 !important",
-    minWidth: "0 !important",
-    overflow: "hidden",
   },
   box: {},
   boxTop: {
     backgroundColor: theme.colors.background,
     height: "6px",
     width: "16px",
-    borderBottomLeftRadius: "0.4em",
+    borderBottomRightRadius: "0.4em",
   },
   boxBottom: {
     backgroundColor: theme.colors.background,
-    borderTopLeftRadius: "0.4em",
+    borderTopRightRadius: "0.4em",
     height: "6px",
     width: "16px",
   },
   something: {
-    borderRadius: "0 38% 38% 0",
+    borderRadius: "38% 0 0 38%",
     backgroundColor: theme.colors.gray[3],
     height: "16px",
     width: "16px",
@@ -172,7 +181,7 @@ export default function BarraNavegacion() {
           <div className={cx(classes.box, classes.boxTop)}></div>
           <div className={cx(classes.box, classes.boxCenter)}>
             <div className={classes.something}>
-              {value ? <MdChevronRight /> : <MdChevronLeft />}
+              {value ? <MdChevronLeft /> : <MdChevronRight />}
             </div>
           </div>
           <div className={cx(classes.boxBottom)}></div>
@@ -180,14 +189,18 @@ export default function BarraNavegacion() {
       </UnstyledButton>
       <Navbar
         ref={ref}
-        height={800}
+        
         width={{ sm: 280 }}
         display=""
         p="md"
-        className={cx(classes.navbar, { [classes.hidden]: value === true })}
+        className={cx(
+          classes.navbar,
+          { [classes.active]: value === false },
+          { [classes.hidden]: value === true }
+        )}
       >
         <Navbar.Section className={classes.header}>
-          <Group position="apart">
+          <Group position="right">
             {/* <Logo width={rem(120)} /> */}
             K-Bocchi
           </Group>
