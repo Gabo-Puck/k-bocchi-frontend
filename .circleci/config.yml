@@ -4,7 +4,7 @@ jobs:
     working_directory: ~/project
     docker:
       - image: cimg/node:18.16.0
-    enviroment:
+    environment:
       CI: false
     steps:
       - checkout
