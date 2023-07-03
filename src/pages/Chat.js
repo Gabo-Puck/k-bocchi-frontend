@@ -7,6 +7,7 @@ import {
   Stack,
   Center,
   Flex,
+  Grid,
 } from "@mantine/core";
 import { useEffect, useRef, useState } from "react";
 import { useListState } from "@mantine/hooks";
@@ -67,20 +68,23 @@ export default function Chat() {
   }, []);
   return (
     <>
-      <Flex mih="100vh" mah="100vh" w="100%" style={{boxSizing:"border-box"}}>
-        {/* <ListaUsuarios usuarios={usuariosConectados} /> */}
-        <ListaChats
-          chats={chats}
-          chatItem={chatItem}
-          onClick={(item) => {
-            // alert(JSON.stringify(item))
+      <Grid mah="100vh" mih="100vh" w="100%" m={0}>
+        <Grid.Col span={4} h="100%">
+          {/* <ListaUsuarios usuarios={usuariosConectados} /> */}
+          <ListaChats
+            chats={chats}
+            chatItem={chatItem}
+            onClick={(item) => {
+              // alert(JSON.stringify(item))
 
-            setChatItem(item);
-          }}
-        />
-        <ChatArea chatItem={chatItem} />
-      </Flex>
+              setChatItem(item);
+            }}
+          />
+        </Grid.Col>
+        <Grid.Col span="auto">
+          <ChatArea chatItem={chatItem} />
+        </Grid.Col>
+      </Grid>
     </>
   );
 }
-

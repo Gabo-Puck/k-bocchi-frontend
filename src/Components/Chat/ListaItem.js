@@ -18,8 +18,11 @@ const useStyles = createStyles((theme) => ({
   activo: {
     backgroundColor: theme.colors["blue-calmer"][1],
   },
-  texto: {
-    
+  nombre: {
+    maxWidth:"20vw"
+  },
+  contenido: {
+    maxWidth:"20vw"
   },
 }));
 
@@ -34,6 +37,7 @@ export default function ListaItem({ chatItem, onClick, selected }) {
   return (
     <Group
       w="100%"
+      noWrap
       onClick={handleClick}
       className={cx(classes.groupContainer, {
         [classes.activo]: selected && selected.id === chatItem.id,
@@ -41,7 +45,13 @@ export default function ListaItem({ chatItem, onClick, selected }) {
     >
       <ImagenAvatar image={chatItem.foto_perfil} />
       <Stack spacing={0} style={{ flex: "1" }}>
-        <Text fw="bold" fz="sm" className={classes.texto}>
+        <Text
+          fw="bold"
+          fz="sm"
+          className={classes.nombre}
+          truncate
+          
+        >
           {chatItem.nombre}
         </Text>
         <Flex justify="space-between" align="baseline">
@@ -50,8 +60,8 @@ export default function ListaItem({ chatItem, onClick, selected }) {
             fw="normal"
             color="dimmed"
             fz="xs"
-            // className={classes.texto}
-            maw="90%"
+            className={classes.contenido}
+            style={{ wordWrap: "break-word", width: "90%" }}
             // style={{ flex: "1" }}
           >
             {chatItem.contenido}

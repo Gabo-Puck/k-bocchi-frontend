@@ -1,5 +1,6 @@
 import {
   Box,
+  Flex,
   LoadingOverlay,
   ScrollArea,
   Stack,
@@ -14,13 +15,11 @@ import { useDebouncedState } from "@mantine/hooks";
 const useStyles = createStyles((theme) => ({
   container: {
     borderRight: `1px solid ${theme.colors.gray[3]}`,
-    minWidth:"30vw",
-    maxWidth:"30vw",
+    height:"100%"
   },
   buscador: {
     borderBottom: `1px solid ${theme.colors.gray[3]}`,
   },
-  
 }));
 
 export default function ListaChats({ chats, onClick, chatItem }) {
@@ -42,7 +41,7 @@ export default function ListaChats({ chats, onClick, chatItem }) {
     setChatResultados(chats);
   }, [chats]);
   return (
-    <Box pos="relative" className={classes.container} component={ScrollArea} w="100%">
+    <Stack pos="relative" className={classes.container} w="100%">
       {/* <Title order={3}>Chats</Title> */}
       <Box className={classes.buscador}>
         <TextInput
@@ -55,10 +54,23 @@ export default function ListaChats({ chats, onClick, chatItem }) {
           }}
         />
       </Box>
-      <Stack spacing={0}>
+      <ScrollArea
+        w="100%"
+        style={{ flex: "1", boxSizing: "border-box" }}
+        styles={{
+          viewport: {
+            width: "100%",
+            // backgroundColor:"black"
+          },
+          root: {
+            width: "100%",
+            // backgroundColor:"yellow"
+          },
+        }}
+      >
         <Lista chats={chatsResultados} onClick={onClick} selected={chatItem} />
-      </Stack>
-    </Box>
+      </ScrollArea>
+    </Stack>
   );
 }
 

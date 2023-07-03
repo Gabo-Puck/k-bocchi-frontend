@@ -10,6 +10,7 @@ export default function ChatArea({ chatItem }) {
   const [mensajes, setMensajes] = useState([]);
   const [loading, setLoading] = useState(false);
   const usuario = useSelector(selectUsuario);
+  const [mensaje, setMensaje] = useState("");
   async function fecthMensajes() {
     const { id: id_from } = usuario;
     const { id: id_to } = chatItem;
@@ -37,6 +38,10 @@ export default function ChatArea({ chatItem }) {
   useEffect(() => {
     console.log({ mensajes });
   }, [mensajes]);
+  function handleEnter() {
+    if (mensaje) return;
+    console.log({ mensaje });
+  }
   return loading ? (
     <LoadingOverlay visible />
   ) : (
@@ -44,7 +49,7 @@ export default function ChatArea({ chatItem }) {
       <Stack
         style={{ flex: "1", boxSizing: "border-box" }}
         px="md"
-        h="100vh"
+        h="100%"
         w="100%"
         spacing={0}
       >
@@ -55,7 +60,13 @@ export default function ChatArea({ chatItem }) {
         >
           <Mensajes mensajes={mensajes} />
         </ScrollArea>
-        <Textarea />
+        <form onSubmit={handleEnter}>
+          <Textarea
+            onChange={({ currentTarget: { value } }) => {
+              setMensaje(value);
+            }}
+          />
+        </form>
       </Stack>
     </>
   );
