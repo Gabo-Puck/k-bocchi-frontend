@@ -19,10 +19,10 @@ const useStyles = createStyles((theme) => ({
     backgroundColor: theme.colors["blue-calmer"][1],
   },
   nombre: {
-    maxWidth:"20vw"
+    maxWidth: "20vw",
   },
   contenido: {
-    maxWidth:"20vw"
+    maxWidth: "15vw",
   },
 }));
 
@@ -45,13 +45,7 @@ export default function ListaItem({ chatItem, onClick, selected }) {
     >
       <ImagenAvatar image={chatItem.foto_perfil} />
       <Stack spacing={0} style={{ flex: "1" }}>
-        <Text
-          fw="bold"
-          fz="sm"
-          className={classes.nombre}
-          truncate
-          
-        >
+        <Text fw="bold" fz="sm" className={classes.nombre} truncate>
           {chatItem.nombre}
         </Text>
         <Flex justify="space-between" align="baseline">
@@ -66,11 +60,13 @@ export default function ListaItem({ chatItem, onClick, selected }) {
           >
             {chatItem.contenido}
           </Text>
-          <Text fw="lighter" fz="xs">
-            {FormatUTCDate(chatItem.fecha) === FormatUTCDate(new Date())
-              ? FormatUTCTime(chatItem.fecha)
-              : formatearFecha(chatItem.fecha)}
-          </Text>
+          {chatItem.fecha && (
+            <Text fw="lighter" fz="xs">
+              {FormatUTCDate(chatItem.fecha) === FormatUTCDate(new Date())
+                ? FormatUTCTime(chatItem.fecha)
+                : formatearFecha(chatItem.fecha)}
+            </Text>
+          )}
         </Flex>
       </Stack>
     </Group>

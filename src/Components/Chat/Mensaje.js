@@ -15,12 +15,10 @@ const useStyles = createStyles((theme) => ({
   yours: {
     background: theme.colors[YOURS][YOURS_SHADE],
     borderRadius: "10px 0px 10px 10px",
-    
   },
   other: {
     background: theme.colors[OTHER][OTHER_SHADE],
     borderRadius: "0px 10px 10px 10px",
-    
   },
   base: {
     // border: "1px solid black",
@@ -28,14 +26,12 @@ const useStyles = createStyles((theme) => ({
     minWidth: "25%",
     padding: `${theme.spacing.sm} ${theme.spacing.xs} 0 ${theme.spacing.xs}`,
     width: "fit-content",
-    
   },
   container: {
     width: "100%",
-    
+
     display: "flex",
     position: "relative",
-    
   },
   containerOther: {
     width: "100%",
@@ -46,7 +42,6 @@ const useStyles = createStyles((theme) => ({
       content: '" "',
       left: `-${theme.fontSizes.xs}`,
       top: `0`,
-      
 
       width: 0,
       height: 0,
@@ -55,30 +50,26 @@ const useStyles = createStyles((theme) => ({
       //   borderRight: `${theme.fontSizes.xs} solid transparent`,
       transform: "rotate(-90deg)",
     },
-    
   },
   texto: {
     wordWrap: "break-word",
     width: "100%",
     fontSize: theme.fontSizes.sm,
     color: theme.colors.dark[5],
-    
   },
   fecha: {
     wordWrap: "break-word",
     width: "100%",
     fontSize: `${theme.fontSizes.xs} !important`,
     color: `${theme.colors.gray[7]} !important`,
-    
   },
   containerYours: {
     width: "100%",
     justifyContent: "end",
     position: "relative",
-    
+
     "&:before": {
       position: "absolute",
-      
 
       content: '" "',
       right: `-${theme.fontSizes.xs}`,
@@ -91,10 +82,10 @@ const useStyles = createStyles((theme) => ({
       transform: "rotate(90deg)",
     },
   },
-  mensaje:{
-    position:"relative",
+  mensaje: {
+    position: "relative",
     margin: `${theme.fontSizes.xs} ${theme.fontSizes.xs} 0 ${theme.fontSizes.xs}`,
-  }
+  },
 }));
 export default function Mensaje({ mensaje }) {
   const { classes, cx } = useStyles();
@@ -116,7 +107,11 @@ export default function Mensaje({ mensaje }) {
             { [classes.other]: !isAutor }
           )}
         >
-          <Text className={classes.texto}>{mensaje.contenido}</Text>
+          <Text className={classes.texto}>
+            {mensaje.contenido.split("\n").map((line, index) => (
+              <Text key={index}>{line}</Text>
+            ))}
+          </Text>
           <Text className={cx(classes.fecha, classes.texto)} ta="end">
             {FormatUTCDateTime(mensaje.fecha)}
           </Text>

@@ -25,12 +25,13 @@ import {
   ScrollArea,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { socket } from "../socket";
+import { socket } from "../utils/socket/socket";
 import { useTimeout } from "@mantine/hooks";
 import useSesionExpiracion, { milisegundos } from "../utils/sesionHook";
 import BarraNavegacion from "./Navbar";
 import ButtonLogout from "./ButtonLogout";
 import useMantenerSesion from "../utils/mantenerSesionHook";
+import { SEND_DATA } from "../utils/socket/socketEvents";
 const selectUsuario = (state) => state.usuario;
 
 function NavLinkBar({ to, label }) {
@@ -58,7 +59,7 @@ export default function Layout() {
   useEffect(() => {
     socket.connect();
     function onConnect() {
-      socket.emit("send_data", { id: usuario.id, nombre: usuario.nombre });
+      socket.emit(SEND_DATA, { id: usuario.id, nombre: usuario.nombre });
       setIsConnected(true);
     }
 

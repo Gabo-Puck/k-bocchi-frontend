@@ -15,6 +15,7 @@ const ImagenAvatar = React.forwardRef(
       image,
       classes = { avatarObject: "" },
       onLoaded = () => {},
+      mx="auto"
     },
     refParent
   ) => {
@@ -55,7 +56,7 @@ const ImagenAvatar = React.forwardRef(
           <Skeleton
             height={height||"3em"}
             width={width||"3em"}
-            mx="auto"
+            mx={mx}
             radius="50%"
             animate={true}
           />

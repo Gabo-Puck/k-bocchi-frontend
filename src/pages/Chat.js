@@ -8,10 +8,11 @@ import {
   Center,
   Flex,
   Grid,
+  createStyles,
 } from "@mantine/core";
 import { useEffect, useRef, useState } from "react";
 import { useListState } from "@mantine/hooks";
-import { socket } from "../socket";
+import { socket } from "../utils/socket/socket";
 import { useSelector } from "react-redux";
 import { modals } from "@mantine/modals";
 import ListaChats from "../Components/Chat/ListaChats";
@@ -20,13 +21,24 @@ import { selectUsuario } from "../utils/usuarioHooks";
 import axios from "axios";
 import Mensajes from "../Components/Chat/Mensajes";
 import ChatArea from "../Components/Chat/ChatArea";
+import { MENSAJE_RECIBIDO } from "../utils/socket/socketEvents";
+// import { socket } from "../../utils/socket/socket";
+// import { MENSAJE_RECIBIDO } from "../../utils/socket/socketEvents";
 
+const useStyles = createStyles((theme) => ({
+  buscador: {
+    borderRight: `1px solid ${theme.colors.gray[3]}`,
+    padding:0
+
+  },
+}));
 export default function Chat() {
   // const [usuariosConectados, handlers] = useListState([]);
   // const filter = (id) => handlers.filter((item) => item.id !== id);
   const [chats, setChats] = useState();
   const { id: id_usuario } = useSelector(selectUsuario);
   const [chatItem, setChatItem] = useState();
+  const {classes,cx} = useStyles();
   async function fetchChats() {
     try {
       let { data: chats } = await axios.get(`/mensajes/chats/${id_usuario}`);
@@ -66,10 +78,47 @@ export default function Chat() {
       socket.off("usuario:desconectado", onUsuarioDesconectado);
     };
   }, []);
+  useEffect(() => {
+    function onMensajeRecibido(msg) {
+      setChats((cs) => {
+        let c = cs.find(
+          (value) => value.id === msg.id_from || value.id === msg.id_to
+        );
+        if (c) {
+          let c2 = cs.filter(({ id }) => id != c.id);
+          delete msg.id;
+          if (msg.id_from === id_usuario) {
+            delete msg.foto_perfil;
+            delete msg.nombre;
+          }
+          return [{ ...c, ...msg }, ...c2];
+        } else {
+          //crear chat
+          return [
+            {
+              nombre: msg.nombre,
+              id: msg.id_from,
+              foto_perfil: msg.foto_perfil,
+              fecha: msg.fecha,
+              contenido: msg.contenido,
+            },
+            ...cs,
+          ];
+        }
+      });
+    }
+    socket.on(MENSAJE_RECIBIDO, onMensajeRecibido);
+    return () => {
+      socket.off(MENSAJE_RECIBIDO, onMensajeRecibido);
+    };
+  }, []);
+  useEffect(() => {
+    console.log({ chatItem });
+  }, [chatItem]);
   return (
     <>
-      <Grid mah="100vh" mih="100vh" w="100%" m={0}>
-        <Grid.Col span={4} h="100%">
+      <Grid h="100vh" w="100%" m={0}>
+        <Grid.Col span={4} h="100%" className={classes.buscador} pos={"relative"}>
           {/* <ListaUsuarios usuarios={usuariosConectados} /> */}
           <ListaChats
             chats={chats}
@@ -79,9 +128,10 @@ export default function Chat() {
 
               setChatItem(item);
             }}
+            setChats={setChats}
           />
         </Grid.Col>
-        <Grid.Col span="auto">
+        <Grid.Col span={8} p={0} h="100%" pos={"relative"}>
           <ChatArea chatItem={chatItem} />
         </Grid.Col>
       </Grid>
