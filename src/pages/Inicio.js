@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { signInWithGoogle, auth } from "../firebase";
+import { signInWithGoogle, auth, messaging } from "../firebase";
 import { getRedirectResult } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { BsExclamationLg } from "react-icons/bs";
@@ -48,6 +48,7 @@ import Layout from "../Components/Layout";
 import useSesionExpiracion from "../utils/sesionHook";
 import { selectUsuario } from "../utils/usuarioHooks";
 import { checkToken } from "../utils/FirebaseMessaging/checkToken";
+import { deleteToken } from "firebase/messaging";
 
 async function mandarCorreoRestablecer(email) {
   try {
@@ -227,8 +228,17 @@ export default function Inicio() {
     }
   }, [usuario]);
   async function goToInicio() {
-    await checkToken(usuario.id);
-    navigate("/app");
+    try{
+      await deleteToken(messaging);
+    }catch(err){
+      console.log(err);
+    }
+    try{
+      await checkToken(usuario.id);
+      navigate("/app");
+    }catch(err){
+      console.log(err);
+    }
   }
   useEffect(() => {
     if (usuario.id) {
