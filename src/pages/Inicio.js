@@ -47,6 +47,7 @@ import { modals } from "@mantine/modals";
 import Layout from "../Components/Layout";
 import useSesionExpiracion from "../utils/sesionHook";
 import { selectUsuario } from "../utils/usuarioHooks";
+import { checkToken } from "../utils/FirebaseMessaging/checkToken";
 
 async function mandarCorreoRestablecer(email) {
   try {
@@ -150,7 +151,7 @@ export default function Inicio() {
   const [isLoadingGoogleAuth, setIsLoadingGoogleAuth] = useState(false);
   const [isBloqueada, setIsBloqueada] = useState(false);
   const [isValidandoCredenciales, setIsValidandoCredenciales] = useState(false);
-  const { isExpirado, sesionExpiracion, init,getId } = useSesionExpiracion();
+  const { isExpirado, sesionExpiracion, init, getId } = useSesionExpiracion();
   const usuario = useSelector(selectUsuario);
   const form = useForm({
     validateInputOnChange: true,
@@ -225,9 +226,13 @@ export default function Inicio() {
       init();
     }
   }, [usuario]);
+  async function goToInicio() {
+    await checkToken(usuario.id);
+    navigate("/app");
+  }
   useEffect(() => {
     if (usuario.id) {
-      navigate("/app");
+      goToInicio();
     }
   }, [sesionExpiracion]);
   useEffect(() => {
@@ -266,7 +271,7 @@ export default function Inicio() {
           } else {
             // alert("Tas logeado carnal");
 
-            let id  = getId();
+            let id = getId();
             const response = (await fetchUsuario({ uid: id })).data;
             const user = { ...response };
 

@@ -23,6 +23,7 @@ import {
   SimpleGrid,
   Grid,
   ScrollArea,
+  Modal,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { socket } from "../utils/socket/socket";
@@ -32,6 +33,11 @@ import BarraNavegacion from "./Navbar";
 import ButtonLogout from "./ButtonLogout";
 import useMantenerSesion from "../utils/mantenerSesionHook";
 import { SEND_DATA } from "../utils/socket/socketEvents";
+import { checkToken } from "../utils/FirebaseMessaging/checkToken";
+import Notificacion from "./Notificacion";
+import { deleteToken } from "firebase/messaging";
+import { messaging } from "../firebase";
+
 const selectUsuario = (state) => state.usuario;
 
 function NavLinkBar({ to, label }) {
@@ -51,7 +57,15 @@ export default function Layout() {
   const navigate = useNavigate();
   const { sesionExpiracion, isExpirado, setMinutos, init, isNull } =
     useSesionExpiracion();
-  const {isSesionAbierta,mantenerSesion,} = useMantenerSesion();
+  const { isSesionAbierta, mantenerSesion } = useMantenerSesion();
+  const [modalNotificaciones, setModalNotificaciones] = useState();
+  
+  useEffect(()=>{
+    
+    // return (()=>{
+    //   deleteToken(messaging)
+    // })
+  },[])
   const { start, clear } = useTimeout(() => {
     console.log("Estas conectado :O");
     setMinutos();
@@ -76,18 +90,16 @@ export default function Layout() {
   useEffect(() => {
     if (isNull()) {
       dispatch({ type: USUARIO_LOGOUT });
-
     } else {
       start();
     }
   }, [sesionExpiracion]);
 
   useEffect(() => {
-    if (isNull()&&!isSesionAbierta()) {
+    if (isNull() && !isSesionAbierta()) {
       navigate("/");
     }
-  }, [usuario,mantenerSesion]);
-
+  }, [usuario, mantenerSesion]);
 
   function FooterApp() {
     return (
@@ -160,6 +172,12 @@ export default function Layout() {
         // navbar={<BarraNavegacion />}
         // footer={<FooterApp />}
       ></AppShell> */}
+      <Notificacion/>
+      <Modal opened={modalNotificaciones!=undefined&&!modalNotificaciones} onClose={()=>setModalNotificaciones(true)} title="¡Aviso!">
+        <Modal.Body>
+          Para una mejor experiencia de usuario, habilite las notificaciones
+        </Modal.Body>
+      </Modal>
       <Flex h="100vh" w="100vw" gap="sm">
         <ScrollArea
           sx={{
@@ -177,7 +195,7 @@ export default function Layout() {
         >
           <Outlet />
         </ScrollArea>
-        <BarraNavegacion /> 
+        <BarraNavegacion />
       </Flex>
 
       {/* <Flex h="100vh" direction="column">

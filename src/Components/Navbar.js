@@ -189,7 +189,6 @@ export default function BarraNavegacion() {
       </UnstyledButton>
       <Navbar
         ref={ref}
-        
         width={{ sm: 280 }}
         display=""
         p="md"

@@ -6,7 +6,7 @@ const minutos = 10;
 const NOMBRE_LOCAL_STORAGE = "sesion-item";
 export const milisegundos = minutos * 60 * 1000;
 function getValoresIniciales() {
-  let sesionItem = sessionStorage.getItem(NOMBRE_LOCAL_STORAGE);
+  let sesionItem = localStorage.getItem(NOMBRE_LOCAL_STORAGE);
   if (sesionItem === null) {
     return { fecha_expiracion: null, id: null };
   } else {
@@ -21,7 +21,7 @@ function deserializeItem(sesionItem) {
 export default function useSesionExpiracion() {
   const { id: id_usuario } = useSelector(selectUsuario);
   const {isSesionAbierta,mantenerSesion} = useMantenerSesion();
-  const [sesionExpiracion, setSesionExpiracion] = useSessionStorage({
+  const [sesionExpiracion, setSesionExpiracion] = useLocalStorage({
     key: NOMBRE_LOCAL_STORAGE,
     defaultValue: getValoresIniciales(),
     serialize: (object) => {
