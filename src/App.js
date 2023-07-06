@@ -142,7 +142,7 @@ function App() {
               },
             }),
           },
-          
+
           Radio: {
             styles: (theme, { variant }) => ({
               radio: {
@@ -153,28 +153,38 @@ function App() {
               },
             }),
           },
-          Badge:{
-            variants:{
+          Badge: {
+            variants: {
               dispositivo: (theme) => ({
+                inner: {
+                  color: theme.colors["blue-empire"][4],
+                  
+                },
                 root: {
-                  backgroundColor: theme.colors["cyan-opaque"][7],
+                  backgroundColor: theme.colors["cyan-opaque"][7]+"4F",
                   color: theme.white,
+                  
                   // ...theme.fn.hover({
                   //   backgroundColor: theme.colors["blue-calm"][7],
                   // }),
                 },
               }),
               medicamento: (theme) => ({
+                inner: {
+                  color: theme.colors["blue-calm"][7],
+                  
+                },
                 root: {
-                  backgroundColor: theme.colors["blue-calm"][5],
+                  backgroundColor: theme.colors["blue-empire"][7]+"5F",
                   color: theme.white,
+                  
                   // ...theme.fn.hover({
                   //   backgroundColor: theme.colors["blue-calm"][7],
                   // }),
                 },
               }),
-            }
-          }
+            },
+          },
         },
 
         colors: {
@@ -423,7 +433,7 @@ function App() {
                   <Route path="marketplace">
                     <Route path="paciente"></Route>
                     <Route path="terapeuta">
-                      <Route path="catalogo" element={<Catalogo/>}/>
+                      <Route path="catalogo" element={<Catalogo />} />
                     </Route>
                   </Route>
                 </Route>
