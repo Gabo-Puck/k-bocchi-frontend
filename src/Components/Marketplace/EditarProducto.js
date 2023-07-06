@@ -15,7 +15,7 @@ import {
 } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
 import { useForm } from "@mantine/form";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FaFileUpload, FaImage } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
 import { RiImageAddFill } from "react-icons/ri";
@@ -32,25 +32,38 @@ import {
   isRequired,
   isRequiredValidation,
 } from "../../utils/inputValidation";
-import { showNegativeFeedbackNotification, showPositiveFeedbackNotification } from "../../utils/notificationTemplate";
+import { showNegativeFeedbackNotification } from "../../utils/notificationTemplate";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { selectUsuario } from "../../utils/usuarioHooks";
+import Imagen from "../Imagen";
 
-export default function CrearProducto({ onCrear }) {
+export default function EditarProducto({ onEditar, producto }) {
+  let {
+    id,
+    nombre,
+    caracteristicas,
+    precio,
+    stock,
+    imagen,
+    categoria,
+    id_terapeuta,
+  } = producto;
   const theme = useMantineTheme();
-  const [urlImagen, setUrlImagen] = useState();
+  const [urlImagen, setUrlImagen] = useState(imagen);
   const [guardando, setGuardando] = useState(false);
-  const {terapeuta:{id:id_terapeuta}} = useSelector(selectUsuario);
+  const [showControls, setShowControls] = useState(false);
+  const openRef = useRef(null);
   const form = useForm({
     initialValues: {
-      nombre: "",
-      caracteristicas: "",
-      precio: undefined,
-      stock: undefined,
-      imagen: undefined,
-      categoria: undefined,
-      id_terapeuta
+      id,
+      nombre,
+      caracteristicas,
+      precio,
+      stock,
+      imagen,
+      categoria,
+      id_terapeuta,
     },
     validateInputOnBlur: true,
     validateInputOnChange: true,
@@ -76,31 +89,29 @@ export default function CrearProducto({ onCrear }) {
       stock: (value) =>
         executeValidation(value, [
           isRequiredValidation,
-          (value) => isMinimoNumero(value, 1, "producto"),
+          (value) => isMinimoNumero(value, 0, "producto"),
           (value) => isMaximoNumero(value, 100000, "productos"),
         ]),
-      imagen: (value) => executeValidation(value, [isRequiredValidation]),
+      //   imagen: (value) => executeValidation(value, [isRequiredValidation]),
       categoria: (value) => executeValidation(value, [isRequiredValidation]),
     },
-    
   });
-  async function handleGuardar(value) {
+  async function handleEditar(value) {
     setGuardando(true);
     const formData = new FormData();
     const prodData = {};
     Object.keys(value).forEach((k) => {
       if (k !== "imagen") prodData[k] = value[k];
     });
-    formData.append("imagen", value.imagen);
+    if (form.isDirty("imagen")) formData.append("imagen", value.imagen);
     formData.append("producto", JSON.stringify(prodData));
     try {
-      let {data:producto} = await axios.post(`/productos`, formData, {
+      let { data: producto } = await axios.patch(`/productos`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      onCrear(producto);
-      showPositiveFeedbackNotification("Se ha creado correctamente tu producto")
+      onEditar(producto);
     } catch (err) {
       if (!err) {
         return;
@@ -115,7 +126,7 @@ export default function CrearProducto({ onCrear }) {
   }
   return (
     <Container fluid>
-      <form onSubmit={form.onSubmit(handleGuardar)}>
+      <form onSubmit={form.onSubmit(handleEditar)}>
         <Stack>
           <TextInput
             withAsterisk
@@ -127,6 +138,7 @@ export default function CrearProducto({ onCrear }) {
             maxSize={3 * 1024 ** 2}
             accept={["image/png", "image/jpg", "image/jpeg"]}
             maxFiles={1}
+            openRef={openRef}
             onDrop={([file]) => {
               console.log(file);
               form.setValues((v) => ({ ...v, imagen: file }));
@@ -162,30 +174,51 @@ export default function CrearProducto({ onCrear }) {
                   color={theme.colors.red[theme.colorScheme === "dark" ? 4 : 6]}
                 />
               </Dropzone.Reject>
-              {urlImagen ? (
+
+              {form.isDirty("imagen") ? (
                 <Image
                   src={urlImagen}
                   imageProps={{
                     onLoad: () => URL.revokeObjectURL(urlImagen),
                   }}
+                  onLoad={() => {
+                    setShowControls(true);
+                  }}
                 />
               ) : (
-                <>
-                  <Dropzone.Idle>
-                    <RiImageAddFill size="3.2rem" stroke={1.5} />
-                  </Dropzone.Idle>
-                  <div>
-                    <Text size="xl" inline>
-                      Arrastra o selecciona para subir una imagen
-                    </Text>
-                    <Text size="sm" color="dimmed" inline mt={7}>
-                      El archivo debe ser formato png,jpg/jpeg
-                    </Text>
-                  </div>
-                </>
+                <Imagen
+                  image={urlImagen}
+                  onImageLoaded={() => {
+                    setShowControls(true);
+                  }}
+                  imageProps={{
+                    onLoad: () => URL.revokeObjectURL(urlImagen),
+                  }}
+                />
               )}
             </Group>
           </Dropzone>
+          {showControls && (
+            <>
+              <Flex justify="center" gap="md">
+                <Button onClick={() => openRef.current()} variant="seleccionar">
+                  Cambiar
+                </Button>
+                {form.isDirty("imagen") && (
+                  <Button
+                    variant="cerrar"
+                    onClick={() => {
+                      form.setFieldValue("imagen", imagen);
+                      setUrlImagen(imagen);
+                      setShowControls(false);
+                    }}
+                  >
+                    Reestablecer
+                  </Button>
+                )}
+              </Flex>
+            </>
+          )}
           <Textarea
             withAsterisk
             label="Caracteristicas"

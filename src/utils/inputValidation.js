@@ -6,7 +6,7 @@
 import axios from "axios";
 import { BACKEND_SERVER } from "../server";
 
-export const isEmailAvailable = async ({email}) => {
+export const isEmailAvailable = async ({ email }) => {
   //En caso de encontrar un correo repetido, va a generar una excepcion
   console.log(email);
   try {
@@ -16,47 +16,46 @@ export const isEmailAvailable = async ({email}) => {
   }
 };
 
-export const isTiempo = (value) =>{
-  if(!/^([0-1]\d|2[0-3]):[0-5]\d$/.test(value.toString())){
+export const isTiempo = (value) => {
+  if (!/^([0-1]\d|2[0-3]):[0-5]\d$/.test(value.toString())) {
     return "Tienes que especificar la fecha";
   }
   return null;
-}
+};
 
-
-
-export const isPhoneValidation = (value) =>{
-  if(!/^\d{10}$/.test(value.toString()))
-    return "Un numero de telefono valido tiene 10 digitos"
-  return null;
-}
-
-export const isNumber = (value) =>{
-  if(!/\d$/.test(value))
-    return "Este campo tiene que ser un numero"
-}
-
-export const isRequiredValidation = (value) => {
-  if (!value || value == "") return "Este campo es necesario";
+export const isPhoneValidation = (value) => {
+  if (!/^\d{10}$/.test(value.toString()))
+    return "Un numero de telefono valido tiene 10 digitos";
   return null;
 };
 
-export const isLongitudMinima = (value,min,mensaje)=>{
-  if(value.trim().length<min) return `Por lo menos tiene que ser ${min} ${mensaje}`
+export const isNumber = (value) => {
+  if (!/\d$/.test(value)) return "Este campo tiene que ser un numero";
+};
+
+export const isRequiredValidation = (value) => {
+  if ((!value || value == "") && value != 0) return "Este campo es necesario";
   return null;
-}
-export const isMinimoNumero = (value,min,mensaje)=>{
-  if(value<min) return `Tiene que ser minimo ${min} ${mensaje}`
+};
+
+export const isLongitudMinima = (value, min, mensaje) => {
+  if (value.trim().length < min)
+    return `Por lo menos tiene que ser ${min} ${mensaje}`;
   return null;
-}
-export const isMaximoNumero = (value,max,mensaje)=>{
-  if(value>max) return `Tiene que ser maximo ${max} ${mensaje}`
+};
+export const isMinimoNumero = (value, min, mensaje) => {
+  if (value < min) return `Tiene que ser minimo ${min} ${mensaje}`;
   return null;
-}
-export const isLongitudMaxima = (value,max,mensaje)=>{
-  if(value.trim().length>max) return `Maximo tiene que ser ${max} ${mensaje}`
+};
+export const isMaximoNumero = (value, max, mensaje) => {
+  if (value > max) return `Tiene que ser maximo ${max} ${mensaje}`;
   return null;
-}
+};
+export const isLongitudMaxima = (value, max, mensaje) => {
+  if (value.trim().length > max)
+    return `Maximo tiene que ser ${max} ${mensaje}`;
+  return null;
+};
 
 export const password_validation = (value) => {
   if (value.length < 8)

@@ -3,9 +3,9 @@ import TablaProductos from "../../../Components/Marketplace/TablaProductos";
 
 export default function Catalogo() {
   return (
-    <Container maw="100%" p={0} h="100vh">
+    <Container w="100vw" h="100vh">
       <Stack h="100%" w="100%">
-        <Title order={3}>Catalogo</Title>
+        <Title order={3}>Mi catalogo</Title>
         <TablaProductos />
       </Stack>
     </Container>

@@ -153,6 +153,28 @@ function App() {
               },
             }),
           },
+          Badge:{
+            variants:{
+              dispositivo: (theme) => ({
+                root: {
+                  backgroundColor: theme.colors["cyan-opaque"][7],
+                  color: theme.white,
+                  // ...theme.fn.hover({
+                  //   backgroundColor: theme.colors["blue-calm"][7],
+                  // }),
+                },
+              }),
+              medicamento: (theme) => ({
+                root: {
+                  backgroundColor: theme.colors["blue-calm"][5],
+                  color: theme.white,
+                  // ...theme.fn.hover({
+                  //   backgroundColor: theme.colors["blue-calm"][7],
+                  // }),
+                },
+              }),
+            }
+          }
         },
 
         colors: {

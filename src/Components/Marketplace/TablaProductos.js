@@ -1,8 +1,11 @@
 import {
   Button,
+  Flex,
   LoadingOverlay,
   ScrollArea,
+  Stack,
   Table,
+  Text,
   Title,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
@@ -11,14 +14,17 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { selectUsuario } from "../../utils/usuarioHooks";
 import FilaProducto from "./FilaProducto";
-import { useSm, useXs } from "../../utils/mediaQueryHooks";
+import { useSm } from "../../utils/mediaQueryHooks";
 import { modals } from "@mantine/modals";
 import CrearProducto from "./CrearProducto";
+import CenterHorizontal from "../CenterHorizontal";
+import Vacio from "../Vacio";
+import { BsGraphDownArrow } from "react-icons/bs";
 
 export default function TablaProductos() {
   const [productos, setProductos] = useState();
   let { terapeuta } = useSelector(selectUsuario);
-  const big = useSm();
+  const sm = useSm();
 
   async function fecthProductos() {
     try {
@@ -58,29 +64,78 @@ export default function TablaProductos() {
   if (productos === undefined)
     return <LoadingOverlay visible overlayBlur={2} />;
   return productos.length === 0 ? (
-    <div>vacio</div>
+    <Vacio
+      children={
+        <Stack align="center" fz="xl">
+          <Text color="dimmed">No hay productos</Text>
+          <BsGraphDownArrow color="gray" />
+          <Button onClick={mostrarModalCrearProducto} variant="siguiente">
+            ¡Añade un producto!
+          </Button>
+        </Stack>
+      }
+    />
   ) : (
     <>
-      <Button onClick={mostrarModalCrearProducto} variant="siguiente">
-        Añadir producto
-      </Button>
+      <Flex justify="end" pr="sm">
+        <Button onClick={mostrarModalCrearProducto} variant="siguiente">
+          Añadir producto
+        </Button>
+      </Flex>
       <ScrollArea style={{ flex: "1" }}>
-        <Table w={big ? "100%" : "130%"}>
+        <Table w={sm ? "100%" : "130%"}>
           <thead>
             <tr>
               <th></th>
-              <th>Producto</th>
-              <th>Caracteristicas</th>
-              <th>Precio</th>
-              <th>Stock</th>
-              <th>Categoria</th>
-              <th>Vendidos</th>
+              <th>
+                <CenterHorizontal>
+                  <Text>Producto</Text>
+                </CenterHorizontal>
+              </th>
+              <th>
+                <CenterHorizontal>
+                  <Text>Caracteristicas</Text>
+                </CenterHorizontal>
+              </th>
+              <th>
+                <CenterHorizontal>
+                  <Text>Precio</Text>
+                </CenterHorizontal>
+              </th>
+              <th>
+                <CenterHorizontal>
+                  <Text>Stock</Text>
+                </CenterHorizontal>
+              </th>
+              <th>
+                <CenterHorizontal>
+                  <Text>Categoria</Text>
+                </CenterHorizontal>
+              </th>
+              <th>
+                <CenterHorizontal>
+                  <Text>Vendidos</Text>
+                </CenterHorizontal>
+              </th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             {productos.map((producto) => (
-              <FilaProducto producto={producto} key={producto.id} />
+              <FilaProducto
+                producto={producto}
+                key={producto.id}
+                onEditar={(producto) => {
+                  setProductos((ps) =>
+                    ps.map((p) => (p.id === producto.id ? producto : p))
+                  );
+                  modals.closeAll();
+                }}
+                onEliminar={(id_producto) => {
+                  setProductos((ps) => ps.filter((p) => p.id !== id_producto));
+                  modals.closeAll();
+                }}
+              />
             ))}
           </tbody>
         </Table>
@@ -97,3 +152,4 @@ export default function TablaProductos() {
     </>
   );
 }
+

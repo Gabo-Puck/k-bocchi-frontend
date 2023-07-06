@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { ResenaGeneral } from "./ResenaGeneral";
 import Imagen from "./Imagen";
+import { distanceFormatter, currencyFormatter } from "../utils/formatters";
 const useStyles = createStyles((theme) => ({
   card: {
     backgroundColor:
@@ -44,14 +45,7 @@ const useStyles = createStyles((theme) => ({
     fontWeight: 700,
   },
 }));
-const numberFormatter = new Intl.NumberFormat("es-MX", {
-  style: "currency",
-  currency: "MXN",
-});
-const distanceFormatter = new Intl.NumberFormat("es-MX", {
-  style: "unit",
-  unit: "kilometer",
-});
+
 export default function TerapeutaResultado({ usuario }) {
   const { classes, theme } = useStyles();
   const navigate = useNavigate();
@@ -121,9 +115,9 @@ export default function TerapeutaResultado({ usuario }) {
 export function RangoPrecio({ terapeuta, ...props }) {
   return (
     <Text color="dark" fw="bold">
-      {`${numberFormatter.format(
+      {`${currencyFormatter.format(
         terapeuta.pago_minimo
-      )} - ${numberFormatter.format(terapeuta.pago_maximo)}`}
+      )} - ${currencyFormatter.format(terapeuta.pago_maximo)}`}
     </Text>
   );
 }
