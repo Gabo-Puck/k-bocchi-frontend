@@ -23,7 +23,7 @@ export default function TablaProductos() {
   async function fecthProductos() {
     try {
       let { id: id_terapeuta } = terapeuta;
-      let { data } = await axios.get(`/productos/${id_terapeuta}`);
+      let { data } = await axios.get(`/productos/terapeuta/${id_terapeuta}`);
       console.log({ data });
       setProductos(data);
     } catch (err) {
