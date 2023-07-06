@@ -40,7 +40,7 @@ export default function TablaProductos() {
     fecthProductos();
   }, []);
   useEffect(() => {
-    console.log({productos});
+    console.log({ productos });
   }, [productos]);
   function mostrarModalCrearProducto() {
     modals.open({
@@ -64,25 +64,36 @@ export default function TablaProductos() {
       <Button onClick={mostrarModalCrearProducto} variant="siguiente">
         Añadir producto
       </Button>
-      <Table w={big ? "100%" : "130%"}>
-        <thead>
-          <tr>
-            <th></th>
-            <th>Producto</th>
-            <th>Caracteristicas</th>
-            <th>Precio</th>
-            <th>Stock</th>
-            <th>Categoria</th>
-            <th>Vendidos</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {productos.map((producto) => (
-            <FilaProducto producto={producto} key={producto.id}/>
-          ))}
-        </tbody>
-      </Table>
+      <ScrollArea style={{ flex: "1" }}>
+        <Table w={big ? "100%" : "130%"}>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Producto</th>
+              <th>Caracteristicas</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th>Categoria</th>
+              <th>Vendidos</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {productos.map((producto) => (
+              <FilaProducto producto={producto} key={producto.id} />
+            ))}
+          </tbody>
+        </Table>
+      </ScrollArea>
+      {/* <div
+        style={{
+          overflowY: "scroll",
+          overflowX: "scroll",
+          flex: "1",
+          maxWidth: "100%",
+        }}
+      >
+      </div> */}
     </>
   );
 }

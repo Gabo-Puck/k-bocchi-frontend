@@ -13,7 +13,7 @@ export default function Pacientes() {
   const [pacientes, setPacientes] = useState();
   const usuario = useSelector(selectUsuario);
 
-  async function fetchPacientes(nombre="") {
+  async function fetchPacientes(nombre = "") {
     setPacientes(undefined);
     let {
       terapeuta: { id },
@@ -33,9 +33,9 @@ export default function Pacientes() {
     fetchPacientes();
   }, []);
   return (
-    <Stack spacing="md" h="100%" maw="100%" style={{ flex: "1 1 auto" }}>
+    <>
       <BusquedaPacientes setPacientes={fetchPacientes} />
       <TablaPacientes pacientes={pacientes} />
-    </Stack>
+    </>
   );
 }

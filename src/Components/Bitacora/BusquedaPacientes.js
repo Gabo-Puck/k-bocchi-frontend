@@ -13,7 +13,7 @@ export default function BusquedaPacientes({ setPacientes = (nombre) => {} }) {
       onChange={({ currentTarget: { value } }) => {
         setNombre(value);
       }}
-      style={{flex: "0 0 auto"}}
+      style={{flex: "0"}}
     />
   );
 }

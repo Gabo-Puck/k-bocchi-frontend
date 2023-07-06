@@ -59,13 +59,12 @@ export default function Layout() {
     useSesionExpiracion();
   const { isSesionAbierta, mantenerSesion } = useMantenerSesion();
   const [modalNotificaciones, setModalNotificaciones] = useState();
-  
-  useEffect(()=>{
-    
+
+  useEffect(() => {
     // return (()=>{
     //   deleteToken(messaging)
     // })
-  },[])
+  }, []);
   const { start, clear } = useTimeout(() => {
     console.log("Estas conectado :O");
     setMinutos();
@@ -172,31 +171,38 @@ export default function Layout() {
         // navbar={<BarraNavegacion />}
         // footer={<FooterApp />}
       ></AppShell> */}
-      <Notificacion/>
-      <Modal opened={modalNotificaciones!=undefined&&!modalNotificaciones} onClose={()=>setModalNotificaciones(true)} title="¡Aviso!">
+      <Notificacion />
+      <Modal
+        opened={modalNotificaciones != undefined && !modalNotificaciones}
+        onClose={() => setModalNotificaciones(true)}
+        title="¡Aviso!"
+      >
         <Modal.Body>
           Para una mejor experiencia de usuario, habilite las notificaciones
         </Modal.Body>
       </Modal>
-      <Flex h="100vh" w="100vw" gap="sm">
-        <ScrollArea
-          sx={{
-            flex: "1",
-          }}
-          h="100vh"
-          m={0}
-          p={0}
-          styles={{
-            viewport: { height: "100%", margin: 0, paddingBottom: 0 },
-            root: { height: "100vh", margin: 0 },
-          }}
-          offsetScrollbars
-          py={0}
-        >
-          <Outlet />
-        </ScrollArea>
+      <ScrollArea
+        sx={{
+          flex: "1",
+        }}
+        w="100vw"
+        h="100vh"
+        m={0}
+        p={0}
+        styles={{
+          viewport: {
+            height: "100%",
+            width: "100%",
+            margin: 0,
+            paddingBottom: 0,
+          },
+          root: { height: "100vh", width: "100%", margin: 0 },
+        }}
+        py={0}
+      >
+        <Outlet />
         <BarraNavegacion />
-      </Flex>
+      </ScrollArea>
 
       {/* <Flex h="100vh" direction="column">
         <Container

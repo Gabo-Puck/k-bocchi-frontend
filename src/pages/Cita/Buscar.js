@@ -123,7 +123,7 @@ export default function Buscar() {
     setSearchParams(serializarSearchParams(parametrosBusqueda));
   }, [parametrosBusqueda]);
   return (
-    <Container h="100vh" mx={0} pt="sm" fluid={true}>
+    <Container h="100vh" mx={0} pt="sm" fluid>
       <BusquedaTerapeutaContext.Provider
         value={{ setResultados, parametrosBusqueda, setParametrosBusqueda }}
       >

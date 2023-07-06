@@ -11,7 +11,7 @@ export default function TablaPacientes({ pacientes }) {
     if (!mid && !sm) return "200%";
   }
   return (
-
+    <ScrollArea style={{ flex: "1" }}>
       <Table
         w={selectWidth()}
         // h={"100%"}
@@ -33,7 +33,7 @@ export default function TablaPacientes({ pacientes }) {
           )}
         </tbody>
       </Table>
-    
+    </ScrollArea>
   );
 }
 

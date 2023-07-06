@@ -3,11 +3,11 @@ import Pacientes from "../../Components/Bitacora/Pacientes";
 
 export default function BitacoraGeneral() {
   return (
-    <Container h="100vh" px="xs" py={0} fluid>
-      <Flex direction="column" h="100%">
-        <Title style={{ flex: "0 0 auto" }}>Bitacora</Title>
+    <Container h="100vh" w="100vw" px="xs" py={0} fluid>
+      <Stack h="100%" w="100%">
+        <Title>Bitacora</Title>
         <Pacientes />
-      </Flex>
+      </Stack>
     </Container>
   );
 }

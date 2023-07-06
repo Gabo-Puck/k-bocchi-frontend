@@ -17,7 +17,7 @@ export default function GrupoNotas({
         {header}
       </Title>
       <Divider />
-      <Flex w="100%" wrap="wrap" gap="xl" style={{ flex: "1 1 auto" }}>
+      <Flex w="100%" wrap="wrap" gap="xl" style={{ flex: "1 1 auto" }} direction="row">
         {notas}
       </Flex>
     </Stack>

@@ -128,13 +128,13 @@ const useStyles = createStyles((theme) => ({
   },
   box: {},
   boxTop: {
-    backgroundColor: theme.colors.background,
+    backgroundColor: "transparent",
     height: "6px",
     width: "16px",
     borderBottomRightRadius: "0.4em",
   },
   boxBottom: {
-    backgroundColor: theme.colors.background,
+    backgroundColor: "transparent",
     borderTopRightRadius: "0.4em",
     height: "6px",
     width: "16px",
@@ -146,7 +146,7 @@ const useStyles = createStyles((theme) => ({
     width: "16px",
   },
   boxCenter: {
-    backgroundColor: theme.colors.background,
+    backgroundColor: "transparent",
   },
 
   header: {
@@ -178,8 +178,11 @@ const useStyles = createStyles((theme) => ({
     }`,
   },
   navbarContainer: {
-    position: "relative",
-    minWidth: "1px",
+    position: "absolute",
+    top:0,
+    right:0,
+    minWidth: "0px",
+    zIndex:1000
   },
 }));
 
