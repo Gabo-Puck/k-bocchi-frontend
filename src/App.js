@@ -142,6 +142,17 @@ function App() {
               },
             }),
           },
+          
+          Radio: {
+            styles: (theme, { variant }) => ({
+              radio: {
+                ":checked": {
+                  backgroundColor: theme.colors["green-nature"][5],
+                  borderColor: theme.colors["green-nature"][5],
+                },
+              },
+            }),
+          },
         },
 
         colors: {

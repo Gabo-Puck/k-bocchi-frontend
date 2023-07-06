@@ -45,6 +45,14 @@ export const isLongitudMinima = (value,min,mensaje)=>{
   if(value.trim().length<min) return `Por lo menos tiene que ser ${min} ${mensaje}`
   return null;
 }
+export const isMinimoNumero = (value,min,mensaje)=>{
+  if(value<min) return `Tiene que ser minimo ${min} ${mensaje}`
+  return null;
+}
+export const isMaximoNumero = (value,max,mensaje)=>{
+  if(value>max) return `Tiene que ser maximo ${max} ${mensaje}`
+  return null;
+}
 export const isLongitudMaxima = (value,max,mensaje)=>{
   if(value.trim().length>max) return `Maximo tiene que ser ${max} ${mensaje}`
   return null;
