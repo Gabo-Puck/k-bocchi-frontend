@@ -9,9 +9,20 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { useToggle } from "@mantine/hooks";
-import { MdSearch, MdChevronLeft, MdChevronRight } from "react-icons/md";
+import {
+  MdSearch,
+  MdChevronLeft,
+  MdChevronRight,
+  MdOutlineSell,
+} from "react-icons/md";
 import { SlLogout } from "react-icons/sl";
-import { FaBookMedical, FaComment } from "react-icons/fa";
+import {
+  FaBookMedical,
+  FaComment,
+  FaMoneyBillWave,
+  FaRobot,
+  FaShippingFast,
+} from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
 import { LinksGroup } from "./NavbarLinksGroup";
 
@@ -27,13 +38,33 @@ const navbarItems = [
   { label: "Buscar terapeuta", icon: MdSearch, to: "/app/cita/buscar" },
   {
     label: "Cita",
-    icon: FaBookMedical,
+    icon: FaRobot,
     initiallyOpened: true,
     links: [
       { label: "Agendar", link: "/app/paciente/chatbot" },
       { label: "Emergencia", link: "/" },
     ],
     rol: PACIENTE,
+  },
+  {
+    label: "Marketplace",
+    icon: FaMoneyBillWave,
+    links: [
+      { label: "Comprar", link: "" },
+      { label: "Mis pedidos", link: "" },
+    ],
+    rol: PACIENTE,
+  },
+  {
+    label: "Marketplace",
+    icon: FaMoneyBillWave,
+    rol: FISIOTERAPEUTA,
+    links: [
+      { label: "Buscar", link: "" },
+      { label: "Mis pedidos", link: "" },
+      { label: "Mi catalogo", link: "/app/marketplace/terapeuta/catalogo" },
+      { label: "Reportes", link: "" },
+    ],
   },
   {
     label: "Bitácora",
@@ -61,7 +92,6 @@ const useStyles = createStyles((theme) => ({
     paddingBottom: 0,
     maxHeight: "100vh",
     minHeight: "100vh",
-    
   },
   hidden: {
     // display:"none",

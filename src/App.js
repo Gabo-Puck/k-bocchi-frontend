@@ -46,6 +46,7 @@ import BitacoraGeneral from "./pages/Bitacora/BitacoraGeneral";
 import BitacoraTerapeuta from "./pages/Bitacora/BitacoraTerapeuta";
 import BitacoraPaciente from "./pages/Bitacora/BitacoraPaciente";
 import BitacoraModificarAcceso from "./pages/Bitacora/BitacoraModificarAcceso";
+import Catalogo from "./pages/Marketplace/Catalogo/Catalogo";
 
 function App() {
   let usuario = useSelector(selectUsuario);
@@ -384,6 +385,12 @@ function App() {
                     <Route path="bitacora">
                       <Route index element={<BitacoraGeneral />} />
                       <Route path=":id" element={<BitacoraTerapeuta />} />
+                    </Route>
+                  </Route>
+                  <Route path="marketplace">
+                    <Route path="paciente"></Route>
+                    <Route path="terapeuta">
+                      <Route path="catalogo" element={<Catalogo/>}/>
                     </Route>
                   </Route>
                 </Route>
