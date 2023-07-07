@@ -132,7 +132,7 @@ export default function Buscar() {
           onClose={close}
           title="Filtros"
           scrollAreaComponent={ScrollArea.Autosize}
-          position="right"
+          position="left"
         >
           <Filtros />
         </Drawer>

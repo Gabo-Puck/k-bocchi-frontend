@@ -50,7 +50,7 @@ const navbarItems = [
     label: "Marketplace",
     icon: FaMoneyBillWave,
     links: [
-      { label: "Comprar", link: "" },
+      { label: "Comprar", link: "/app/marketplace/buscar" },
       { label: "Mis pedidos", link: "" },
     ],
     rol: PACIENTE,

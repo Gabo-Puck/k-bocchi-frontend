@@ -15,7 +15,9 @@ const Imagen = React.forwardRef(
       image,
       classes = { avatarObject: "" },
       onLoaded = () => {},
-      onImageLoaded = ()=>{}
+      onImageLoaded = ()=>{},
+      fit="cover"
+
     },
     refParent
   ) => {
@@ -57,7 +59,7 @@ const Imagen = React.forwardRef(
             animate={true}
           />
         ) : (
-          <Image src={file} height={height} onLoad={onImageLoaded}  withPlaceholder/>
+          <Image src={file} height={height} onLoad={onImageLoaded} fit={fit}  withPlaceholder/>
         )}
       </>
     );
