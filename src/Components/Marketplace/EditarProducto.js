@@ -32,7 +32,7 @@ import {
   isRequired,
   isRequiredValidation,
 } from "../../utils/inputValidation";
-import { showNegativeFeedbackNotification } from "../../utils/notificationTemplate";
+import { showNegativeFeedbackNotification, showPositiveFeedbackNotification } from "../../utils/notificationTemplate";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { selectUsuario } from "../../utils/usuarioHooks";
@@ -111,6 +111,7 @@ export default function EditarProducto({ onEditar, producto }) {
           "Content-Type": "multipart/form-data",
         },
       });
+      showPositiveFeedbackNotification("Se ha editado el producto")
       onEditar(producto);
     } catch (err) {
       if (!err) {
