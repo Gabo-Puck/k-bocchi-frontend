@@ -17,6 +17,8 @@ import ImagenAvatar from "../ImagenAvatar";
 import DisponibilidadProducto from "./DisponibilidadProducto";
 import CategoriaProducto from "./CategoriaProducto";
 import { currencyFormatter } from "../../utils/formatters";
+import { useNavigate } from "react-router-dom";
+import Vendedor from "./Vendedor";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -49,6 +51,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function CardProducto({
+  id,
   imagen,
   nombre,
   caracteristicas,
@@ -61,7 +64,7 @@ export default function CardProducto({
   categoria,
 }) {
   const { classes, theme } = useStyles();
-
+  const navigate = useNavigate();
   // const features = badges.map((badge) => (
   //   <Badge
   //     color={theme.colorScheme === "dark" ? "dark" : "gray"}
@@ -119,13 +122,10 @@ export default function CardProducto({
         </Text>
       </Card.Section>
       <Card.Section className={classes.section}>
-        <Text mt="md" className={classes.label} c="dimmed">
-          Publicado por:
-        </Text>
-        <Group>
-          <ImagenAvatar image={imagen_vendedor} />
-          <Text>{nombre_vendedor}</Text>
-        </Group>
+        <Vendedor
+          imagen_vendedor={imagen_vendedor}
+          nombre_vendedor={nombre_vendedor}
+        />
       </Card.Section>
       <Card.Section className={classes.section}>
         <Flex align="center" gap="md">
@@ -144,7 +144,14 @@ export default function CardProducto({
         </Flex>
       </Card.Section>
       <Group mt="xs">
-        <Button radius="md" style={{ flex: 1 }} variant="siguiente">
+        <Button
+          radius="md"
+          style={{ flex: 1 }}
+          variant="siguiente"
+          onClick={() => {
+            navigate(`/app/marketplace/buscar/detalles/${id}`);
+          }}
+        >
           Más detalles
         </Button>
       </Group>

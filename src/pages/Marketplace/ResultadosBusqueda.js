@@ -1,10 +1,9 @@
 import { useEffect } from "react";
 import { useOutletContext, useSearchParams } from "react-router-dom";
 import CardProducto from "../../Components/Marketplace/CardProducto";
-import { useSm, } from "../../utils/mediaQueryHooks";
+import { useSm } from "../../utils/mediaQueryHooks";
 import { Flex, Text } from "@mantine/core";
 import Vacio from "../../Components/Vacio";
-
 
 const mockData = {
   id: 29,
@@ -42,7 +41,7 @@ export default function ResultadosBusqueda() {
   let [searchParams, setSearchParams] = useSearchParams();
   let sm = useSm();
   let { productos } = useOutletContext();
-  
+
   if (productos.length === 0)
     return <Vacio children={<Text>No hay productos</Text>} />;
   return (
@@ -55,6 +54,7 @@ export default function ResultadosBusqueda() {
     >
       {productos.map((producto) => (
         <CardProducto
+          key={producto.id}
           {...producto}
           imagen_vendedor={producto.terapeuta.usuario.foto_perfil}
           nombre_vendedor={producto.terapeuta.usuario.nombre}

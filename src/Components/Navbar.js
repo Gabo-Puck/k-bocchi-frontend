@@ -50,7 +50,7 @@ const navbarItems = [
     label: "Marketplace",
     icon: FaMoneyBillWave,
     links: [
-      { label: "Comprar", link: "/app/marketplace/buscar" },
+      { label: "Comprar", link: "/app/marketplace/buscar/x" },
       { label: "Mis pedidos", link: "" },
     ],
     rol: PACIENTE,
@@ -60,7 +60,7 @@ const navbarItems = [
     icon: FaMoneyBillWave,
     rol: FISIOTERAPEUTA,
     links: [
-      { label: "Buscar", link: "" },
+      { label: "Buscar", link: "/app/marketplace/buscar" },
       { label: "Mis pedidos", link: "" },
       { label: "Mi catalogo", link: "/app/marketplace/terapeuta/catalogo" },
       { label: "Reportes", link: "" },

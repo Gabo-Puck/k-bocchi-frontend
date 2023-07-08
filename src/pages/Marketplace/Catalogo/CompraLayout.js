@@ -13,7 +13,12 @@ import {
   UnstyledButton,
   useMantineTheme,
 } from "@mantine/core";
-import { Outlet, useSearchParams } from "react-router-dom";
+import {
+  Outlet,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
 import { useMd } from "../../../utils/mediaQueryHooks";
 import { AiOutlineSearch } from "react-icons/ai";
@@ -23,6 +28,9 @@ import axios from "axios";
 import { showNegativeFeedbackNotification } from "../../../utils/notificationTemplate";
 import BarraBusqueda from "../../../Components/Marketplace/BarraBusqueda";
 import { useDisclosure } from "@mantine/hooks";
+import { useSelector } from "react-redux";
+import { selectUsuario } from "../../../utils/usuarioHooks";
+import { PACIENTE } from "../../../roles";
 
 export default function CompraLayout() {
   const theme = useMantineTheme();
@@ -31,7 +39,11 @@ export default function CompraLayout() {
   let [buscando, setBuscando] = useState(false);
   let [productos, setProductos] = useState([]);
   const [opened, { open, close }] = useDisclosure(false);
+  const navigate = useNavigate();
+  const na = useLocation();
+  const { rol } = useSelector(selectUsuario);
   async function fetchProductos() {
+    if (/\/app\/marketplace\/buscar\/detalles\/.*$/.test(na.pathname)) return;
     setBuscando(true);
     try {
       let { data } = await axios.get(`/productos?${searchParams}`);
@@ -61,7 +73,7 @@ export default function CompraLayout() {
         position="left"
         keepMounted
       >
-        <Filtros/>
+        <Filtros />
       </Drawer>
       <Stack spacing={0}>
         <Flex
@@ -104,12 +116,16 @@ export default function CompraLayout() {
             </Grid.Col>
           </Grid>
 
-          <UnstyledButton mr="xl">
-            <FaShoppingCart
-              color={theme.colors["blue-empire"][5]}
-              size={theme.fontSizes.lg}
-            />
-          </UnstyledButton>
+          {rol === PACIENTE ? (
+            <UnstyledButton mr="xl">
+              <FaShoppingCart
+                color={theme.colors["blue-empire"][5]}
+                size={theme.fontSizes.lg}
+              />
+            </UnstyledButton>
+          ) : (
+            <div></div>
+          )}
         </Flex>
       </Stack>
       <ScrollArea style={{ flex: "1" }} w="100vw">

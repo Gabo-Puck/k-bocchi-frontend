@@ -9,7 +9,7 @@ import {
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { currencyFormatter } from "../../utils/formatters";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   CATEGORIA_DISPOSITIVO,
   CATEGORIA_MEDICAMENTO,
@@ -24,17 +24,18 @@ export function Filtros({ setBusqueda }) {
     rango_inferior: searchParams.get("rango_inferior"),
     rango_superior: searchParams.get("rango_superior"),
   });
+  const navigate = useNavigate();
   useEffect(() => {
     console.log(filtros);
   }, [filtros]);
   function updateParams() {
-    setSearchParams((sp) => {
-      Object.entries(filtros).forEach(([key, value]) => {
-        if (value === null) sp.delete(key);
-        else sp.set(key, value);
-      });
-      return sp;
+    let x = new URLSearchParams(searchParams);
+
+    Object.entries(filtros).forEach(([key, value]) => {
+      if (value === null) x.delete(key);
+      else x.set(key, value);
     });
+    navigate(`/app/marketplace/buscar/x?${x}`);
   }
   return (
     <Stack>

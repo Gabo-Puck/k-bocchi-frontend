@@ -49,6 +49,7 @@ import BitacoraModificarAcceso from "./pages/Bitacora/BitacoraModificarAcceso";
 import Catalogo from "./pages/Marketplace/Catalogo/Catalogo";
 import CompraLayout from "./pages/Marketplace/Catalogo/CompraLayout";
 import ResultadosBusqueda from "./pages/Marketplace/ResultadosBusqueda";
+import DetallesProducto from "./pages/Marketplace/DetallesProducto";
 
 function App() {
   let usuario = useSelector(selectUsuario);
@@ -160,12 +161,11 @@ function App() {
               dispositivo: (theme) => ({
                 inner: {
                   color: theme.colors["blue-empire"][4],
-                  
                 },
                 root: {
-                  backgroundColor: theme.colors["cyan-opaque"][7]+"4F",
+                  backgroundColor: theme.colors["cyan-opaque"][7] + "4F",
                   color: theme.white,
-                  
+
                   // ...theme.fn.hover({
                   //   backgroundColor: theme.colors["blue-calm"][7],
                   // }),
@@ -174,12 +174,11 @@ function App() {
               medicamento: (theme) => ({
                 inner: {
                   color: theme.colors["blue-calm"][7],
-                  
                 },
                 root: {
-                  backgroundColor: theme.colors["blue-empire"][7]+"5F",
+                  backgroundColor: theme.colors["blue-empire"][7] + "5F",
                   color: theme.white,
-                  
+
                   // ...theme.fn.hover({
                   //   backgroundColor: theme.colors["blue-calm"][7],
                   // }),
@@ -433,8 +432,12 @@ function App() {
                     </Route>
                   </Route>
                   <Route path="marketplace">
-                    <Route path="buscar" element={<CompraLayout/>}>
-                        <Route index element={<ResultadosBusqueda/>}/>
+                    <Route path="buscar" element={<CompraLayout />}>
+                      <Route path="x" element={<ResultadosBusqueda />} />
+                      <Route
+                        path="detalles/:id_producto"
+                        element={<DetallesProducto />}
+                      />
                     </Route>
                     <Route path="paciente"></Route>
                     <Route path="terapeuta">

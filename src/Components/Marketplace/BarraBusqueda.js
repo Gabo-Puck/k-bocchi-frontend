@@ -1,11 +1,12 @@
 import { TextInput, UnstyledButton } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function BarraBusqueda() {
   let [searchParams, setSearchParams] = useSearchParams();
   let [search, setSearch] = useState(searchParams.get("palabra"));
+  let navigate = useNavigate();
   useEffect(() => {
     console.log({ search });
   }, [search]);
@@ -18,10 +19,9 @@ export default function BarraBusqueda() {
       rightSection={
         <UnstyledButton
           onClick={() => {
-            setSearchParams((x) => {
-              x.set("palabra", search);
-              return x
-            });
+            let x = new URLSearchParams(searchParams);
+            x.set("palabra",search)
+            navigate(`/app/marketplace/buscar/x?${x}`);
           }}
         >
           <AiOutlineSearch />
