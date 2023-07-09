@@ -58,7 +58,7 @@ export default function CardProducto({
   precio,
   stock,
   isNuevo,
-  hasStock,
+  stock_carrito,
   imagen_vendedor,
   nombre_vendedor,
   categoria,
@@ -133,7 +133,7 @@ export default function CardProducto({
             <Text className={classes.label} c="dimmed">
               Disponible:
             </Text>
-            <DisponibilidadProducto stock={stock} hasStock={hasStock} />
+            <DisponibilidadProducto stock={stock_carrito} />
           </div>
           <div>
             <Text className={classes.label} c="dimmed">

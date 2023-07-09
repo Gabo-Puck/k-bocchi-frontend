@@ -31,8 +31,7 @@ export default function DetallesProducto() {
   let [cargando, setCargando] = useState(true);
   let [producto, setProducto] = useState();
   let { rol } = useSelector(selectUsuario);
-  let [stock, setStock] = useState();
-  let [hasStock, setHasStock] = useState();
+  let [stockCarrito, setStockCarrito] = useState();
   const sm = useSm();
   async function fetchProducto() {
     setCargando(true);
@@ -57,8 +56,7 @@ export default function DetallesProducto() {
   }, []);
   useEffect(() => {
     if (producto) {
-      setStock(producto.stock);
-      setHasStock(producto.hasStock);
+      setStockCarrito(producto.stock_carrito);
     }
   }, [producto]);
   if (cargando === true) return <LoadingOverlay visible overlayBlur={2} />;
@@ -80,15 +78,13 @@ export default function DetallesProducto() {
             <Text fw="bold" style={{ wordWrap: "break-word", width: "90%" }}>
               Disponibilidad
             </Text>
-            <DisponibilidadProducto stock={stock} hasStock={hasStock} />
+            <DisponibilidadProducto stock={stockCarrito} />
           </Box>
           {rol === PACIENTE && (
             <>
               <BotonAnadirCarrito
-                stock={stock}
-                setStock={setStock}
-                hasStock={hasStock}
-                setHasStock={setHasStock}
+                stock={stockCarrito}
+                setStock={setStockCarrito}
                 id_producto={id_producto}
               />
             </>

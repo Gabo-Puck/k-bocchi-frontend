@@ -12,7 +12,6 @@ import { selectUsuario } from "../../utils/usuarioHooks";
 export default function BotonAnadirCarrito({
   stock,
   setStock,
-  hasStock,
   setHasStock,
   id_producto,
 }) {
@@ -28,7 +27,6 @@ export default function BotonAnadirCarrito({
     setCantidad(1);
   }, [stock]);
   async function handleAnadir() {
-    let stock;
     setGuardar(true);
     try {
       let { data } = await axios.post("/carrito", {
@@ -39,9 +37,9 @@ export default function BotonAnadirCarrito({
       showPositiveFeedbackNotification(
         "Se ha añadido el producto al carrito 🤑"
       );
-      stock = data.stock;
-      if (stock === 0) setHasStock(0);
       setGuardar(false);
+      setStock(data.stock_carrito);
+      return;
     } catch (err) {
       setGuardar(false);
       if (!err) return;
@@ -59,18 +57,17 @@ export default function BotonAnadirCarrito({
 
       if (err.response.status === 420) {
         //Ya no hay stock para este producto
-        setHasStock(0);
-        stock = 0;
+        setStock(0);
         mensaje = "Este producto se encuentra agotado";
       }
       if (err.response.status === 421) {
         //No hay stock suficiente para la cantidad requerida
         mensaje = "No hay stock suficiente";
-        stock = data.stock;
+        setStock(data.stock_carrito);
       }
       showNegativeFeedbackNotification(mensaje);
+      return;
     }
-    setStock(stock);
   }
   return (
     <Box w="fit-content">
@@ -80,13 +77,13 @@ export default function BotonAnadirCarrito({
         onChange={(value) => {
           setCantidad(value);
         }}
-        disabled={guardar || !hasStock}
+        disabled={guardar || stock === 0}
         initialValue={cantidad}
         min={1}
       />
       <Button
         variant="seleccionar"
-        disabled={!hasStock}
+        disabled={stock === 0}
         w="100%"
         loading={guardar}
         onClick={handleAnadir}
