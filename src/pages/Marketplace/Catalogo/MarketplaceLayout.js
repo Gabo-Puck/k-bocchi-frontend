@@ -32,37 +32,11 @@ import { useSelector } from "react-redux";
 import { selectUsuario } from "../../../utils/usuarioHooks";
 import { PACIENTE } from "../../../roles";
 
-export default function CompraLayout() {
+export default function MarketplaceLayout() {
   const theme = useMantineTheme();
   const md = useMd();
-  let [searchParams, setSearchParams] = useSearchParams();
-  let [buscando, setBuscando] = useState(false);
-  let [productos, setProductos] = useState([]);
   const [opened, { open, close }] = useDisclosure(false);
-  const navigate = useNavigate();
-  const na = useLocation();
   const { rol } = useSelector(selectUsuario);
-  async function fetchProductos() {
-    if (/\/app\/marketplace\/buscar\/detalles\/.*$/.test(na.pathname)) return;
-    setBuscando(true);
-    try {
-      let { data } = await axios.get(`/productos?${searchParams}`);
-      setProductos(data);
-    } catch (err) {
-      if (err) {
-        let {
-          response: { data },
-        } = err;
-        showNegativeFeedbackNotification(data);
-      }
-      console.log(err);
-      return;
-    }
-    setBuscando(false);
-  }
-  useEffect(() => {
-    fetchProductos();
-  }, [searchParams]);
   return (
     <Stack h="100vh" w="100vw">
       <Drawer
@@ -129,11 +103,7 @@ export default function CompraLayout() {
         </Flex>
       </Stack>
       <ScrollArea style={{ flex: "1" }} w="100vw">
-        {buscando ? (
-          <LoadingOverlay visible overlayBlur={2} />
-        ) : (
-          <Outlet context={{ productos }} />
-        )}
+        <Outlet />
       </ScrollArea>
     </Stack>
   );

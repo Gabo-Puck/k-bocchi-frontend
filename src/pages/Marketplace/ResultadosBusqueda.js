@@ -1,9 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useOutletContext, useSearchParams } from "react-router-dom";
 import CardProducto from "../../Components/Marketplace/CardProducto";
 import { useSm } from "../../utils/mediaQueryHooks";
-import { Flex, Text } from "@mantine/core";
+import { Flex, LoadingOverlay, Text } from "@mantine/core";
 import Vacio from "../../Components/Vacio";
+import axios from "axios";
+import { showNegativeFeedbackNotification } from "../../utils/notificationTemplate";
 
 const mockData = {
   id: 29,
@@ -40,7 +42,29 @@ function serializarSearchParams(object) {
 export default function ResultadosBusqueda() {
   let [searchParams, setSearchParams] = useSearchParams();
   let sm = useSm();
-  let { productos } = useOutletContext();
+  const [productos, setProductos] = useState();
+  const [buscando, setBuscando] = useState(true);
+  async function fetchProductos() {
+    setBuscando(true);
+    try {
+      let { data } = await axios.get(`/productos?${searchParams}`);
+      setProductos(data);
+    } catch (err) {
+      if (err) {
+        let {
+          response: { data },
+        } = err;
+        showNegativeFeedbackNotification(data);
+      }
+      console.log(err);
+      return;
+    }
+    setBuscando(false);
+  }
+  useEffect(() => {
+    fetchProductos();
+  }, [searchParams]);
+  if (buscando) return <LoadingOverlay visible overlayBlur={2} />;
 
   if (productos.length === 0)
     return <Vacio children={<Text>No hay productos</Text>} />;

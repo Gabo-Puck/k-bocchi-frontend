@@ -4,7 +4,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function BarraBusqueda() {
-  let [searchParams, setSearchParams] = useSearchParams();
+  let [searchParams, setSearchParams] = useSearchParams({ palabra: "" });
   let [search, setSearch] = useState(searchParams.get("palabra"));
   let navigate = useNavigate();
   useEffect(() => {
@@ -20,8 +20,8 @@ export default function BarraBusqueda() {
         <UnstyledButton
           onClick={() => {
             let x = new URLSearchParams(searchParams);
-            x.set("palabra",search)
-            navigate(`/app/marketplace/buscar/x?${x}`);
+            x.set("palabra", search);
+            navigate(`/app/marketplace/resultados?${x}`);
           }}
         >
           <AiOutlineSearch />

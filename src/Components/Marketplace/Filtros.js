@@ -35,7 +35,7 @@ export function Filtros({ setBusqueda }) {
       if (value === null) x.delete(key);
       else x.set(key, value);
     });
-    navigate(`/app/marketplace/buscar/x?${x}`);
+    navigate(`/app/marketplace/resultados?${x}`);
   }
   return (
     <Stack>

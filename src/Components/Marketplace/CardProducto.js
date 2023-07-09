@@ -149,7 +149,7 @@ export default function CardProducto({
           style={{ flex: 1 }}
           variant="siguiente"
           onClick={() => {
-            navigate(`/app/marketplace/buscar/detalles/${id}`);
+            navigate(`../detalles/${id}`);
           }}
         >
           Más detalles

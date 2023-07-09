@@ -47,9 +47,10 @@ import BitacoraTerapeuta from "./pages/Bitacora/BitacoraTerapeuta";
 import BitacoraPaciente from "./pages/Bitacora/BitacoraPaciente";
 import BitacoraModificarAcceso from "./pages/Bitacora/BitacoraModificarAcceso";
 import Catalogo from "./pages/Marketplace/Catalogo/Catalogo";
-import CompraLayout from "./pages/Marketplace/Catalogo/CompraLayout";
+import MarketplaceLayout from "./pages/Marketplace/Catalogo/MarketplaceLayout";
 import ResultadosBusqueda from "./pages/Marketplace/ResultadosBusqueda";
 import DetallesProducto from "./pages/Marketplace/DetallesProducto";
+import Carrito from "./pages/Marketplace/Carrito";
 
 function App() {
   let usuario = useSelector(selectUsuario);
@@ -432,11 +433,15 @@ function App() {
                     </Route>
                   </Route>
                   <Route path="marketplace">
-                    <Route path="buscar" element={<CompraLayout />}>
-                      <Route path="x" element={<ResultadosBusqueda />} />
+                    <Route element={<MarketplaceLayout />}>
+                      <Route path="resultados" element={<ResultadosBusqueda />} />
                       <Route
                         path="detalles/:id_producto"
                         element={<DetallesProducto />}
+                      />
+                      <Route
+                        path="carrito"
+                        element={<Carrito />}
                       />
                     </Route>
                     <Route path="paciente"></Route>

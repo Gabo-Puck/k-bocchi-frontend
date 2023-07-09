@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Container,
+  Flex,
   Grid,
   Group,
   LoadingOverlay,
@@ -22,12 +23,16 @@ import { useSelector } from "react-redux";
 import { selectUsuario } from "../../utils/usuarioHooks";
 import { PACIENTE } from "../../roles";
 import Vendedor from "../../Components/Marketplace/Vendedor";
+import ControlCantidad from "../../Components/Marketplace/ControlCantidad";
+import BotonAnadirCarrito from "../../Components/Marketplace/BotonAnadirCarrito";
 
 export default function DetallesProducto() {
   let { id_producto } = useParams();
   let [cargando, setCargando] = useState(true);
   let [producto, setProducto] = useState();
   let { rol } = useSelector(selectUsuario);
+  let [stock, setStock] = useState();
+  let [hasStock, setHasStock] = useState();
   const sm = useSm();
   async function fetchProducto() {
     setCargando(true);
@@ -50,6 +55,12 @@ export default function DetallesProducto() {
   useEffect(() => {
     fetchProducto();
   }, []);
+  useEffect(() => {
+    if (producto) {
+      setStock(producto.stock);
+      setHasStock(producto.hasStock);
+    }
+  }, [producto]);
   if (cargando === true) return <LoadingOverlay visible overlayBlur={2} />;
   return (
     <Container>
@@ -69,15 +80,18 @@ export default function DetallesProducto() {
             <Text fw="bold" style={{ wordWrap: "break-word", width: "90%" }}>
               Disponibilidad
             </Text>
-            <DisponibilidadProducto
-              stock={producto.stock}
-              hasStock={producto.hasStock}
-            />
+            <DisponibilidadProducto stock={stock} hasStock={hasStock} />
           </Box>
           {rol === PACIENTE && (
-            <Button variant="seleccionar" disabled={!producto.hasStock}>
-              Añadir al carrito
-            </Button>
+            <>
+              <BotonAnadirCarrito
+                stock={stock}
+                setStock={setStock}
+                hasStock={hasStock}
+                setHasStock={setHasStock}
+                id_producto={id_producto}
+              />
+            </>
           )}
         </Grid.Col>
       </Grid>
