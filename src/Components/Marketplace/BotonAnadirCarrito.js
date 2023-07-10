@@ -80,6 +80,7 @@ export default function BotonAnadirCarrito({
         disabled={guardar || stock === 0}
         initialValue={cantidad}
         min={1}
+        size={42}
       />
       <Button
         variant="seleccionar"

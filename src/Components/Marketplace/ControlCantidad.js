@@ -10,6 +10,9 @@ import {
 export default function ControlCantidad({
   max,
   disabled,
+  size,
+  widthInput,
+  heightInput,
   initialValue = 0,
   onChange = (value) => {},
   step = 1,
@@ -26,9 +29,9 @@ export default function ControlCantidad({
     onChange(value);
   }, [value]);
   return (
-    <Group spacing={5} {...props}>
+    <Group spacing={5} {...props} noWrap>
       <ActionIcon
-        size={42}
+        size={size}
         variant="default"
         disabled={value === min || disabled}
         onClick={() => handlers.current.decrement()}
@@ -45,11 +48,11 @@ export default function ControlCantidad({
         min={min}
         step={step}
         disabled={disabled}
-        styles={{ input: { width: rem(54), height: 42, textAlign: "center" } }}
+        styles={{ input: { width: widthInput, height: heightInput, textAlign: "center" } }}
       />
 
       <ActionIcon
-        size={42}
+        size={size}
         variant="default"
         disabled={value === max || disabled}
         onClick={() => handlers.current.increment()}

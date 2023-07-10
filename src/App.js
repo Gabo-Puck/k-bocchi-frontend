@@ -47,7 +47,7 @@ import BitacoraTerapeuta from "./pages/Bitacora/BitacoraTerapeuta";
 import BitacoraPaciente from "./pages/Bitacora/BitacoraPaciente";
 import BitacoraModificarAcceso from "./pages/Bitacora/BitacoraModificarAcceso";
 import Catalogo from "./pages/Marketplace/Catalogo/Catalogo";
-import MarketplaceLayout from "./pages/Marketplace/Catalogo/MarketplaceLayout";
+import MarketplaceLayout from "./pages/Marketplace/MarketplaceLayout";
 import ResultadosBusqueda from "./pages/Marketplace/ResultadosBusqueda";
 import DetallesProducto from "./pages/Marketplace/DetallesProducto";
 import Carrito from "./pages/Marketplace/Carrito";
@@ -441,8 +441,10 @@ function App() {
                       />
                       <Route
                         path="carrito"
-                        element={<Carrito />}
-                      />
+                        element={<PrivateRoutes authRol={[PACIENTE]}/>}
+                      >
+                        <Route index element={<Carrito/>}/>
+                      </Route>
                     </Route>
                     <Route path="paciente"></Route>
                     <Route path="terapeuta">

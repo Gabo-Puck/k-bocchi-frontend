@@ -11,13 +11,14 @@ const Imagen = React.forwardRef(
   (
     {
       height,
+      heightSkeleton,
+      widthSkeleton,
       width,
       image,
       classes = { avatarObject: "" },
       onLoaded = () => {},
-      onImageLoaded = ()=>{},
-      fit="cover"
-
+      onImageLoaded = () => {},
+      fit = "cover",
     },
     refParent
   ) => {
@@ -54,12 +55,19 @@ const Imagen = React.forwardRef(
       <>
         {file === undefined ? (
           <Skeleton
-            height={height || "100%"}
-            width={width || "100%"}
+            height={heightSkeleton || "100%"}
+            width={widthSkeleton || "100%"}
             animate={true}
           />
         ) : (
-          <Image src={file} height={height} onLoad={onImageLoaded} fit={fit}  withPlaceholder/>
+          <Image
+            src={file}
+            height={height}
+            onLoad={onImageLoaded}
+            fit={fit}
+            width={width}
+            withPlaceholder
+          />
         )}
       </>
     );
