@@ -13,7 +13,7 @@ import {
   rem,
 } from "@mantine/core";
 import CarritoItem from "./CarritoItem";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Imagen from "../Imagen";
 import ControlCantidad from "./ControlCantidad";
 import { useMd, useSm, useXs } from "../../utils/mediaQueryHooks";
@@ -21,6 +21,12 @@ import CenterHorizontal from "../CenterHorizontal";
 import { currencyFormatter } from "../../utils/formatters";
 import { FaTrash } from "react-icons/fa";
 import ButtonEliminarCarrito from "./BotonEliminarProducto";
+import { usePrevious } from "@mantine/hooks";
+import {
+  showNegativeFeedbackNotification,
+  showPositiveFeedbackNotification,
+} from "../../utils/notificationTemplate";
+import axios from "axios";
 
 export default function CarritoProductos({ productos, setProductos }) {
   const md = useMd();
@@ -63,7 +69,7 @@ function VistaGrande({ productos, setProductos }) {
       </thead>
       <tbody>
         {productos.map(({ producto, ...carritoItem }) => (
-          <tr>
+          <tr key={producto.id}>
             <td width={"30%"}>
               <Grid w={md ? "100%" : "auto"}>
                 <Grid.Col span={12} md={12}>
@@ -76,8 +82,9 @@ function VistaGrande({ productos, setProductos }) {
             </td>
             <td>
               <CenterHorizontal>
-                <ControlCantidad
-                  initialValue={carritoItem.cantidad}
+                <ModificarCantidad
+                  carritoItem={carritoItem}
+                  setProductos={setProductos}
                   size={xs ? 42 : 20}
                   heightInput={xs ? 42 : 20}
                   widthInput={rem(xs ? 54 : 45)}
@@ -87,7 +94,11 @@ function VistaGrande({ productos, setProductos }) {
             </td>
             <td>
               <Text ta="center">
-                <Text>{currencyFormatter.format(producto.precio)}</Text>
+                <Text>
+                  {currencyFormatter.format(
+                    producto.precio * carritoItem.cantidad
+                  )}
+                </Text>
                 <Text fz="xs" color="dimmed">
                   Precio unitario: {currencyFormatter.format(producto.precio)}
                 </Text>
@@ -121,6 +132,7 @@ function VistaMovil({ productos, setProductos }) {
           wrap="wrap"
           my="md"
           pos="relative"
+          key={producto.id}
         >
           <Stack style={{ flex: "1" }} align="center" h="100%" mb="md">
             <Text fw="bold" fz="lg" ta="start">
@@ -140,8 +152,9 @@ function VistaMovil({ productos, setProductos }) {
             style={{ flex: "1" }}
           >
             <Text>
-              <ControlCantidad
-                initialValue={carritoItem.cantidad}
+              <ModificarCantidad
+                carritoItem={carritoItem}
+                setProductos={setProductos}
                 size={42}
                 heightInput={42}
                 widthInput={rem(54)}
@@ -168,6 +181,69 @@ function VistaMovil({ productos, setProductos }) {
         </Flex>
       ))}
     </div>
+  );
+}
+
+function ModificarCantidad({ setProductos, carritoItem, ...props }) {
+  const [actualValue, setActualValue] = useState(carritoItem.cantidad);
+  const [cargando, setCargando] = useState(false);
+  useEffect(() => {
+    console.log({ actualValue });
+  }, [actualValue]);
+  async function handleChange(cantidad) {
+    try {
+      let res = await axios.post("/carrito/set", {
+        ...carritoItem,
+        cantidad,
+      });
+      showPositiveFeedbackNotification("¡Se ha cambiado el carrito!");
+      setProductos((ps) =>
+        ps.map((p) =>
+          p.id_producto === carritoItem.id_producto ? { ...p, cantidad } : p
+        )
+      );
+      return cantidad;
+    } catch (err) {
+      if (!err) return null;
+      if (err.response.status === 500) {
+        showNegativeFeedbackNotification(
+          "Lo lamentamos, algo ha salido mal 😥"
+        );
+        return null;
+      }
+      let mensaje;
+      if (err.response.status === 420) {
+        //Ya no hay stock para este producto
+        // setStock(0);
+        mensaje = "Este producto se encuentra agotado";
+      }
+      if (err.response.status === 421) {
+        //No hay stock suficiente para la cantidad requerida
+        mensaje = "No hay stock suficiente";
+        // setStock(data.stock_carrito);
+      }
+      showNegativeFeedbackNotification(mensaje);
+    }
+    return null;
+  }
+  return (
+    <ControlCantidad
+      onBlur={async (value, setValue) => {
+        if (actualValue === value) return;
+        setCargando(true);
+        let resultado = await handleChange(value);
+        setCargando(false);
+        if (resultado !== null) {
+          //condicion de correcto
+          setActualValue(value);
+        } else {
+          setValue(actualValue);
+        }
+      }}
+      disabled={cargando}
+      initialValue={carritoItem.cantidad}
+      {...props}
+    />
   );
 }
 

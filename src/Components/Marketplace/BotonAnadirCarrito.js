@@ -1,4 +1,4 @@
-import { Box, Button } from "@mantine/core";
+import { Box, Button, rem } from "@mantine/core";
 import ControlCantidad from "./ControlCantidad";
 import { useEffect, useState } from "react";
 import {
@@ -79,8 +79,10 @@ export default function BotonAnadirCarrito({
         }}
         disabled={guardar || stock === 0}
         initialValue={cantidad}
-        min={1}
         size={42}
+        heightInput={42}
+        widthInput={rem(54)}
+        min={1}
       />
       <Button
         variant="seleccionar"

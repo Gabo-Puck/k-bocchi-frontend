@@ -86,6 +86,7 @@ export default function DetallesProducto() {
                 stock={stockCarrito}
                 setStock={setStockCarrito}
                 id_producto={id_producto}
+                
               />
             </>
           )}
