@@ -71,9 +71,9 @@ export function FormatUTCDate(date) {
   }).format(d);
   return formateDate;
 }
-export function FormatDate(date = new Date().toISOString()) {
+export function FormatDate(date = new Date()) {
   let fecha = new Date(date);
-  return `${fecha.getUTCFullYear()}-${(fecha.getUTCMonth() + 1)
+  return `${fecha.getFullYear()}-${(fecha.getMonth() + 1)
     .toString()
-    .padStart(2, "0")}-${fecha.getUTCDate().toString().padStart(2, "0")}`;
+    .padStart(2, "0")}-${fecha.getDate().toString().padStart(2, "0")}`;
 }

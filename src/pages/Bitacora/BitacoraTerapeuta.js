@@ -10,7 +10,6 @@ import GrupoNotas from "../../Components/Bitacora/GrupoNotas";
 import NotaPreviewTerapeuta from "../../Components/Bitacora/NotaPreviewTerapeuta";
 import CrearNotaButton from "../../Components/Bitacora/CrearNotaButton";
 
-
 export default function BitacoraTerapeuta() {
   const [notas, setNotas] = useState();
   const { id: pacienteId } = useParams();
@@ -23,14 +22,14 @@ export default function BitacoraTerapeuta() {
       let { data: notas } = await axios.get(
         `/notas/terapeuta/${id}?id_paciente=${pacienteId}`
       );
-      
+
       //Checamos si en la respuesta existe una propiedad con la fecha de hoy
-      if (!notas.find(({header}) => formatearFecha(header) === "Hoy")) {
+      if (!notas.find(({ header }) => formatearFecha(header) === "Hoy")) {
         // notas[FormatDate()] = [];
         notas.unshift({
           header: FormatDate(),
-          notas:[]
-        })
+          notas: [],
+        });
       }
       console.log({ notas });
       setNotas(notas);
@@ -46,8 +45,8 @@ export default function BitacoraTerapeuta() {
     <Container h="100vh" py="lg" fluid>
       <Bitacora
         notas={notas}
-        crearGrupos={(notas) => {
-          return notas.map(({notas,header}) => (
+        crearGrupos={(n) => {
+          return n.map(({ notas, header }) => (
             <GrupoNotas
               grupo={notas}
               header={formatearFecha(header)}
