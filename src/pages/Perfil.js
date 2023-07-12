@@ -54,6 +54,7 @@ import { executeValidation } from "../utils/isFormInvalid";
 import getValueFromPath from "../Components/GetValueFromPath";
 import FotoPerfil from "../Components/FotoPerfil";
 import { useXs } from "../utils/mediaQueryHooks";
+import OnboardPaypal from "../Components/Paypal/OnboardPaypal";
 
 export default function Perfil() {
   const theme = useMantineTheme();
@@ -84,6 +85,7 @@ export default function Perfil() {
               description={usuario.telefono}
               icon={BsFillTelephoneFill}
             />
+            <PaypalStatus />
             <CheckboxMantenerSesion />
             <HorarioUsuario />
           </Stack>
@@ -91,6 +93,9 @@ export default function Perfil() {
       </SimpleGrid>
     </Container>
   );
+}
+function PaypalStatus() {
+  return <OnboardPaypal />;
 }
 
 function EstrellasUsuario() {
@@ -494,5 +499,3 @@ function crearFechaFromTiempo(tiempo, fecha = new Date()) {
   let hora = new Date(`${fecha.toDateString()} ${tiempo}:00`);
   return hora;
 }
-
-

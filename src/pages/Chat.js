@@ -80,6 +80,7 @@ export default function Chat() {
   }, []);
   useEffect(() => {
     function onMensajeRecibido(msg) {
+      console.log({msg});
       setChats((cs) => {
         let c = cs.find(
           (value) => value.id === msg.id_from || value.id === msg.id_to

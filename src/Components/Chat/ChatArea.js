@@ -23,22 +23,21 @@ import {
 import ImagenAvatar from "../ImagenAvatar";
 import Vacio from "../Vacio";
 
-
-const useStyles = createStyles((theme)=>({
+const useStyles = createStyles((theme) => ({
   header: {
     padding: `${theme.spacing.sm} ${theme.spacing.md}`,
     background: `${theme.colors["green-nature"][5]}`,
     color: `${theme.white}`,
-    fontWeight: `${theme.fontSizes.md}`
-  }
-}))
+    fontWeight: `${theme.fontSizes.md}`,
+  },
+}));
 
 export default function ChatArea({ chatItem }) {
   const [mensajes, setMensajes] = useState([]);
   const [loading, setLoading] = useState(false);
   const usuario = useSelector(selectUsuario);
   const [mensaje, setMensaje] = useState("");
-  const {classes,cx} = useStyles();
+  const { classes, cx } = useStyles();
   const refScrollArea = useRef();
   async function fecthMensajes() {
     const { id: id_from } = usuario;
@@ -125,7 +124,7 @@ export default function ChatArea({ chatItem }) {
     setMensaje("");
   }
   if (!chatItem) {
-    return <NoChatActivo/>
+    return <NoChatActivo />;
   }
   return loading ? (
     <LoadingOverlay visible />
@@ -139,13 +138,18 @@ export default function ChatArea({ chatItem }) {
         spacing={0}
       >
         <Flex align="center" gap="md" className={classes.header}>
-          <ImagenAvatar mx={0} image={chatItem.foto_perfil}/>
+          <ImagenAvatar mx={0} image={chatItem.foto_perfil} />
           <Text fw="bold">{chatItem.nombre}</Text>
         </Flex>
         <div
           // offsetScrollbars={false}
           ref={refScrollArea}
-          style={{ flex: "1", boxSizing: "border-box", overflowY: "scroll" }}
+          style={{
+            flex: "1",
+            boxSizing: "border-box",
+            overflowY: "scroll",
+            position: "relative",
+          }}
           // maw="100%"
           // m="lg"
         >
@@ -164,5 +168,5 @@ export default function ChatArea({ chatItem }) {
 }
 
 function NoChatActivo() {
-  return <Vacio children={<Text color="dimmed">Selecciona un chat</Text>}/>
+  return <Vacio children={<Text color="dimmed">Selecciona un chat</Text>} />;
 }
