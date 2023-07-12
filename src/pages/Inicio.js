@@ -34,7 +34,12 @@ import {
   isRequiredValidation,
   password_validation,
 } from "../utils/inputValidation";
-import { useDisclosure, useLocalStorage, useMediaQuery } from "@mantine/hooks";
+import {
+  useDisclosure,
+  useLocalStorage,
+  useMediaQuery,
+  useSessionStorage,
+} from "@mantine/hooks";
 import { DisabledButton, EnabledButton } from "../Components/DynamicButtons";
 import { Notifications, notifications } from "@mantine/notifications";
 import {
@@ -146,6 +151,10 @@ export const fetchUsuario = async ({ uid }) =>
 export default function Inicio() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [urlGiven, setUrlGiven] = useSessionStorage({
+    key: "urlGiven",
+    defaultValue: "/app",
+  });
   const theme = useMantineTheme();
   const isMobile = useMediaQuery(`(max-width:${theme.breakpoints.sm})`);
   const [isDisabled, setIsDisabled] = useState(true);
@@ -228,14 +237,14 @@ export default function Inicio() {
     }
   }, [usuario]);
   async function goToInicio() {
-    try{
+    try {
       await deleteToken(messaging);
-    }catch(err){
+    } catch (err) {
       console.log(err);
     }
-    try{
+    try {
       await checkToken(usuario.id);
-      navigate("/app");
+      navigate(urlGiven);
     }catch(err){
       console.log(err);
     }

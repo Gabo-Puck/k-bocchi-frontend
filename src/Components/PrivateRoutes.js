@@ -1,7 +1,8 @@
 import { useSelector } from "react-redux";
-import { Outlet, Navigate, useLoaderData } from "react-router-dom";
+import { Outlet, Navigate, useLoaderData, useLocation } from "react-router-dom";
 import useSesionExpiracion from "../utils/sesionHook";
 import { useEffect } from "react";
+import { useSessionStorage } from "@mantine/hooks";
 
 const selectUsuario = (state) => state.usuario;
 /**
@@ -20,10 +21,14 @@ const selectUsuario = (state) => state.usuario;
 export const PrivateRoutes = ({ authRol = [], redirect }) => {
   //Mediante el hook/funcion "useSelector" de react redux, podemos obtener los datos del usuario
   const usuario = useSelector(selectUsuario);
+  const location = useLocation();
+
   console.log("USUARIO:", usuario);
   //Si el usuario no esta logeado, es decir que la propiedad "email" es undefined (Esto puede cambiar a otra propiedad de ser necesario)
   //Manda el usuario al inicio de la app
   if (!usuario.email) {
+    console.log({ pathname: location.pathname });
+    sessionStorage.setItem("urlGiven", location.pathname);
     return <Navigate to="/" />;
   }
   //Si el usuario si esta logeado pero no tiene el rol, se redirecciona al inicio de la app (login) si es que redirect es undefined
@@ -31,6 +36,9 @@ export const PrivateRoutes = ({ authRol = [], redirect }) => {
   if (!authRol.includes(usuario.rol)) {
     return <Navigate to={redirect || "/"} />;
   }
+  sessionStorage.setItem("urlGiven",location.pathname)
+  
+
   //Una vez el usuario pasa todos los filtros, se renderiza el componente "Outlet".
   //"Outlet" es un componente que permite renderizar la propiedad "element" de "Route"
   return <Outlet />;
