@@ -34,6 +34,7 @@ export const PrivateRoutes = ({ authRol = [], redirect }) => {
   //Si el usuario si esta logeado pero no tiene el rol, se redirecciona al inicio de la app (login) si es que redirect es undefined
   //Si no, lo redirecciona a la ruta indicada en redirect
   if (!authRol.includes(usuario.rol)) {
+    sessionStorage.setItem("urlGiven", "/app");
     return <Navigate to={redirect || "/"} />;
   }
   sessionStorage.setItem("urlGiven",location.pathname)
