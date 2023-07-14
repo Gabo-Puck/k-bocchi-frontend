@@ -109,7 +109,7 @@ export default function Checkout({ carrito }) {
   useEffect(() => {
     setCostoEnvio();
     setAdressId();
-  }, [form.values]);
+  }, [form.values, carrito]);
   return (
     <>
       <Stack h="100px">

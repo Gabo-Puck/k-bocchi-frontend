@@ -7,8 +7,9 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { selectUsuario } from "../../utils/usuarioHooks";
 import { showNegativeFeedbackNotification } from "../../utils/notificationTemplate";
-import { Skeleton } from "@mantine/core";
+import { Skeleton, Stack, Text, Title } from "@mantine/core";
 import { useEffect, useState } from "react";
+import { modals } from "@mantine/modals";
 
 export default function PaypalCheckoutButton({
   carrito,
@@ -27,14 +28,28 @@ export default function PaypalCheckoutButton({
     try {
       let { data } = await axios.get(`/pagos/see-merchants/${id_paciente}`);
       console.log(data.map(({ merchant_id }) => merchant_id).join(","));
-      dispatch({
-        type: "resetOptions",
-        value: {
-          ...options,
-          merchantId: "*",
-          dataMerchantId: data.map(({ merchant_id }) => merchant_id).join(","),
-        },
-      });
+      if (data.length > 1) {
+        dispatch({
+          type: "resetOptions",
+          value: {
+            ...options,
+            merchantId: "*",
+            dataMerchantId: data
+              .map(({ merchant_id }) => merchant_id)
+              .join(","),
+          },
+        });
+      }
+      if (data.length === 1) {
+        dispatch({
+          type: "resetOptions",
+          value: {
+            ...options,
+            merchantId: data[0].merchant_id,
+            dataMerchantId: undefined,
+          },
+        });
+      }
     } catch (err) {
       if (!err) return;
       showNegativeFeedbackNotification(
@@ -45,7 +60,7 @@ export default function PaypalCheckoutButton({
   }
   useEffect(() => {
     fetchMerchants();
-  }, []);
+  }, [carrito]);
   return isResolved ? (
     <PayPalButtons
       onInit={(data, actions) => {
@@ -66,6 +81,19 @@ export default function PaypalCheckoutButton({
           })
           .then(({ data }) => data.id)
       }
+      onApprove={() => {
+        modals.open({
+          title: <Title order={3}>Compra completada</Title>,
+          children: (
+            <Stack>
+              <Text>Tu compra se ha completado exitosamente</Text>
+              <Text>
+                Tus vendedores enviaran tus productos lo más pronto posible
+              </Text>
+            </Stack>
+          ),
+        });
+      }}
     />
   ) : (
     <Skeleton w="100%" h="3em" />
