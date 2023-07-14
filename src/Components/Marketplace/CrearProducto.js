@@ -32,7 +32,10 @@ import {
   isRequired,
   isRequiredValidation,
 } from "../../utils/inputValidation";
-import { showNegativeFeedbackNotification, showPositiveFeedbackNotification } from "../../utils/notificationTemplate";
+import {
+  showNegativeFeedbackNotification,
+  showPositiveFeedbackNotification,
+} from "../../utils/notificationTemplate";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { selectUsuario } from "../../utils/usuarioHooks";
@@ -41,7 +44,9 @@ export default function CrearProducto({ onCrear }) {
   const theme = useMantineTheme();
   const [urlImagen, setUrlImagen] = useState();
   const [guardando, setGuardando] = useState(false);
-  const {terapeuta:{id:id_terapeuta}} = useSelector(selectUsuario);
+  const {
+    terapeuta: { id: id_terapeuta },
+  } = useSelector(selectUsuario);
   const form = useForm({
     initialValues: {
       nombre: "",
@@ -50,7 +55,7 @@ export default function CrearProducto({ onCrear }) {
       stock: undefined,
       imagen: undefined,
       categoria: undefined,
-      id_terapeuta
+      id_terapeuta,
     },
     validateInputOnBlur: true,
     validateInputOnChange: true,
@@ -73,6 +78,30 @@ export default function CrearProducto({ onCrear }) {
           (value) => isMinimoNumero(value, 1, "peso"),
           (value) => isMaximoNumero(value, 100000, "pesos"),
         ]),
+      ancho: (value) =>
+        executeValidation(value, [
+          isRequiredValidation,
+          (value) => isMinimoNumero(value, 1, "cm"),
+          (value) => isMaximoNumero(value, 150, "cm"),
+        ]),
+      largo: (value) =>
+        executeValidation(value, [
+          isRequiredValidation,
+          (value) => isMinimoNumero(value, 1, "cm"),
+          (value) => isMaximoNumero(value, 150, "cm"),
+        ]),
+      altura: (value) =>
+        executeValidation(value, [
+          isRequiredValidation,
+          (value) => isMinimoNumero(value, 1, "cm"),
+          (value) => isMaximoNumero(value, 150, "cm"),
+        ]),
+      peso: (value) =>
+        executeValidation(value, [
+          isRequiredValidation,
+          (value) => isMinimoNumero(value, 1, "gr"),
+          (value) => isMaximoNumero(value, 5000, "gr"),
+        ]),
       stock: (value) =>
         executeValidation(value, [
           isRequiredValidation,
@@ -82,7 +111,6 @@ export default function CrearProducto({ onCrear }) {
       imagen: (value) => executeValidation(value, [isRequiredValidation]),
       categoria: (value) => executeValidation(value, [isRequiredValidation]),
     },
-    
   });
   async function handleGuardar(value) {
     setGuardando(true);
@@ -94,13 +122,15 @@ export default function CrearProducto({ onCrear }) {
     formData.append("imagen", value.imagen);
     formData.append("producto", JSON.stringify(prodData));
     try {
-      let {data:producto} = await axios.post(`/productos`, formData, {
+      let { data: producto } = await axios.post(`/productos`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
       onCrear(producto);
-      showPositiveFeedbackNotification("Se ha creado correctamente tu producto")
+      showPositiveFeedbackNotification(
+        "Se ha creado correctamente tu producto"
+      );
     } catch (err) {
       if (!err) {
         return;
@@ -192,6 +222,34 @@ export default function CrearProducto({ onCrear }) {
             description="Proporciona los detalles del producto. Puedes incluir peso, forma de uso, cantidad por empaque, recomendaciones etc."
             autosize
             {...form.getInputProps("caracteristicas")}
+          />
+          <NumberInput
+            withAsterisk
+            label="Peso (gr)"
+            description="Es el peso de tu producto en gramos"
+            precision={2}
+            {...form.getInputProps("peso")}
+          />
+          <NumberInput
+            withAsterisk
+            label="Altura (cm)"
+            description="Es la altura de tu producto en centimetros"
+            precision={2}
+            {...form.getInputProps("altura")}
+          />
+          <NumberInput
+            withAsterisk
+            label="Ancho (cm)"
+            description="Es el ancho de tu producto en centimetros"
+            precision={2}
+            {...form.getInputProps("ancho")}
+          />
+          <NumberInput
+            withAsterisk
+            label="Largo (cm)"
+            description="Es el largo de tu producto en centimetros"
+            precision={2}
+            {...form.getInputProps("largo")}
           />
           <NumberInput
             withAsterisk

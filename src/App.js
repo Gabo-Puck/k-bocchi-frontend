@@ -51,6 +51,8 @@ import MarketplaceLayout from "./pages/Marketplace/MarketplaceLayout";
 import ResultadosBusqueda from "./pages/Marketplace/ResultadosBusqueda";
 import DetallesProducto from "./pages/Marketplace/DetallesProducto";
 import Carrito from "./pages/Marketplace/Carrito";
+import { PAYPAL_CLIENT_ID } from "./paypal";
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 
 function App() {
   let usuario = useSelector(selectUsuario);
@@ -287,184 +289,205 @@ function App() {
         },
       }}
     >
-      <Notifications />
-      <div className="App">
-        {/**Router es un componente que permite crear un enrutador para la aplicacion. Además soporta los controles de anterior y siguiente del navegador */}
-        <BrowserRouter>
-          <ModalsProvider
-            modalProps={{
-              centered: true,
-            }}
-          >
-            {/**Routes permite definir en donde se empezaran a definir las rutas de la aplicacion, asi como la ruta donde empezaran*/}
-            <Routes>
-              {/**Route es componente que permite asociar una ruta a un componente, de forma que cuando se este en esa ruta se mostrara dicho componente */}
-              {/**path indica la ruta y element el componente */}
-              <Route path="/" element={<Inicio />} />
-              <Route path="/registro">
-                {/**Cuando se anidan componentes routes, los componentes route hijos pueden usar rutas relativas
-                 * de forma que por ejemplo en la ruta de abajo, se renderiza "RegistroPaciente" en /registro/paciente
-                 */}
-                <Route index element={<RegistroDesicion />} />
-                <Route path="paciente" element={<RegistroPaciente />}>
-                  <Route
-                    element={<DatosIdentificacion siguiente={"../personal"} />}
-                    path="credenciales"
-                  />
-                  <Route
-                    element={
-                      <DatosBasicos
-                        siguiente={"../confirmacion"}
-                        anterior={"../credenciales"}
-                      />
-                    }
-                    path="personal"
-                  />
-                  <Route
-                    element={
-                      <Confirmacion
-                        anterior={"../personal"}
-                        siguiente={"/"}
-                        saveFunction={saveInfoPaciente}
-                      />
-                    }
-                    path="confirmacion"
-                  />
-                </Route>
-                <Route path="fisioterapeuta" element={<RegistroFisio />}>
-                  <Route
-                    element={<DatosIdentificacion siguiente="../personal" />}
-                    path="credenciales"
-                  />
-                  <Route
-                    element={
-                      <DatosBasicos
-                        siguiente="../identidad"
-                        anterior="../credenciales"
-                      />
-                    }
-                    path="personal"
-                  />
-                  <Route
-                    element={
-                      <DatosValidacionIne
-                        siguiente="../cedula"
-                        anterior="../personal"
-                      />
-                    }
-                    path="identidad"
-                  />
-                  <Route
-                    element={
-                      <DatosValidarCedula
-                        siguiente="../consultorio"
-                        anterior="../identidad"
-                      />
-                    }
-                    path="cedula"
-                  />
-                  <Route
-                    element={
-                      <DatosConsultorio
-                        siguiente="../confirmacion"
-                        anterior="../cedula"
-                      />
-                    }
-                    path="consultorio"
-                  />
-                  <Route
-                    element={
-                      <Confirmacion
-                        siguiente="/"
-                        saveFunction={saveInfoFisioterapeuta}
-                        anterior="../consultorio"
-                      />
-                    }
-                    path="confirmacion"
-                  />
-                </Route>
-              </Route>
-              {/**
-               * Para proteger las rutas se utiliza el componente PrivateRoutes. En authRol definimos que roles tienen acceso a cierta ruta
-               * con redirect se indica a donde se tiene que redireccionar al usuario en caso de no tener el rol adecuado.
-               * Para poder usar "PrivateRoutes" se pasa como componente en la propiedad "element" de un componente Route
-               */}
-              {/**
-               * La ruta app es la ruta donde los usuarios podrán usar la aplicacion como tal
-               */}
-              <Route
-                path="/app"
-                element={<PrivateRoutes authRol={[PACIENTE, FISIOTERAPEUTA]} />}
-              >
-                <Route path="/app" element={<Layout />}>
-                  <Route index element={<Home />} />
-                  {/* TODOS */}
-                  <Route path="perfil" element={<Perfil />} />
-                  <Route path="chat" element={<Chat />} />
-                  <Route path="cita" element={<LayoutCita />}>
-                    <Route path="buscar" element={<Buscar />} />
+      <PayPalScriptProvider
+        options={{
+          "client-id": process.env.REACT_APP_PAYPAL_CLIENT_ID,
+          currency: "MXN",
+          locale: "es_MX",
+        }}
+      >
+        <Notifications />
+        <div className="App">
+          {/**Router es un componente que permite crear un enrutador para la aplicacion. Además soporta los controles de anterior y siguiente del navegador */}
+          <BrowserRouter>
+            <ModalsProvider
+              modalProps={{
+                centered: true,
+              }}
+            >
+              {/**Routes permite definir en donde se empezaran a definir las rutas de la aplicacion, asi como la ruta donde empezaran*/}
+              <Routes>
+                {/**Route es componente que permite asociar una ruta a un componente, de forma que cuando se este en esa ruta se mostrara dicho componente */}
+                {/**path indica la ruta y element el componente */}
+                <Route path="/" element={<Inicio />} />
+                <Route path="/registro">
+                  {/**Cuando se anidan componentes routes, los componentes route hijos pueden usar rutas relativas
+                   * de forma que por ejemplo en la ruta de abajo, se renderiza "RegistroPaciente" en /registro/paciente
+                   */}
+                  <Route index element={<RegistroDesicion />} />
+                  <Route path="paciente" element={<RegistroPaciente />}>
                     <Route
-                      path="terapeuta/:id"
-                      element={<DetallesTerapeuta />}
+                      element={
+                        <DatosIdentificacion siguiente={"../personal"} />
+                      }
+                      path="credenciales"
+                    />
+                    <Route
+                      element={
+                        <DatosBasicos
+                          siguiente={"../confirmacion"}
+                          anterior={"../credenciales"}
+                        />
+                      }
+                      path="personal"
+                    />
+                    <Route
+                      element={
+                        <Confirmacion
+                          anterior={"../personal"}
+                          siguiente={"/"}
+                          saveFunction={saveInfoPaciente}
+                        />
+                      }
+                      path="confirmacion"
                     />
                   </Route>
-                  {/* PACIENTE */}
-                  <Route
-                    path="paciente"
-                    element={<PrivateRoutes authRol={[PACIENTE]} />}
-                  >
-                    <Route path="chatbot" element={<ChatBot />} />
-                    <Route path="bitacora">
-                      <Route index element={<BitacoraPaciente />} />
+                  <Route path="fisioterapeuta" element={<RegistroFisio />}>
+                    <Route
+                      element={<DatosIdentificacion siguiente="../personal" />}
+                      path="credenciales"
+                    />
+                    <Route
+                      element={
+                        <DatosBasicos
+                          siguiente="../identidad"
+                          anterior="../credenciales"
+                        />
+                      }
+                      path="personal"
+                    />
+                    <Route
+                      element={
+                        <DatosValidacionIne
+                          siguiente="../cedula"
+                          anterior="../personal"
+                        />
+                      }
+                      path="identidad"
+                    />
+                    <Route
+                      element={
+                        <DatosValidarCedula
+                          siguiente="../consultorio"
+                          anterior="../identidad"
+                        />
+                      }
+                      path="cedula"
+                    />
+                    <Route
+                      element={
+                        <DatosConsultorio
+                          siguiente="../confirmacion"
+                          anterior="../cedula"
+                        />
+                      }
+                      path="consultorio"
+                    />
+                    <Route
+                      element={
+                        <Confirmacion
+                          siguiente="/"
+                          saveFunction={saveInfoFisioterapeuta}
+                          anterior="../consultorio"
+                        />
+                      }
+                      path="confirmacion"
+                    />
+                  </Route>
+                </Route>
+                {/**
+                 * Para proteger las rutas se utiliza el componente PrivateRoutes. En authRol definimos que roles tienen acceso a cierta ruta
+                 * con redirect se indica a donde se tiene que redireccionar al usuario en caso de no tener el rol adecuado.
+                 * Para poder usar "PrivateRoutes" se pasa como componente en la propiedad "element" de un componente Route
+                 */}
+                {/**
+                 * La ruta app es la ruta donde los usuarios podrán usar la aplicacion como tal
+                 */}
+                <Route
+                  path="/app"
+                  element={
+                    <PrivateRoutes authRol={[PACIENTE, FISIOTERAPEUTA]} />
+                  }
+                >
+                  <Route path="/app" element={<Layout />}>
+                    <Route index element={<Home />} />
+                    {/* TODOS */}
+                    <Route path="perfil" element={<Perfil />} />
+                    <Route path="chat" element={<Chat />} />
+                    <Route path="cita" element={<LayoutCita />}>
+                      <Route path="buscar" element={<Buscar />} />
                       <Route
-                        path="modificar/acceso/:id"
-                        element={<BitacoraModificarAcceso />}
+                        path="terapeuta/:id"
+                        element={<DetallesTerapeuta />}
                       />
                     </Route>
-                  </Route>
-                  {/* FISIOTERAPEUTA */}
-                  <Route
-                    path="terapeuta"
-                    element={<PrivateRoutes authRol={[FISIOTERAPEUTA]} />}
-                  >
-                    <Route path="bitacora">
-                      <Route index element={<BitacoraGeneral />} />
-                      <Route path=":id" element={<BitacoraTerapeuta />} />
-                    </Route>
-                  </Route>
-                  <Route path="marketplace">
-                    <Route element={<MarketplaceLayout />}>
-                      <Route path="resultados" element={<ResultadosBusqueda />} />
-                      <Route
-                        path="detalles/:id_producto"
-                        element={<DetallesProducto />}
-                      />
-                      <Route
-                        path="carrito"
-                        element={<PrivateRoutes authRol={[PACIENTE]}/>}
-                      >
-                        <Route index element={<Carrito/>}/>
+                    {/* PACIENTE */}
+                    <Route
+                      path="paciente"
+                      element={<PrivateRoutes authRol={[PACIENTE]} />}
+                    >
+                      <Route path="chatbot" element={<ChatBot />} />
+                      <Route path="bitacora">
+                        <Route index element={<BitacoraPaciente />} />
+                        <Route
+                          path="modificar/acceso/:id"
+                          element={<BitacoraModificarAcceso />}
+                        />
                       </Route>
                     </Route>
-                    <Route path="paciente"></Route>
-                    <Route path="terapeuta">
-                      <Route path="catalogo" element={<Catalogo />} />
+                    {/* FISIOTERAPEUTA */}
+                    <Route
+                      path="terapeuta"
+                      element={<PrivateRoutes authRol={[FISIOTERAPEUTA]} />}
+                    >
+                      <Route path="bitacora">
+                        <Route index element={<BitacoraGeneral />} />
+                        <Route path=":id" element={<BitacoraTerapeuta />} />
+                      </Route>
+                    </Route>
+                    <Route path="marketplace">
+                      <Route element={<MarketplaceLayout />}>
+                        <Route
+                          path="resultados"
+                          element={<ResultadosBusqueda />}
+                        />
+                        <Route
+                          path="detalles/:id_producto"
+                          element={<DetallesProducto />}
+                        />
+                        <Route
+                          path="carrito"
+                          element={<PrivateRoutes authRol={[PACIENTE]} />}
+                        >
+                          <Route
+                            element={<PrivateRoutes authRol={[PACIENTE]} />}
+                          >
+                            <Route index element={<Carrito />} />
+                          </Route>
+                        </Route>
+                      </Route>
+                      <Route
+                        path="terapeuta"
+                        element={<PrivateRoutes authRol={[FISIOTERAPEUTA]} />}
+                      >
+                        <Route path="catalogo" element={<Catalogo />} />
+                      </Route>
                     </Route>
                   </Route>
                 </Route>
-              </Route>
-              {/**Mediante el simbolo '*' podemos indicar que esta elemento se renderiza en cualquier ruta. Al estar al final solo se renderiza
-               * cuando el usuario trato de ingresar a una ruta que no existe, por lo tanto se renderiza "PaginaError"
-               */}
-              <Route
-                path="/reestablecerContrasena/:stringEncoded"
-                element={<CambiarContrasena />}
-              />
-              <Route path="*" element={<PaginaError />} />
-            </Routes>
-          </ModalsProvider>
-        </BrowserRouter>
-      </div>
+                {/**Mediante el simbolo '*' podemos indicar que esta elemento se renderiza en cualquier ruta. Al estar al final solo se renderiza
+                 * cuando el usuario trato de ingresar a una ruta que no existe, por lo tanto se renderiza "PaginaError"
+                 */}
+                <Route
+                  path="/reestablecerContrasena/:stringEncoded"
+                  element={<CambiarContrasena />}
+                />
+                <Route path="*" element={<PaginaError />} />
+              </Routes>
+            </ModalsProvider>
+          </BrowserRouter>
+        </div>
+      </PayPalScriptProvider>
     </MantineProvider>
   );
 }

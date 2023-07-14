@@ -22,6 +22,12 @@ export const isTiempo = (value) => {
   }
   return null;
 };
+export const isCodigoPostal = (value) => {
+  if (value.toString().length!=5) {
+    return "El codigo postal esta en formato incorrecto";
+  }
+  return null;
+};
 
 export const isPhoneValidation = (value) => {
   if (!/^\d{10}$/.test(value.toString()))
@@ -34,7 +40,8 @@ export const isNumber = (value) => {
 };
 
 export const isRequiredValidation = (value) => {
-  if ((!value || value == "") && value != 0) return "Este campo es necesario";
+  value = value?.toString();
+  if ((!value || value == "")) return "Este campo es necesario";
   return null;
 };
 
