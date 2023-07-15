@@ -81,18 +81,28 @@ export default function PaypalCheckoutButton({
           })
           .then(({ data }) => data.id)
       }
-      onApprove={() => {
-        modals.open({
-          title: <Title order={3}>Compra completada</Title>,
-          children: (
-            <Stack>
-              <Text>Tu compra se ha completado exitosamente</Text>
-              <Text>
-                Tus vendedores enviaran tus productos lo más pronto posible
-              </Text>
-            </Stack>
-          ),
-        });
+      onApprove={async ({ orderID }) => {
+        try {
+          await axios.post(`/ticket/${id_paciente}`, {
+            id_address: addressId,
+            costo_envio: costoEnvio,
+            order_id: orderID,
+          });
+          modals.open({
+            title: <Title order={3}>Compra completada</Title>,
+            children: (
+              <Stack>
+                <Text>Tu compra se ha completado exitosamente</Text>
+                <Text>
+                  Tus vendedores enviaran tus productos lo más pronto posible
+                </Text>
+              </Stack>
+            ),
+          });
+        } catch (err) {
+          console.log("Algo ha salido mal");
+          console.log(err);
+        }
       }}
     />
   ) : (
