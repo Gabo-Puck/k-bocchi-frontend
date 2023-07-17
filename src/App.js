@@ -517,6 +517,9 @@ function App() {
                         <Route index element={<VentasTerapeuta />} />
                         <Route path=":id" element={<DetallesVenta />} />
                       </Route>
+                      <Route path="ticket">
+                        <Route path=":id" element={<DetallesVenta />} />
+                      </Route>
                       <Route path="compras">
                         <Route index element={<ComprasPaciente />} />
                         <Route path=":id" element={<DetallesVenta />} />

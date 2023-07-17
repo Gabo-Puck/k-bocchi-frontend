@@ -62,7 +62,7 @@ export default function PaypalCheckoutButton({
   }
   function handleHick() {
     modals.closeAll();
-    navigate("/app");
+    navigate("/app/marketplace/envios/paciente");
   }
   useEffect(() => {
     fetchMerchants();

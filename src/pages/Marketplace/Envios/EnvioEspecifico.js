@@ -115,6 +115,15 @@ export default function EnvioEspecifico() {
             label="Status"
             value={<BadgeEstadoPaquete estado={paquete.estatus} />}
           />
+          <Text
+            fw="lighter"
+            color="blue-calm.4"
+            underline
+            component={Link}
+            to={`/app/marketplace/ticket/${paquete.ticket.id}`}
+          >
+            Ver detalles del paquete
+          </Text>
           {seguimiento && (
             <Flex justify="end" w="100%">
               <Button component="a" href={seguimiento} target="_blank">
