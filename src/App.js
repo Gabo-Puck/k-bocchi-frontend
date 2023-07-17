@@ -53,6 +53,13 @@ import DetallesProducto from "./pages/Marketplace/DetallesProducto";
 import Carrito from "./pages/Marketplace/Carrito";
 import { PAYPAL_CLIENT_ID } from "./paypal";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import EnviosPaciente from "./pages/Marketplace/Envios/EnviosPaciente";
+import EnviosTerapeuta from "./pages/Marketplace/Envios/EnviosTerapeuta";
+import EnvioEspecifico from "./pages/Marketplace/Envios/EnvioEspecifico";
+import VentasTerapeuta from "./pages/Marketplace/Ventas/VentasTerapeuta";
+import ComprasPaciente from "./pages/Marketplace/Ventas/ComprasPaciente";
+import DetallesVenta from "./pages/Marketplace/Ventas/DetallesVenta";
+// import EnviosContext from "./pages/Marketplace/Envios/EnviosContext";
 
 function App() {
   let usuario = useSelector(selectUsuario);
@@ -168,10 +175,6 @@ function App() {
                 root: {
                   backgroundColor: theme.colors["cyan-opaque"][7] + "4F",
                   color: theme.white,
-
-                  // ...theme.fn.hover({
-                  //   backgroundColor: theme.colors["blue-calm"][7],
-                  // }),
                 },
               }),
               medicamento: (theme) => ({
@@ -181,10 +184,42 @@ function App() {
                 root: {
                   backgroundColor: theme.colors["blue-empire"][7] + "5F",
                   color: theme.white,
-
-                  // ...theme.fn.hover({
-                  //   backgroundColor: theme.colors["blue-calm"][7],
-                  // }),
+                },
+              }),
+              entregado: (theme) => ({
+                inner: {
+                  color: theme.colors["green-nature"][9],
+                },
+                root: {
+                  backgroundColor: theme.colors["green-nature"][3] + "2F",
+                  color: theme.white,
+                },
+              }),
+              preparado: (theme) => ({
+                inner: {
+                  color: theme.colors["blue-calm"][9],
+                },
+                root: {
+                  backgroundColor: theme.colors["blue-calm"][3] + "2F",
+                  color: theme.white,
+                },
+              }),
+              camino: (theme) => ({
+                inner: {
+                  color: theme.colors["cyan-opaque"][9],
+                },
+                root: {
+                  backgroundColor: theme.colors["cyan-opaque"][2] + "2F",
+                  color: theme.white,
+                },
+              }),
+              punto: (theme) => ({
+                inner: {
+                  color: theme.colors["blue-empire"][9],
+                },
+                root: {
+                  backgroundColor: theme.colors["blue-empire"][2] + "2F",
+                  color: theme.white,
                 },
               }),
             },
@@ -445,6 +480,7 @@ function App() {
                         <Route path=":id" element={<BitacoraTerapeuta />} />
                       </Route>
                     </Route>
+                    {/* MARKETPLACE */}
                     <Route path="marketplace">
                       <Route element={<MarketplaceLayout />}>
                         <Route
@@ -471,6 +507,19 @@ function App() {
                         element={<PrivateRoutes authRol={[FISIOTERAPEUTA]} />}
                       >
                         <Route path="catalogo" element={<Catalogo />} />
+                      </Route>
+                      <Route path="envios">
+                        <Route path="terapeuta" element={<EnviosTerapeuta />} />
+                        <Route path="paciente" element={<EnviosPaciente />} />
+                        <Route path=":id" element={<EnvioEspecifico />}/>
+                      </Route>
+                      <Route path="ventas">
+                        <Route index element={<VentasTerapeuta />} />
+                        <Route path=":id" element={<DetallesVenta />} />
+                      </Route>
+                      <Route path="compras">
+                        <Route index element={<ComprasPaciente />} />
+                        <Route path=":id" element={<DetallesVenta />} />
                       </Route>
                     </Route>
                   </Route>

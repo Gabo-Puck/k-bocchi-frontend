@@ -13,6 +13,7 @@ export default function Catalogo() {
   const [cargando, setCargando] = useState(true);
   const getOnboardLinks = async () => {
     if (!terapeuta) return;
+    setCargando(true);
     let { id: id_terapeuta } = terapeuta;
     try {
       let { data: onboardStatus } = await axios.get(
@@ -20,7 +21,6 @@ export default function Catalogo() {
       );
       setActivo(true);
       console.log(onboardStatus);
-      
     } catch (err) {
       if (err) {
         setActivo(false);

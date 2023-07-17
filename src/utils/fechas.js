@@ -77,3 +77,10 @@ export function FormatDate(date = new Date()) {
     .toString()
     .padStart(2, "0")}-${fecha.getDate().toString().padStart(2, "0")}`;
 }
+
+export function colocarFecha(fecha) {
+  console.log({ fecha });
+  let formateado = formatearFecha(fecha);
+  let hora = FormatUTCTime(fecha);
+  return `${formateado} ${hora}`;
+}
