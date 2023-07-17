@@ -18,6 +18,9 @@ import { colocarFecha } from "../../../utils/fechas";
 import BadgeEstadoPaquete from "../../../Components/Marketplace/BadgesPaquete/BadgeEstadoPaquete";
 import { ESTADO_SIN_MANDAR } from "../../../utils/paquetesEstados";
 import { modals } from "@mantine/modals";
+import { useSelector } from "react-redux";
+import { selectUsuario } from "../../../utils/usuarioHooks";
+import { FISIOTERAPEUTA } from "../../../roles";
 
 export default function EnvioEspecifico() {
   let { id } = useParams();
@@ -26,6 +29,7 @@ export default function EnvioEspecifico() {
   const [noEncontrado, setNoEncontrado] = useState(false);
   const [cargando, setCargando] = useState(false);
   const md = useMd();
+  const { rol } = useSelector(selectUsuario);
   async function fetchPaquete() {
     try {
       let { data } = await axios.get(`/paquetes/${id}`);
@@ -119,7 +123,8 @@ export default function EnvioEspecifico() {
             </Flex>
           )}
           {paquete.estatus === ESTADO_SIN_MANDAR &&
-            paquete.codigo_rastreo === "" && (
+            paquete.codigo_rastreo === "" &&
+            rol === FISIOTERAPEUTA && (
               <Flex justify="end" w="100%">
                 <Button
                   variant="siguiente"

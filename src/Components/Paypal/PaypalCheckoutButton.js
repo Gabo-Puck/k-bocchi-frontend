@@ -7,9 +7,10 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { selectUsuario } from "../../utils/usuarioHooks";
 import { showNegativeFeedbackNotification } from "../../utils/notificationTemplate";
-import { Skeleton, Stack, Text, Title } from "@mantine/core";
+import { Button, Flex, Skeleton, Stack, Text, Title } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { modals } from "@mantine/modals";
+import { useNavigate } from "react-router-dom";
 
 export default function PaypalCheckoutButton({
   carrito,
@@ -21,6 +22,7 @@ export default function PaypalCheckoutButton({
   const {
     paciente: { id: id_paciente },
   } = useSelector(selectUsuario);
+  const navigate = useNavigate();
   const [{ isResolved, isPending, options }, dispatch] =
     usePayPalScriptReducer();
 
@@ -57,6 +59,10 @@ export default function PaypalCheckoutButton({
       );
       console.log(err);
     }
+  }
+  function handleHick() {
+    modals.closeAll();
+    navigate("/app");
   }
   useEffect(() => {
     fetchMerchants();
@@ -96,8 +102,16 @@ export default function PaypalCheckoutButton({
                 <Text>
                   Tus vendedores enviaran tus productos lo más pronto posible
                 </Text>
+                <Flex justify="end">
+                  <Button onClick={handleHick} variant="siguiente">
+                    Entendido
+                  </Button>
+                </Flex>
               </Stack>
             ),
+            withCloseButton: false,
+            closeOnClickOutside: false,
+            closeOnEscape: false,
           });
         } catch (err) {
           console.log("Algo ha salido mal");
