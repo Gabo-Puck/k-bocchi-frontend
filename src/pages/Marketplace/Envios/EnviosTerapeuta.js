@@ -47,7 +47,7 @@ export default function EnviosTerapeuta() {
       <Title mb="md">Tus envios</Title>
       <Container fluid>
         <Grid>
-          <Grid.Col sm={12} md={6} orderMd={1} order={2}>
+          <Grid.Col sm={12} md={6} orderMd={1} order={2} pos="relative">
             <ListaPaquetes paquetes={paquetes} />
           </Grid.Col>
           <Grid.Col sm={12} md={6} orderMd={2} order={1}>
