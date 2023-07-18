@@ -22,6 +22,7 @@ import {
 } from "chart.js";
 import { meses } from "../../../utils/fechas";
 import jsPDF from "jspdf";
+import Vacio from "../../../Components/Vacio";
 
 Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 export default function Graficas({ mes }) {
@@ -111,6 +112,8 @@ export default function Graficas({ mes }) {
     fetchVentas();
   }, [mes]);
   if (ventas === undefined) return <LoadingOverlay overlayBlur={3} visible />;
+  if (ventas.ventas_actual.length === 0)
+    return <Vacio children={<Text>No hay ventas</Text>} />;
   return (
     <>
       <Flex justify="end">

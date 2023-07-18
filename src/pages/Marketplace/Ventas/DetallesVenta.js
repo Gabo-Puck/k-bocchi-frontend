@@ -24,6 +24,7 @@ import Imagen from "../../../Components/Imagen";
 import { useSelector } from "react-redux";
 import { selectUsuario } from "../../../utils/usuarioHooks";
 import { FISIOTERAPEUTA, PACIENTE } from "../../../roles";
+import ListaProductosTicket from "../../../Components/Marketplace/ListaProductosTicket";
 
 export default function DetallesVenta() {
   const [venta, setVenta] = useState();
@@ -67,7 +68,7 @@ export default function DetallesVenta() {
         <Group>
           <Info label="Comprador" />
           <Group>
-            <ImagenAvatar image={venta.paciente.usuario.foto_perfil} />
+            <ImagenAvatar image={venta.paciente.usuario.foto_perfil} mx={0} />
             <Text>{venta.paciente.usuario.nombre}</Text>
           </Group>
         </Group>
@@ -92,52 +93,7 @@ export default function DetallesVenta() {
         </Flex>
       </Paper>
       <Paper w="100%" shadow="xs" p="md" withBorder mt="md">
-        <Stack>
-          {venta.detalles.map(
-            ({
-              id,
-              imagen,
-              nombre: nombre_producto,
-              cantidad,
-              subtotal,
-              id_paquete,
-              terapeuta: {
-                usuario: { foto_perfil, nombre: nombre_terapeuta },
-              },
-            }) => (
-              <Group w="100%" align="center" key={id}>
-                <Imagen image={imagen} width="20vh" />
-                <Stack style={{ flex: "1" }}>
-                  <div>
-                    <Text fw="bold">{nombre_producto}</Text>
-                    <Text
-                      fw="lighter"
-                      color="blue-calm.4"
-                      underline
-                      component={Link}
-                      to={`/app/marketplace/envios/${id_paquete}`}
-                    >
-                      Ver paquete
-                    </Text>
-                  </div>
-                  <div>
-                    <Text>Vendedor:</Text>
-                    <Group>
-                      <ImagenAvatar image={foto_perfil} />
-                      <Text>{nombre_terapeuta}</Text>
-                    </Group>
-                  </div>
-                </Stack>
-                <Stack justify="center" align="center" spacing={0}>
-                  <Text fw="bold">{currencyFormatter.format(subtotal)}</Text>
-                  <Text fw="lighter" fs="sm" color="gray">
-                    Cantidad: {cantidad}
-                  </Text>
-                </Stack>
-              </Group>
-            )
-          )}
-        </Stack>
+        <ListaProductosTicket detalles={venta.detalles}/>
       </Paper>
     </Container>
   );

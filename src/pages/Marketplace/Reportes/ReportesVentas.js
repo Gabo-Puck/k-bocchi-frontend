@@ -44,7 +44,13 @@ export default function ReportesVentas() {
             <Graficas mes={mesSeleccionado} />
           </Tabs.Panel>
 
-          <Tabs.Panel value="ventas" pt="xs" w="100%" pos="relative">
+          <Tabs.Panel
+            value="ventas"
+            pt="xs"
+            w="100%"
+            pos="relative"
+            style={{ flex: "1" }}
+          >
             <Ventas mes={mesSeleccionado} />
           </Tabs.Panel>
         </Tabs>
