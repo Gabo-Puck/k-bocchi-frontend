@@ -64,7 +64,7 @@ const navbarItems = [
       { label: "Buscar", link: "/app/marketplace/resultados" },
       { label: "Mi catalogo", link: "/app/marketplace/terapeuta/catalogo" },
       { label: "Mis envios", link: "/app/marketplace/envios/terapeuta" },
-      { label: "Mis ventas", link: "/app/marketplace/ventas" },
+      { label: "Mis ventas", link: "/app/marketplace/terapeuta/reportes" },
       { label: "Reportes", link: "" },
     ],
   },

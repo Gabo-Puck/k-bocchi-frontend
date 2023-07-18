@@ -43,6 +43,27 @@ export function formatearFecha(fecha) {
   }
 }
 
+export const meses = [
+  "Enero",
+  "Febrero",
+  "Marzo",
+  "Abril",
+  "Mayo",
+  "Junio",
+  "Julio",
+  "Agosto",
+  "Septiembre",
+  "Octubre",
+  "Noviembre",
+  "Diciembre",
+];
+export function obtenerMes(fecha = new Date()) {
+  console.log({ fecha });
+  const mesActual = fecha.getMonth();
+
+  return { mes: meses[mesActual], index: mesActual };
+}
+
 export function FormatUTCDateTime(date) {
   let dt = new Date(date);
   let formatDateTime = Intl.DateTimeFormat("es-MX", {

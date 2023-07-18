@@ -56,9 +56,9 @@ import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import EnviosPaciente from "./pages/Marketplace/Envios/EnviosPaciente";
 import EnviosTerapeuta from "./pages/Marketplace/Envios/EnviosTerapeuta";
 import EnvioEspecifico from "./pages/Marketplace/Envios/EnvioEspecifico";
-import VentasTerapeuta from "./pages/Marketplace/Ventas/VentasTerapeuta";
 import ComprasPaciente from "./pages/Marketplace/Ventas/ComprasPaciente";
 import DetallesVenta from "./pages/Marketplace/Ventas/DetallesVenta";
+import ReportesVentas from "./pages/Marketplace/Reportes/ReportesVentas";
 // import EnviosContext from "./pages/Marketplace/Envios/EnviosContext";
 
 function App() {
@@ -506,15 +506,15 @@ function App() {
                         path="terapeuta"
                         element={<PrivateRoutes authRol={[FISIOTERAPEUTA]} />}
                       >
+                        <Route path="reportes" element={<ReportesVentas />} />
                         <Route path="catalogo" element={<Catalogo />} />
                       </Route>
                       <Route path="envios">
                         <Route path="terapeuta" element={<EnviosTerapeuta />} />
                         <Route path="paciente" element={<EnviosPaciente />} />
-                        <Route path=":id" element={<EnvioEspecifico />}/>
+                        <Route path=":id" element={<EnvioEspecifico />} />
                       </Route>
                       <Route path="ventas">
-                        <Route index element={<VentasTerapeuta />} />
                         <Route path=":id" element={<DetallesVenta />} />
                       </Route>
                       <Route path="ticket">
