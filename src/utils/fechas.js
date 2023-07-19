@@ -57,6 +57,19 @@ export const meses = [
   "Noviembre",
   "Diciembre",
 ];
+export function getMes(index) {
+  if (index == -2) {
+    let anio = new Date().getFullYear() - 1;
+    let mes = meses[meses.length - 2];
+    return `${mes} (${anio})`;
+  }
+  if (index == -1) {
+    let anio = new Date().getFullYear() - 1;
+    let mes = meses[meses.length - 1];
+    return `${mes} (${anio})`;
+  }
+  return meses[index];
+}
 export function obtenerMes(fecha = new Date()) {
   console.log({ fecha });
   const mesActual = fecha.getMonth();

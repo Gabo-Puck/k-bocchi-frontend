@@ -1,5 +1,5 @@
 import { Container, Select, Stack, Tabs, Title } from "@mantine/core";
-import { meses, obtenerMes } from "../../../utils/fechas";
+import { getMes, meses, obtenerMes } from "../../../utils/fechas";
 import { useState } from "react";
 import Graficas from "./Graficas";
 import Ventas from "./Ventas";
@@ -8,7 +8,17 @@ export default function ReportesVentas() {
   const [mesSeleccionado, setMesSeleccionado] = useState(
     obtenerMes().index.toString()
   );
-  console.log({ index: obtenerMes().index });
+  function obtenerMeses() {
+    let mesesSelect = [];
+    for (let index = -1; index < meses.length; index++) {
+      mesesSelect.push({
+        value: `${index}`,
+        label: getMes(index),
+      });
+    }
+    return mesesSelect;
+  }
+
   return (
     <Container fluid h="100vh">
       <Stack w="100%" h="100%">
@@ -19,10 +29,7 @@ export default function ReportesVentas() {
           label="Selecciona un mes"
           onChange={setMesSeleccionado}
           value={mesSeleccionado}
-          data={meses.map((value, index) => ({
-            value: `${index}`,
-            label: value,
-          }))}
+          data={obtenerMeses()}
         />
         <Tabs
           defaultValue="grafica"

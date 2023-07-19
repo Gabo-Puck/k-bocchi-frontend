@@ -20,7 +20,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { meses } from "../../../utils/fechas";
+import { getMes } from "../../../utils/fechas";
 import jsPDF from "jspdf";
 import Vacio from "../../../Components/Vacio";
 
@@ -59,7 +59,7 @@ export default function Graficas({ mes }) {
   function createDataSets() {
     let dataset = [
       {
-        label: meses[Number(mes)],
+        label: getMes(Number(mes)),
         backgroundColor: theme.colors["blue-empire"][5],
         data: ventas.ventas_actual.map(
           ({ cantidad_vendida }) => cantidad_vendida
@@ -69,7 +69,7 @@ export default function Graficas({ mes }) {
     if (ventas.ventas_anterior) {
       dataset = [
         {
-          label: meses[Number(mes - 1)],
+          label: getMes(Number(mes - 1)),
           backgroundColor: theme.colors["green-nature"][5],
           data: ventas.ventas_anterior.map(
             ({ cantidad_vendida }) => cantidad_vendida
@@ -104,7 +104,7 @@ export default function Graficas({ mes }) {
     pdf.addImage(canvasClon, "PNG", 0, 0);
 
     // download the pdf
-    pdf.save(`Reporte_Ventas_${meses[mes]}`);
+    pdf.save(`Reporte_Ventas_${getMes(mes)}`);
     console.log(chart.canvas);
   }
   useEffect(() => {
@@ -130,10 +130,9 @@ export default function Graficas({ mes }) {
             },
             title: {
               display: true,
-              text:
-                mes === "0"
-                  ? `Ventas de ${meses[mes]}`
-                  : `Ventas de ${meses[mes - 1]} con respecto a ${meses[mes]}`,
+              text: `Ventas de ${getMes(mes - 1)} con respecto a ${getMes(
+                mes
+              )}`,
             },
           },
           scales: {
