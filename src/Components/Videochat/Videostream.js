@@ -10,11 +10,20 @@ export default function Videostream({ srcObject, ...props }) {
     if (!ref.current) return;
     //Si existe entonces asignamos el stream
     ref.current.srcObject = srcObject;
+    ref.current
+      .play()
+      .then((c) => {
+        console.log({ c });
+      })
+      .catch((c) => {
+        console.log({c});
+      });
     //Cleanup function para unmount
     return () => {
       //Si existe una referencia en streamRef entonces liberamos los recursos del stream
       if (streamRef) streamRef.getTracks().forEach((track) => track.stop());
     };
   }, [srcObject]);
-  return <video {...props} ref={ref} autoPlay muted />;
+
+  return <video {...props} ref={ref} muted />;
 }
