@@ -6,6 +6,10 @@ import {
   Container,
   Flex,
   SimpleGrid,
+  Stack,
+  Text,
+  TextInput,
+  Textarea,
   UnstyledButton,
   createStyles,
 } from "@mantine/core";
@@ -16,7 +20,9 @@ import {
   FaVideoSlash,
   FaPhoneSlash,
 } from "react-icons/fa";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useListState } from "@mantine/hooks";
+import { useSelector } from "react-redux";
+import { selectUsuario } from "../utils/usuarioHooks";
 const useStyles = createStyles((theme) => ({
   videoInsert: {
     width: "100%",
@@ -27,7 +33,6 @@ const useStyles = createStyles((theme) => ({
 export default function Videochat() {
   const [peerId, setPeerId] = useState("");
   const [remotePeerIdValue, setRemotePeerIdValue] = useState("");
-  const [remoteStream, setRemoteStream] = useState();
   const [userStream, setUserStream] = useState();
   const remoteVideoRef = useRef(null);
   const currentUserVideoRef = useRef(null);
@@ -35,6 +40,9 @@ export default function Videochat() {
   const { classes, cx } = useStyles();
   const [audio, { toggle: toggleAudio }] = useDisclosure(true);
   const [video, { toggle: toggleVideo }] = useDisclosure(true);
+  const [messages, handlers] = useListState();
+  const [message, setMessage] = useState("");
+  const { nombre } = useSelector(selectUsuario);
   useEffect(() => {
     const peer = new Peer();
 
@@ -51,6 +59,7 @@ export default function Videochat() {
       getUserMedia({ video: true, audio: true }, (mediaStream) => {
         currentUserVideoRef.current.srcObject = mediaStream;
         setUserStream(mediaStream);
+        setRemotePeerIdValue(call.peer)
         // currentUserVideoRef.current.play();
         call.answer(mediaStream);
         call.on("stream", function (remoteStream) {
@@ -59,18 +68,23 @@ export default function Videochat() {
         });
       });
     });
-
+    peer.on("connection", (conn) => {
+      conn.on("data", (data) => {
+        console.log({data});
+        handlers.append(data);
+      });
+    });
     peerInstance.current = peer;
   }, []);
   useEffect(() => {
     console.log({ video });
     if (userStream)
-      userStream.getVideoTracks().forEach((t) => t.enabled = video);
+      userStream.getVideoTracks().forEach((t) => (t.enabled = video));
   }, [video]);
   useEffect(() => {
     console.log({ audio });
     if (userStream) {
-      userStream.getAudioTracks().forEach((t) => t.enabled = audio);
+      userStream.getAudioTracks().forEach((t) => (t.enabled = audio));
     }
   }, [audio]);
   const call = (remotePeerId) => {
@@ -91,7 +105,31 @@ export default function Videochat() {
       });
     });
   };
-
+  function mandarMensaje() {
+    if (message !== "") {
+      console.log({remotePeerIdValue});
+      const conn = peerInstance.current.connect(remotePeerIdValue);
+      const msgObj = {
+        name: nombre,
+        message: message,
+      };
+      conn.on("open", () => {
+        conn.send(msgObj);
+      });
+      handlers.append({ name: "Tú", message });
+      setMessage("");
+    }
+  }
+  function handleKeyPress(e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      mandarMensaje();
+      return;
+    }
+  }
+  function handleChange(e) {
+    setMessage(e.target.value);
+  }
   return (
     <Container>
       <h1>Current user id is {peerId}</h1>
@@ -172,6 +210,20 @@ export default function Videochat() {
             <FaPhoneSlash />
           </ControlButtonLlamada>
         </Flex>
+        <Stack>
+          <Stack>
+            {messages.map(({ message, name }) => (
+              <Text>
+                {name}:{message}
+              </Text>
+            ))}
+          </Stack>
+          <Textarea
+            value={message}
+            onChange={handleChange}
+            onKeyDown={handleKeyPress}
+          />
+        </Stack>
       </Container>
     </Container>
   );
