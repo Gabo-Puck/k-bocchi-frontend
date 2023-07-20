@@ -59,6 +59,7 @@ import EnvioEspecifico from "./pages/Marketplace/Envios/EnvioEspecifico";
 import ComprasPaciente from "./pages/Marketplace/Ventas/ComprasPaciente";
 import DetallesVenta from "./pages/Marketplace/Ventas/DetallesVenta";
 import ReportesVentas from "./pages/Marketplace/Reportes/ReportesVentas";
+import Videochat from "./pages/Videochat";
 // import EnviosContext from "./pages/Marketplace/Envios/EnviosContext";
 
 function App() {
@@ -449,6 +450,7 @@ function App() {
                     {/* TODOS */}
                     <Route path="perfil" element={<Perfil />} />
                     <Route path="chat" element={<Chat />} />
+                    <Route path="videollamada" element={<Videochat />} />
                     <Route path="cita" element={<LayoutCita />}>
                       <Route path="buscar" element={<Buscar />} />
                       <Route

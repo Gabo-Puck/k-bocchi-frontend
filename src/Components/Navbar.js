@@ -22,6 +22,7 @@ import {
   FaMoneyBillWave,
   FaRobot,
   FaShippingFast,
+  FaVideo,
 } from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
 import { LinksGroup } from "./NavbarLinksGroup";
@@ -84,6 +85,11 @@ const navbarItems = [
     label: "Chat",
     icon: FaComment,
     to: "/app/chat",
+  },
+  {
+  label: "Videollamada",
+    icon: FaVideo,
+    to: "/app/videollamada",
   },
 ];
 
