@@ -106,13 +106,17 @@ export default function Videochat() {
   }, [peerInstance]);
   useEffect(() => {
     console.log({ video });
-    if (userStream)
-      userStream.getVideoTracks().forEach((t) => (t.enabled = video));
+    if (currentStreamRef.current)
+      currentStreamRef.current
+        .getVideoTracks()
+        .forEach((t) => (t.enabled = video));
   }, [video]);
   useEffect(() => {
     console.log({ audio });
-    if (userStream) {
-      userStream.getAudioTracks().forEach((t) => (t.enabled = audio));
+    if (currentStreamRef.current) {
+      currentStreamRef.current
+        .getAudioTracks()
+        .forEach((t) => (t.enabled = audio));
     }
   }, [audio]);
   useEffect(() => {
@@ -194,7 +198,7 @@ export default function Videochat() {
   }
   useEffect(() => {
     entrarLlamada();
-  }, [mounted, peerId]);
+  }, [mounted, peerId, currentStreamRef.current]);
   const call = (remotePeerId) => {
     console.log("EN CALL");
     // setUserStream(mediaStream);
