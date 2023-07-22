@@ -178,27 +178,27 @@ export default function Videochat() {
     };
   }, [mounted]);
   async function entrarLlamada() {
+    let conectar = false;
     if (mounted && peerId && currentStreamRef.current !== undefined) {
       try {
         let response = await axios.get(
           `/salas/acceso/${codigo_acceso}/${id_usuario}`
         );
-        getUserResources();
-        socket.emit("videochat:entrar", {
-          peer_id: peerId,
-          codigo_acceso,
-          rol,
-        });
+        conectar = true;
       } catch (error) {
         if (!error) return;
         let {
           response: { status },
         } = error;
-        if (status === 403) {
+        if (status === 403 && rol === PACIENTE) {
           modals.open({
             title: <Title order={3}>¡Atención!</Title>,
             children: <Text>Aún no puedes entrar a la sala</Text>,
           });
+          return;
+        }
+        if (status === 403 && rol === FISIOTERAPEUTA) {
+          conectar = true;
           return;
         }
         console.log(error);
@@ -206,6 +206,8 @@ export default function Videochat() {
           response: { data },
         } = error;
         showNegativeFeedbackNotification(data);
+      } finally {
+        if (conectar) getUserResources();
       }
     }
   }
