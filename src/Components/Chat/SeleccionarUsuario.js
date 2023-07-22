@@ -35,11 +35,12 @@ const useStyles = createStyles((theme) => ({
     zIndex: 500,
   },
 }));
-export default function SeleccionarUsuario({ setSeleccion }) {
+export default function SeleccionarUsuario({ setSeleccion, initialValue=null }) {
   const [usuarios, setUsuarios] = useState(undefined);
   const theme = useMantineTheme();
   const { classes, cx } = useStyles();
   const usuario = useSelector(selectUsuario);
+  // const [selectedValue, setSelectedValue] = useState(initialValue);
   async function fetchUsuarios() {
     try {
       if (usuario.rol === FISIOTERAPEUTA) {
@@ -55,6 +56,7 @@ export default function SeleccionarUsuario({ setSeleccion }) {
               id: data.id_usuario,
               nombre: data.nombre,
               foto_perfil: data.foto_perfil,
+              id_paciente: data.id_paciente,
             },
             value: data.id_usuario,
             k: data.id,
@@ -116,7 +118,9 @@ export default function SeleccionarUsuario({ setSeleccion }) {
       label="Selecciona un usuario"
       description="Puedes escribir el nombre"
       //   placeholder={terapeutas[0].label}
+      // value={selectedValue}
       itemComponent={SelectItem}
+      defaultValue={initialValue}
       searchable
       maxDropdownHeight={300}
       withinPortal
@@ -125,12 +129,11 @@ export default function SeleccionarUsuario({ setSeleccion }) {
         itemsWrapper: classes.dropdown,
       }}
       onChange={(v) => {
-        const selected = usuarios.find(({value})=>value===v)
-        if(selected){
-            setSeleccion(selected.obj);
-
+        const selected = usuarios.find(({ value }) => value === v);
+        if (selected) {
+          setSeleccion(selected.obj);
+          // setSeleccion(selected.obj.id);
         }
-
       }}
       nothingFound="No hay coincidencias"
       data={usuarios}
@@ -145,7 +148,7 @@ const SelectItem = forwardRef(
   ({ image, label, description, k, ...others }, ref) => (
     <div ref={ref} {...others} key={k}>
       <Group noWrap>
-        <ImagenAvatar image={image} mx={0}/>
+        <ImagenAvatar image={image} mx={0} />
         <div>
           <Text size="sm">{label}</Text>
           <Text size="xs" opacity={0.65}>

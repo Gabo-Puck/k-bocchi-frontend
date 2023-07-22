@@ -23,7 +23,7 @@ export const isTiempo = (value) => {
   return null;
 };
 export const isCodigoPostal = (value) => {
-  if (value.toString().length!=5) {
+  if (value.toString().length != 5) {
     return "El codigo postal esta en formato incorrecto";
   }
   return null;
@@ -41,7 +41,12 @@ export const isNumber = (value) => {
 
 export const isRequiredValidation = (value) => {
   value = value?.toString();
-  if ((!value || value == "")) return "Este campo es necesario";
+  if (!value || value == "") return "Este campo es necesario";
+  return null;
+};
+export const isLongitudExacta = (value, longitud, msg) => {
+  value = value?.toString();
+  if (value.trim().length !== longitud) return msg;
   return null;
 };
 

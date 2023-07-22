@@ -66,7 +66,7 @@ const navbarItems = [
       { label: "Mi catalogo", link: "/app/marketplace/terapeuta/catalogo" },
       { label: "Mis envios", link: "/app/marketplace/envios/terapeuta" },
       { label: "Mis ventas", link: "/app/marketplace/terapeuta/reportes" },
-      { label: "Reportes", link: "" },
+      // { label: "Reportes", link: "" },
     ],
   },
   {
@@ -87,9 +87,16 @@ const navbarItems = [
     to: "/app/chat",
   },
   {
-  label: "Videollamada",
+    label: "Salas",
+    rol: FISIOTERAPEUTA,
     icon: FaVideo,
-    to: "/app/videollamada",
+    to: "/app/terapeuta/salas",
+  },
+  {
+    label: "Videollamada",
+    rol: PACIENTE,
+    icon: FaVideo,
+    to: "/app/paciente/videollamada",
   },
 ];
 
@@ -187,10 +194,10 @@ const useStyles = createStyles((theme) => ({
   },
   navbarContainer: {
     position: "absolute",
-    top:0,
-    right:0,
+    top: 0,
+    right: 0,
     minWidth: "0px",
-    zIndex:1000
+    zIndex: 1000,
   },
 }));
 

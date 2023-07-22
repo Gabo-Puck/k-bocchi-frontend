@@ -87,6 +87,16 @@ export function FormatUTCDateTime(date) {
   }).format(dt);
   return formatDateTime;
 }
+export function FormatUTCDateTime12(date) {
+  let dt = new Date(date);
+  let formatDateTime = Intl.DateTimeFormat("es-MX", {
+    dateStyle: "medium",
+    timeStyle: "medium",
+    hourCycle: "h11",
+    timeZone: "UTC",
+  }).format(dt);
+  return formatDateTime;
+}
 export function FormatUTCTime(date) {
   let t = new Date(date);
   let formatTime = Intl.DateTimeFormat("es-MX", {

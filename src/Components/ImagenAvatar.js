@@ -15,6 +15,7 @@ const ImagenAvatar = React.forwardRef(
       image,
       classes = { avatarObject: "" },
       onLoaded = () => {},
+      onImageLoaded = () => {},
       mx="auto"
     },
     refParent
@@ -65,6 +66,7 @@ const ImagenAvatar = React.forwardRef(
             radius="50%"
             h={height}
             w={width}
+            onLoad={onImageLoaded}
             className={classes.avatarObject}
             src={file}
           />
