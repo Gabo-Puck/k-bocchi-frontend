@@ -28,11 +28,12 @@ import { useDisclosure, useListState } from "@mantine/hooks";
 import { useSelector } from "react-redux";
 import { selectUsuario } from "../utils/usuarioHooks";
 import { socket } from "../utils/socket/socket";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { showNegativeFeedbackNotification } from "../utils/notificationTemplate";
 import { modals } from "@mantine/modals";
 import { useSm } from "../utils/mediaQueryHooks";
+import { FISIOTERAPEUTA, PACIENTE } from "../roles";
 const useStyles = createStyles((theme) => ({
   videoInsert: {
     width: "100%",
@@ -67,6 +68,7 @@ export default function Videochat() {
   const { codigo_acceso } = useParams();
   const { id: id_usuario } = useSelector(selectUsuario);
   const sm = useSm();
+  const navigate = useNavigate();
   useEffect(() => {
     if (!peerInstance.current) {
       const peer = new Peer();
@@ -81,6 +83,7 @@ export default function Videochat() {
   }
   function onCall(call) {
     setRemotePeerIdValue(call.peer);
+
     call.answer(currentStreamRef.current);
     call.on("stream", function (remoteStream) {
       remoteVideoRef.current.srcObject = remoteStream;
@@ -120,7 +123,7 @@ export default function Videochat() {
     }
   }, [audio]);
   useEffect(() => {
-    getUserResources();
+    // getUserResources();
   }, []);
   async function getUserResources() {
     if (currentStreamRef.current || doneRef.current == true) return;
@@ -130,13 +133,22 @@ export default function Videochat() {
       navigator.webkitGetUserMedia ||
       navigator.mozGetUserMedia;
     try {
-      getUserMedia({ video: true, audio: true }, (mediaStream) => {
-        currentUserVideoRef.current.srcObject = mediaStream;
-        currentStreamRef.current = mediaStream;
-        console.log("EN CALL");
+      let mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
       });
+      currentStreamRef.current = mediaStream;
+      // getUserMedia({ video: true, audio: true });
     } catch (error) {
       console.log(error);
+    } finally {
+      currentUserVideoRef.current.srcObject = currentStreamRef.current;
+      console.log("EN CALL");
+      socket.emit("videochat:entrar", {
+        peer_id: peerId,
+        codigo_acceso,
+        rol,
+      });
     }
   }
   function onUsuarioConectado({ peer_id, rol }) {
@@ -166,11 +178,12 @@ export default function Videochat() {
     };
   }, [mounted]);
   async function entrarLlamada() {
-    if (mounted && peerId) {
+    if (mounted && peerId && currentStreamRef.current !== undefined) {
       try {
         let response = await axios.get(
           `/salas/acceso/${codigo_acceso}/${id_usuario}`
         );
+        getUserResources();
         socket.emit("videochat:entrar", {
           peer_id: peerId,
           codigo_acceso,
@@ -339,11 +352,6 @@ export default function Videochat() {
               }}
             />
             <ControlButtonLlamada
-              actionIconProps={{ size: "3em", variant: "filled" }}
-            >
-              <FaPhoneSlash />
-            </ControlButtonLlamada>
-            <ControlButtonLlamada
               actionIconProps={{
                 size: "3em",
                 variant: "filled",
@@ -352,6 +360,22 @@ export default function Videochat() {
               }}
             >
               <TiMessages />
+            </ControlButtonLlamada>
+            <ControlButtonLlamada
+              actionIconProps={{
+                size: "3em",
+                variant: "filled",
+                color: "red",
+                onClick: () => {
+                  if (rol === PACIENTE) {
+                    navigate("/app/paciente/videollamada");
+                  } else if (rol === FISIOTERAPEUTA) {
+                    navigate("/app/terapeuta/salas");
+                  }
+                },
+              }}
+            >
+              <FaPhoneSlash />
             </ControlButtonLlamada>
           </Flex>
         </Container>
