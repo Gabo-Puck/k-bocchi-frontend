@@ -17,6 +17,7 @@ import {
 } from "react-icons/md";
 import { SlLogout } from "react-icons/sl";
 import {
+  FaBook,
   FaBookMedical,
   FaComment,
   FaMoneyBillWave,
@@ -97,6 +98,12 @@ const navbarItems = [
     rol: PACIENTE,
     icon: FaVideo,
     to: "/app/paciente/videollamada",
+  },
+  {
+    label: "Agenda",
+    rol: FISIOTERAPEUTA,
+    icon: FaBook,
+    to: "/app/terapeuta/agenda",
   },
 ];
 

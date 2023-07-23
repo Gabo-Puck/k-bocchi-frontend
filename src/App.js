@@ -62,6 +62,7 @@ import ReportesVentas from "./pages/Marketplace/Reportes/ReportesVentas";
 import Videochat from "./pages/Videochat";
 import Salas from "./pages/Salas";
 import EntrarCodigo from "./pages/EntrarCodigo";
+import AgendaTerapeuta from "./pages/AgendaTerapeuta";
 // import EnviosContext from "./pages/Marketplace/Envios/EnviosContext";
 
 function App() {
@@ -452,7 +453,10 @@ function App() {
                     {/* TODOS */}
                     <Route path="perfil" element={<Perfil />} />
                     <Route path="chat" element={<Chat />} />
-                    <Route path="videollamada/:codigo_acceso" element={<Videochat />} />
+                    <Route
+                      path="videollamada/:codigo_acceso"
+                      element={<Videochat />}
+                    />
                     <Route path="cita" element={<LayoutCita />}>
                       <Route path="buscar" element={<Buscar />} />
                       <Route
@@ -473,13 +477,14 @@ function App() {
                           element={<BitacoraModificarAcceso />}
                         />
                       </Route>
-                      <Route path="videollamada" element={<EntrarCodigo/>}/>
+                      <Route path="videollamada" element={<EntrarCodigo />} />
                     </Route>
                     {/* FISIOTERAPEUTA */}
                     <Route
                       path="terapeuta"
                       element={<PrivateRoutes authRol={[FISIOTERAPEUTA]} />}
                     >
+                      <Route path="agenda" element={<AgendaTerapeuta />} />
                       <Route path="bitacora">
                         <Route index element={<BitacoraGeneral />} />
                         <Route path=":id" element={<BitacoraTerapeuta />} />

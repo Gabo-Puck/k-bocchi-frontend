@@ -4,7 +4,6 @@ import {
   useLoadScript,
   Marker,
   MarkerF,
-    
 } from "@react-google-maps/api";
 import "../css/mapa.css";
 
@@ -29,12 +28,12 @@ import usePlacesAutocomplete, {
 import { notifications } from "@mantine/notifications";
 import { showPositiveFeedbackNotification } from "../utils/notificationTemplate";
 const libraries = ["places"];
-export default function MapaComponent({ setDatosLat }) {
+export default function MapaComponent({ setDatosLat,bottom }) {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_MAPS_API_KEY,
     libraries: libraries,
   });
-  if (!isLoaded) return <LoadingOverlay visible/>;
+  if (!isLoaded) return <LoadingOverlay visible />;
   return <MapaSelectPlace setDatosLat={setDatosLat} />;
 }
 
@@ -60,10 +59,11 @@ function MapaSelectPlace({ setDatosLat }) {
         color="green-nature"
         disabled={!selected}
         onClick={() => {
-          setDatosLat(selected);
+          let returned = setDatosLat(selected);
           showPositiveFeedbackNotification(
             "Se ha guardado la ubicación seleccionada"
           );
+          if (returned === true) return;
           modals.closeAll();
         }}
       >
