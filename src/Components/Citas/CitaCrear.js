@@ -25,6 +25,7 @@ import CenterHorizontal from "../CenterHorizontal";
 import { modals } from "@mantine/modals";
 import { FormatDate } from "../../utils/fechas";
 import axios from "axios";
+import { showNegativeFeedbackNotification } from "../../utils/notificationTemplate";
 export default function CitaCrear({ setCitas }) {
   const { terapeuta } = useSelector(selectUsuario);
   const [guardando, setGuardando] = useState(false);
@@ -105,6 +106,12 @@ export default function CitaCrear({ setCitas }) {
           }
         } catch (error) {
           console.log(error);
+          if (error) {
+            let {
+              response: { data },
+            } = error;
+            showNegativeFeedbackNotification(data);
+          }
         } finally {
           console.log({ grupoIndex });
         }

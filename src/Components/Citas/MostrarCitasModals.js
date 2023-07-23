@@ -18,6 +18,7 @@ export function mostrarCitaEditar(cita, setCitas) {
   modals.open({
     title: <Title order={3}>Editar cita</Title>,
     children: <CitaEditar cita={cita} setCitas={setCitas} />,
+    fullScreen: true,
   });
 }
 export function mostrarCitaEliminar(cita, setCitas) {
