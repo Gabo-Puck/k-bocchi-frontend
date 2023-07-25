@@ -44,7 +44,7 @@ const navbarItems = [
     initiallyOpened: true,
     links: [
       { label: "Agendar", link: "/app/paciente/chatbot" },
-      { label: "Emergencia", link: "/" },
+      { label: "Emergencia", link: "/app/paciente/citas" },
     ],
     rol: PACIENTE,
   },

@@ -63,6 +63,7 @@ import Videochat from "./pages/Videochat";
 import Salas from "./pages/Salas";
 import EntrarCodigo from "./pages/EntrarCodigo";
 import AgendaTerapeuta from "./pages/AgendaTerapeuta";
+import CitaEmergencia from "./pages/CitaEmergencia";
 // import EnviosContext from "./pages/Marketplace/Envios/EnviosContext";
 
 function App() {
@@ -478,6 +479,7 @@ function App() {
                         />
                       </Route>
                       <Route path="videollamada" element={<EntrarCodigo />} />
+                      <Route path="citas" element={<CitaEmergencia />} />
                     </Route>
                     {/* FISIOTERAPEUTA */}
                     <Route
