@@ -46,7 +46,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export default function TerapeutaResultado({ usuario }) {
+export default function TerapeutaResultado({ usuario, Button }) {
   const { classes, theme } = useStyles();
   const navigate = useNavigate();
   useEffect(() => {
@@ -59,8 +59,7 @@ export default function TerapeutaResultado({ usuario }) {
       : usuario.terapeuta.resenas[0].promedio;
   return (
     <Card
-      maw="300px"
-      miw="200px"
+      w="300px"
       shadow="sm"
       padding="lg"
       withBorder
@@ -68,8 +67,8 @@ export default function TerapeutaResultado({ usuario }) {
       p="md"
       className={classes.card}
     >
-      <Card.Section >
-        <Imagen height="40vh" image={usuario.foto_perfil}/>
+      <Card.Section>
+        <Imagen height="40vh" image={usuario.foto_perfil} />
       </Card.Section>
 
       <Card.Section className={classes.section} mt="md">
@@ -82,9 +81,9 @@ export default function TerapeutaResultado({ usuario }) {
       </Card.Section>
 
       <Card.Section className={classes.section}>
-        <Group spacing={7} mt={5}>
-          {usuario.dist && (
-            <Text>
+        <Stack spacing={7} mt={5}>
+          {usuario.dist !== undefined && (
+            <Text style={{ flex: "1" }}>
               A{" "}
               <Text fw="bold" span>
                 {distanceFormatter.format(usuario.dist)}
@@ -92,21 +91,14 @@ export default function TerapeutaResultado({ usuario }) {
               aprox
             </Text>
           )}
-          <BadgeModalidadTrabajo size="md" terapeuta={usuario.terapeuta} />
-          <RangoPrecio terapeuta={usuario.terapeuta} />
-          <Button
-            radius="sm"
-            style={{ flex: 1 }}
-            color="green-nature"
-            mah="30px"
-            mih="30px"
-            onClick={() => {
-              navigate(`/app/cita/terapeuta/${usuario.terapeuta.id}`);
-            }}
-          >
-            Mas información
-          </Button>
-        </Group>
+          <BadgeModalidadTrabajo
+            size="md"
+            terapeuta={usuario.terapeuta}
+            
+          />
+          <RangoPrecio terapeuta={usuario.terapeuta} style={{ flex: "1" }} />
+          {Button}
+        </Stack>
       </Card.Section>
     </Card>
   );
@@ -114,16 +106,16 @@ export default function TerapeutaResultado({ usuario }) {
 
 export function RangoPrecio({ terapeuta, ...props }) {
   return (
-    <Text color="dark" fw="bold">
+    <Text color="dark" fw="bold" {...props}>
       {`${currencyFormatter.format(
         terapeuta.pago_minimo
       )} - ${currencyFormatter.format(terapeuta.pago_maximo)}`}
     </Text>
   );
 }
-export function BadgeModalidadTrabajo({ terapeuta, ...props }) {
+export function BadgeModalidadTrabajo({ terapeuta, propsContainer, ...props }) {
   return (
-    <Flex w="100%" gap="md" justify="center">
+    <Flex w="100%" gap="md" justify="center" {...propsContainer}>
       {terapeuta.servicio_domicilio == 1 ? (
         <Badge {...props} c="green-nature">
           Domicilio

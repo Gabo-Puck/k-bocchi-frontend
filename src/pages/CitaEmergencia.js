@@ -6,6 +6,7 @@ import {
   Flex,
   Group,
   Loader,
+  LoadingOverlay,
   MediaQuery,
   Modal,
   Paper,
@@ -21,7 +22,7 @@ import {
 import { useDebouncedState, useDisclosure } from "@mantine/hooks";
 import { useContext, useEffect, useState } from "react";
 import { BusquedaTerapeutaContext } from "../Components/BusquedaTerapeutaContext";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { MdPersonSearch } from "react-icons/md";
 import TerapeutaResultado from "../Components/TerapeutaResultado";
@@ -35,7 +36,10 @@ import { executeValidation } from "../utils/isFormInvalid";
 import { isRequiredValidation } from "../utils/inputValidation";
 import { FormatDate, FormatDateTime, FormatUTCDateTime } from "../utils/fechas";
 import { serializarSearchParams } from "./Cita/Buscar";
-
+import CitaEmergenciaCrear from "../Components/Citas/CitaEmergenciaCrear";
+import { useLoadScript } from "@react-google-maps/api";
+import usePlacesAutocomplete, { getGeocode } from "use-places-autocomplete";
+import CenterHorizontal from "../Components/CenterHorizontal";
 // export function CitaEmergencia() {
 //   const theme = useMantineTheme();
 //   const [value, setValue] = useDebouncedState("", 300);
@@ -102,6 +106,7 @@ import { serializarSearchParams } from "./Cita/Buscar";
 //     </>
 //   );
 // }
+const libraries = ["places"];
 
 export default function CitaEmergencia() {
   const [resultados, setResultados] = useState([]);
@@ -115,6 +120,8 @@ export default function CitaEmergencia() {
     useDisclosure(true);
   const [modalidad, setModalidad] = useState([]);
   const [cargando, setCargando] = useState(false);
+  const [domicilio, setDomicilio] = useState();
+  const navigate = useNavigate();
   return (
     <Container h="100vh" mx={0} pt="sm" fluid>
       <Modal
@@ -122,8 +129,11 @@ export default function CitaEmergencia() {
         title={<Title order={3}>Criterios de búsqueda</Title>}
         onClose={closeModal}
         opened={showModal}
+        keepMounted={true}
       >
         <Filtros
+          closeModal={closeModal}
+          setResultados={setResultados}
           ubicacion={ubicacion}
           setUbicacion={setUbicacion}
           rango={rango}
@@ -134,6 +144,8 @@ export default function CitaEmergencia() {
           setModalidad={setModalidad}
           cargando={cargando}
           setCargando={setCargando}
+          setDomicilio={setDomicilio}
+          domicilio={domicilio}
         />
       </Modal>
       <Flex direction="column" h="100%" pos="relative">
@@ -185,8 +197,36 @@ export default function CitaEmergencia() {
                 wrap="wrap"
                 gap="lg"
               >
-                {resultados.map((terapeuta) => (
-                  <TerapeutaResultado usuario={terapeuta} key={terapeuta.id} />
+                {resultados.map(({ terapeuta, cita_disponible }) => (
+                  <TerapeutaResultado
+                    usuario={terapeuta}
+                    key={terapeuta.id}
+                    Button={
+                      <Button
+                        radius="sm"
+                        style={{ flex: 1 }}
+                        color="green-nature"
+                        // mah="30px"
+
+                        mih="30px"
+                        onClick={() => {
+                          modals.open({
+                            title: <Title>Crear cita emergencia</Title>,
+                            children: (
+                              <CitaEmergenciaCrear
+                                domicilio_elegido={{ ...ubicacion, domicilio }}
+                                horario_elegido={cita_disponible}
+                                setResultados={setResultados}
+                                terapeuta_datos={terapeuta}
+                              />
+                            ),
+                          });
+                        }}
+                      >
+                        Agendar cita
+                      </Button>
+                    }
+                  />
                 ))}
               </Flex>
             </MediaQuery>
@@ -210,6 +250,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 function Filtros({
+  setResultados,
   ubicacion,
   setUbicacion,
   rango,
@@ -220,22 +261,42 @@ function Filtros({
   setModalidad,
   cargando,
   setCargando,
+  closeModal,
+  domicilio,
+  setDomicilio,
 }) {
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: process.env.REACT_APP_MAPS_API_KEY,
+    libraries: libraries,
+  });
   const [showMapa, setShowMapa] = useState(false);
   const [showAgrandar, setShowAgrandar] = useState(false);
+  const [fetchingAddress, setFetchingAddress] = useState(false);
   const { classes, cx } = useStyles();
-  function getUbicacionActual() {
+  async function getUbicacionActual() {
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setUbicacion({
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-        });
-        form.setFieldValue("ubicacion", {
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-        });
-        console.log(pos);
+      async (pos) => {
+        try {
+          setFetchingAddress(true);
+          setUbicacion({
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+          });
+          let [{ formatted_address }] = await getGeocode({
+            location: { lat: pos.coords.latitude, lng: pos.coords.longitude },
+          });
+          setDomicilio(formatted_address);
+          form.setFieldValue("ubicacion", {
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+          });
+          console.log(pos);
+        } catch (err) {
+          console.log("Algo ha salido mal obteniendo tu ubicación");
+        } finally {
+          setShowMapa(false);
+          setFetchingAddress(false);
+        }
       },
       (err) => {
         showNegativeFeedbackNotification(
@@ -278,9 +339,13 @@ function Filtros({
     values.fecha = new Date(values.fecha.setSeconds(0));
     searchObject.fecha = FormatDateTime(values.fecha);
     try {
-      await axios.get(
+      let { data } = await axios.get(
         `/citas/emergencia?${serializarSearchParams(searchObject)}`
       );
+      closeModal();
+      setResultados(data);
+      setFecha(values.fecha);
+      setModalidad(values.modalidad);
     } catch (error) {
       console.log(error);
       if (!error) return;
@@ -295,6 +360,12 @@ function Filtros({
   useEffect(() => {
     form.setFieldValue("rango", rango);
   }, [rango]);
+  useEffect(() => {
+    console.log({ domicilio });
+  }, [domicilio]);
+  if (!isLoaded || fetchingAddress)
+    return <LoadingOverlay visible overlayBlur={3} />;
+
   return (
     <form onSubmit={form.onSubmit(handleBuscar)}>
       <Stack>
@@ -319,14 +390,25 @@ function Filtros({
               )}
             </Text>
             <Stack>
-              <Button color="green-nature" onClick={getUbicacionActual}>
-                Ubicación actual
-              </Button>
-              {!showMapa ? (
-                <Button color="green-nature" onClick={() => setShowMapa(true)}>
-                  Seleccionar ubicación
-                </Button>
-              ) : (
+              <CenterHorizontal>
+                <Text>Domicilio: {domicilio || "Sin seleccionar"}</Text>
+              </CenterHorizontal>
+              <CenterHorizontal>
+                <Flex direction="column" gap="sm">
+                  <Button color="green-nature" onClick={getUbicacionActual}>
+                    Ubicación actual
+                  </Button>
+                  {!showMapa && (
+                    <Button
+                      color="green-nature"
+                      onClick={() => setShowMapa(true)}
+                    >
+                      Seleccionar ubicación
+                    </Button>
+                  )}
+                </Flex>
+              </CenterHorizontal>
+              {showMapa && (
                 <MapaComponent
                   setDatosLat={({
                     coords: { lat, lng },
@@ -336,6 +418,7 @@ function Filtros({
                       lat,
                       lng,
                     });
+                    setDomicilio(domicilio);
                     form.setFieldValue("ubicacion", {
                       lat,
                       lng,

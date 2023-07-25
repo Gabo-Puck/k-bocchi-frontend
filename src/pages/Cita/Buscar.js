@@ -26,7 +26,7 @@ import {
 import axios from "axios";
 import { MdPersonSearch } from "react-icons/md";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useContext } from "react";
 import { BusquedaTerapeutaContext } from "../../Components/BusquedaTerapeutaContext";
 import { useForm } from "@mantine/form";
@@ -118,6 +118,7 @@ export default function Buscar() {
   const [resultados, setResultados] = useState([]);
   let [searchParams, setSearchParams] = useSearchParams();
   let [parametrosBusqueda, setParametrosBusqueda] = useState({});
+  let navigate = useNavigate();
   const [opened, { open, close }] = useDisclosure(false);
   useEffect(() => {
     setSearchParams(serializarSearchParams(parametrosBusqueda));
@@ -137,7 +138,6 @@ export default function Buscar() {
           <Filtros />
         </Drawer>
         <Flex direction="column" h="100%">
-
           <Flex
             direction="column"
             sx={{ justifyContent: "center", flex: "0 0 auto" }}
@@ -190,10 +190,26 @@ export default function Buscar() {
                   wrap="wrap"
                   gap="lg"
                 >
-                  {resultados.map((terapeuta) => (
+                  {resultados.map((r) => (
                     <TerapeutaResultado
-                      usuario={terapeuta}
-                      key={terapeuta.id}
+                      Button={
+                        <Button
+                          radius="sm"
+                          style={{ flex: 1 }}
+                          color="green-nature"
+                          mah="30px"
+                          mih="30px"
+                          onClick={() => {
+                            navigate(
+                              `/app/cita/terapeuta/${r.terapeuta.id}`
+                            );
+                          }}
+                        >
+                          Mas información
+                        </Button>
+                      }
+                      usuario={r}
+                      key={r.id}
                     />
                   ))}
                 </Flex>
