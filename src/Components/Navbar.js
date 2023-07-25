@@ -105,6 +105,12 @@ const navbarItems = [
     icon: FaBook,
     to: "/app/terapeuta/agenda",
   },
+  {
+    label: "Agenda",
+    rol: PACIENTE,
+    icon: FaBook,
+    to: "/app/paciente/agenda",
+  },
 ];
 
 const useStyles = createStyles((theme) => ({

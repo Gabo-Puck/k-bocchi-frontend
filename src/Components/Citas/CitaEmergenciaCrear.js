@@ -33,6 +33,7 @@ import {
 } from "../../utils/notificationTemplate";
 import { useLoadScript } from "@react-google-maps/api";
 import usePlacesAutocomplete, { getGeocode } from "use-places-autocomplete";
+import { useNavigate } from "react-router-dom";
 
 export default function CitaEmergenciaCrear({
   setResultados,
@@ -43,7 +44,7 @@ export default function CitaEmergenciaCrear({
   const { paciente } = useSelector(selectUsuario);
   const [guardando, setGuardando] = useState(false);
   const [terapeutaModalidad, setTerapeutaModalidad] = useState();
-
+  const navigate = useNavigate();
   const form = useForm({
     validateInputOnBlur: true,
     validateInputOnChange: true,
@@ -107,8 +108,9 @@ export default function CitaEmergenciaCrear({
       let { data } = await axios.post("/citas", {
         ...values,
       });
-      setResultados((c) => []);
+
       showPositiveFeedbackNotification("Se ha agendado tu cita");
+      navigate("/app/paciente/agenda");
       modals.closeAll();
     } catch (error) {
       if (!error) return;

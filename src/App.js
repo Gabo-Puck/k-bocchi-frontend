@@ -64,6 +64,7 @@ import Salas from "./pages/Salas";
 import EntrarCodigo from "./pages/EntrarCodigo";
 import AgendaTerapeuta from "./pages/AgendaTerapeuta";
 import CitaEmergencia from "./pages/CitaEmergencia";
+import AgendaPaciente from "./pages/AgendaPaciente";
 // import EnviosContext from "./pages/Marketplace/Envios/EnviosContext";
 
 function App() {
@@ -470,6 +471,7 @@ function App() {
                       path="paciente"
                       element={<PrivateRoutes authRol={[PACIENTE]} />}
                     >
+                      <Route path="agenda" element={<AgendaPaciente />} />
                       <Route path="chatbot" element={<ChatBot />} />
                       <Route path="bitacora">
                         <Route index element={<BitacoraPaciente />} />
