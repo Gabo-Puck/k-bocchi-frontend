@@ -15,6 +15,7 @@ import {
   Text,
   TextInput,
   Title,
+  createStyles,
   useMantineTheme,
 } from "@mantine/core";
 import { useDebouncedState, useDisclosure } from "@mantine/hooks";
@@ -32,7 +33,8 @@ import { DateTimePicker } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { executeValidation } from "../utils/isFormInvalid";
 import { isRequiredValidation } from "../utils/inputValidation";
-import { FormatUTCDateTime } from "../utils/fechas";
+import { FormatDate, FormatDateTime, FormatUTCDateTime } from "../utils/fechas";
+import { serializarSearchParams } from "./Cita/Buscar";
 
 // export function CitaEmergencia() {
 //   const theme = useMantineTheme();
@@ -194,7 +196,19 @@ export default function CitaEmergencia() {
     </Container>
   );
 }
+const MODALIDAD_DOMICILIO = "Domicilio";
+const MODALIDAD_AMBOS = "Ambos";
+const MODALIDAD_CONSULTORIO = "Consultorio";
 
+const useStyles = createStyles((theme) => ({
+  textoAgrandar: {
+    color: theme.colors["green-nature"][7],
+    cursor: "pointer",
+    ":hover": {
+      textDecoration: "underline",
+    },
+  },
+}));
 function Filtros({
   ubicacion,
   setUbicacion,
@@ -208,6 +222,8 @@ function Filtros({
   setCargando,
 }) {
   const [showMapa, setShowMapa] = useState(false);
+  const [showAgrandar, setShowAgrandar] = useState(false);
+  const { classes, cx } = useStyles();
   function getUbicacionActual() {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
@@ -229,12 +245,14 @@ function Filtros({
       }
     );
   }
+  let timestamp = new Date();
+  let fechaActual = new Date(timestamp.setMinutes(timestamp.getMinutes() + 10));
   const form = useForm({
     validateInputOnChange: true,
     validateInputOnBlur: true,
     initialValues: {
       rango,
-      fecha:new Date(FormatUTCDateTime(fecha))||new Date(),
+      fecha: fechaActual,
       modalidad,
       ubicacion,
     },
@@ -244,97 +262,151 @@ function Filtros({
       ubicacion: (value) => executeValidation(value, [isRequiredValidation]),
     },
   });
+
+  async function handleBuscar(values) {
+    setCargando(true);
+    setShowAgrandar(true);
+    let searchObject = {};
+    if (values.modalidad === MODALIDAD_CONSULTORIO) {
+      searchObject.con_consultorio = "true";
+    }
+    if (values.modalidad === MODALIDAD_DOMICILIO) {
+      searchObject.servicio_domicilio = "true";
+    }
+    searchObject = { ...searchObject, ...ubicacion };
+    searchObject.distancia = values.rango;
+    values.fecha = new Date(values.fecha.setSeconds(0));
+    searchObject.fecha = FormatDateTime(values.fecha);
+    try {
+      await axios.get(
+        `/citas/emergencia?${serializarSearchParams(searchObject)}`
+      );
+    } catch (error) {
+      console.log(error);
+      if (!error) return;
+      let {
+        response: { data },
+      } = error;
+      showNegativeFeedbackNotification(data);
+    } finally {
+      setCargando(false);
+    }
+  }
+  useEffect(() => {
+    form.setFieldValue("rango", rango);
+  }, [rango]);
   return (
-    <Stack>
-      <Paper shadow="sm" p="xl" pb="xs" pos="rel">
-        <Center>Ubicacion</Center>
-        <Stack my="xs">
-          <Text fz="xs" ta="center" color="dimmed">
-            Mostrará terapeutas en un area de {rango}
-            km
-            {ubicacion.lat}|{ubicacion.lng}
-          </Text>
-          <Stack>
-            <Button color="green-nature" onClick={getUbicacionActual}>
-              Ubicación actual
-            </Button>
-            {!showMapa ? (
-              <Button color="green-nature" onClick={() => setShowMapa(true)}>
-                Seleccionar ubicación
+    <form onSubmit={form.onSubmit(handleBuscar)}>
+      <Stack>
+        <Paper shadow="sm" p="xl" pb="xs" pos="rel">
+          <Center>Ubicacion</Center>
+          <Stack my="xs">
+            <Text fz="xs" ta="center" color="dimmed">
+              <Text span>
+                Mostrará terapeutas en un area de {rango}
+                km.{" "}
+              </Text>
+              {showAgrandar && (
+                <Text
+                  span
+                  className={classes.textoAgrandar}
+                  onClick={() => {
+                    setRango(15);
+                  }}
+                >
+                  Aumentar el rango a 15km
+                </Text>
+              )}
+            </Text>
+            <Stack>
+              <Button color="green-nature" onClick={getUbicacionActual}>
+                Ubicación actual
               </Button>
-            ) : (
-              <MapaComponent
-                setDatosLat={({
-                  coords: { lat, lng },
-                  direccion: domicilio,
-                }) => {
-                  setUbicacion({
-                    lat,
-                    lng,
-                  });
-                  form.setFieldValue("ubicacion", {
-                    lat,
-                    lng,
-                  });
-                  return true;
+              {!showMapa ? (
+                <Button color="green-nature" onClick={() => setShowMapa(true)}>
+                  Seleccionar ubicación
+                </Button>
+              ) : (
+                <MapaComponent
+                  setDatosLat={({
+                    coords: { lat, lng },
+                    direccion: domicilio,
+                  }) => {
+                    setUbicacion({
+                      lat,
+                      lng,
+                    });
+                    form.setFieldValue("ubicacion", {
+                      lat,
+                      lng,
+                    });
+                    return true;
+                  }}
+                />
+              )}
+            </Stack>
+          </Stack>
+        </Paper>
+        <Paper shadow="sm" p="xl" pb="xs" pos="rel">
+          <Center>Fecha</Center>
+          <Stack my="xs">
+            <Text fz="xs" ta="center" color="dimmed">
+              Mostrará los terapeutas con disponibilidad esa fecha
+            </Text>
+            <Stack>
+              <DateTimePicker
+                valueFormat="DD MMM YYYY HH:mm"
+                minDate={new Date()}
+                maw={400}
+                miw={400}
+                modalProps={{
+                  zIndex: 1000,
                 }}
+                dropdownType="modal"
+                mx="auto"
+                {...form.getInputProps("fecha")}
               />
-            )}
+            </Stack>
           </Stack>
-        </Stack>
-      </Paper>
-      <Paper shadow="sm" p="xl" pb="xs" pos="rel">
-        <Center>Fecha</Center>
-        <Stack my="xs">
-          <Text fz="xs" ta="center" color="dimmed">
-            Mostrará los terapeutas con disponibilidad esa fecha
-          </Text>
-          <Stack>
-            <DateTimePicker
-              valueFormat="DD MMM YYYY HH:mm"
-              minDate={new Date()}
-              maw={400}
-              miw={400}
-              modalProps={{
-                zIndex: 1000,
-              }}
-              dropdownType="modal"
-              mx="auto"
-              {...form.getInputProps("fecha")}
-            />
+        </Paper>
+        <Paper shadow="sm" p="xl" pb="xs" pos="rel">
+          <Center>Modalidad</Center>
+          <Stack my="xs">
+            <Text fz="xs" ta="center" color="dimmed">
+              Mostrará los terapeutas con esa modalidad de trabajo
+            </Text>
+            <Stack>
+              <Radio.Group
+                value={modalidad || null}
+                my="xs"
+                {...form.getInputProps("modalidad")}
+              >
+                <Flex justify="space-around" w="100%">
+                  <Radio
+                    value={MODALIDAD_DOMICILIO}
+                    label={MODALIDAD_DOMICILIO}
+                  />
+                  <Radio
+                    value={MODALIDAD_CONSULTORIO}
+                    label={MODALIDAD_CONSULTORIO}
+                  />
+                  <Radio value={MODALIDAD_AMBOS} label={MODALIDAD_AMBOS} />
+                </Flex>
+              </Radio.Group>
+            </Stack>
           </Stack>
-        </Stack>
-      </Paper>
-      <Paper shadow="sm" p="xl" pb="xs" pos="rel">
-        <Center>Modalidad</Center>
-        <Stack my="xs">
-          <Text fz="xs" ta="center" color="dimmed">
-            Mostrará los terapeutas con esa modalidad de trabajo {modalidad}
-          </Text>
-          <Stack>
-            <Radio.Group
-              value={modalidad || null}
-              my="xs"
-              {...form.getInputProps("modalidad")}
-            >
-              <Flex justify="space-around" w="100%">
-                <Radio value="Domicilio" label="Domicilio" />
-                <Radio value="Consultorio" label="Consultorio" />
-                <Radio value="Ambos" label="Ambos" />
-              </Flex>
-            </Radio.Group>
-          </Stack>
-        </Stack>
-      </Paper>
-      <Flex justify="end">
-        <Button
-          variant="siguiente"
-          loading={cargando}
-          disabled={!form.isValid()}
-        >
-          Buscar
-        </Button>
-      </Flex>
-    </Stack>
+        </Paper>
+        <Flex justify="end">
+          <Button
+            type="submit"
+            variant="siguiente"
+            loading={cargando}
+            disabled={!form.isValid()}
+          >
+            Buscar
+          </Button>
+        </Flex>
+      </Stack>
+    </form>
   );
 }

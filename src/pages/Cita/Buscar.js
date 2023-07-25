@@ -40,7 +40,7 @@ import {
   useDisclosure,
 } from "@mantine/hooks";
 
-function serializarSearchParams(object) {
+export function serializarSearchParams(object) {
   const filteredEntries = Object.entries(object).filter(
     ([key, value]) => value !== undefined
   );

@@ -121,6 +121,17 @@ export function FormatDate(date = new Date()) {
     .toString()
     .padStart(2, "0")}-${fecha.getDate().toString().padStart(2, "0")}`;
 }
+export function FormatTime(date = new Date()) {
+  let fecha = new Date(date);
+  return `${fecha.getHours().toString().padStart(2, "0")}:${fecha
+    .getMinutes()
+    .toString()
+    .padStart(2, "0")}:${fecha.getSeconds().toString().padStart(2, "0")}`;
+}
+export function FormatDateTime(date = new Date()) {
+  let fecha = new Date(date);
+  return `${FormatDate(fecha)} ${FormatTime(fecha)}`;
+}
 
 export function colocarFecha(fecha) {
   console.log({ fecha });
