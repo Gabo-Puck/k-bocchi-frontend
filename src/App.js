@@ -65,6 +65,7 @@ import EntrarCodigo from "./pages/EntrarCodigo";
 import AgendaTerapeuta from "./pages/AgendaTerapeuta";
 import CitaEmergencia from "./pages/CitaEmergencia";
 import AgendaPaciente from "./pages/AgendaPaciente";
+import Notificaciones from "./pages/Notificaciones";
 // import EnviosContext from "./pages/Marketplace/Envios/EnviosContext";
 
 function App() {
@@ -455,6 +456,7 @@ function App() {
                     {/* TODOS */}
                     <Route path="perfil" element={<Perfil />} />
                     <Route path="chat" element={<Chat />} />
+                    <Route path="notificaciones" element={<Notificaciones />} />
                     <Route
                       path="videollamada/:codigo_acceso"
                       element={<Videochat />}

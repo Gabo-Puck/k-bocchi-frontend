@@ -14,6 +14,8 @@ import {
   MdChevronLeft,
   MdChevronRight,
   MdOutlineSell,
+  MdDoorbell,
+  MdNotifications,
 } from "react-icons/md";
 import { SlLogout } from "react-icons/sl";
 import {
@@ -38,6 +40,7 @@ import { useNavigate } from "react-router-dom";
 
 const navbarItems = [
   { label: "Buscar terapeuta", icon: MdSearch, to: "/app/cita/buscar" },
+  { label: "Notificaciones", icon: MdNotifications, to: "/app/notificaciones" },
   {
     label: "Cita",
     icon: FaRobot,
