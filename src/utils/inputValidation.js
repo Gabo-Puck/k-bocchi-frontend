@@ -1,6 +1,7 @@
 /**
  * Este archivo contiene los objetos de validacion para los formularios
- *
+ * De manera general, las validaciones necesitan regresar un string con el error encontrado
+ * Si no hay error, se regresa null y el formulario asume que el campo esta correcto
  */
 
 import axios from "axios";

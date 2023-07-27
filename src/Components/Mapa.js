@@ -28,38 +28,53 @@ import usePlacesAutocomplete, {
 import { notifications } from "@mantine/notifications";
 import { showPositiveFeedbackNotification } from "../utils/notificationTemplate";
 const libraries = ["places"];
+//Este componente permite cargar el mapa
+//Recibe setDatosLat que es un setter que pasa los datos obtenidos de la api de google places
 export default function MapaComponent({ setDatosLat,bottom }) {
+  //Primero se carga el script de google maps, con la key de la aplicación y se le indica que librerías cargar (places)
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_MAPS_API_KEY,
     libraries: libraries,
   });
+  //Si aún no carga, se muestra un overlay de carga
   if (!isLoaded) return <LoadingOverlay visible />;
+  //Una vez carga se muestra el componente del mapa
   return <MapaSelectPlace setDatosLat={setDatosLat} />;
 }
 
+
+//Este componente es el mapa en sí
 function MapaSelectPlace({ setDatosLat }) {
+  //se define el centro del mapa, en este caso se centra en cdmx
   const center = useMemo(() => ({ lat: 19.43, lng: -99.13 }));
 
+  //Se crea el estado que va a almacenar la direccion y coordenadas obtenidas
   const [selected, setSelected] = useState({
     direccion: null,
     coords: null,
   });
   return (
     <>
+    {/* Componente de la api de google places, permite agregar un buscador de lugares, se le pasa setSelected para guardar la seleccion */}
       <PlacesAutocomplete style={{ width: "90%" }} setSelected={setSelected} />
 
+{/* Se renderiza el mapa */}
       <GoogleMap
         zoom={15}
         center={selected.coords || center}
         mapContainerClassName="googleMapa"
       >
+        {/* Se renderiza el cursor */}
         {selected.coords && <MarkerF position={selected.coords} />}
       </GoogleMap>
+      {/* Se carga el boton de seleccion */}
       <Button
         color="green-nature"
         disabled={!selected}
         onClick={() => {
+          //Se manda a llamar el setter con los datos obtenidos de la seleccion
           let returned = setDatosLat(selected);
+          //Se muestra un mensaje de confirmación
           showPositiveFeedbackNotification(
             "Se ha guardado la ubicación seleccionada"
           );
@@ -129,6 +144,7 @@ function PlacesAutocomplete({ setSelected }) {
   );
 }
 export const abrirMapa = ({ setDatosLat }) => {
+  //Esta función recibe un setter, que se va a ejecutar con los datos obtenidos de la api de places de google map
   modals.open({
     id: "mapa-modal",
     title: <Title order={3}>Añadir ubicación</Title>,

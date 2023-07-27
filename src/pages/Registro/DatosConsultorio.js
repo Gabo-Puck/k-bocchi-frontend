@@ -42,6 +42,7 @@ function validacionNombreConsultorio(value) {
 export function DatosConsultorio({ anterior, siguiente }) {
   const { datos, setDatos } = useOutletContext();
   const navigate = useNavigate();
+  //Obtenemos los datos necesarios para esta interfaz
   const {
     nombre_del_consultorio,
     direccion,
@@ -51,20 +52,29 @@ export function DatosConsultorio({ anterior, siguiente }) {
     pago_maximo,
     pago_minimo,
   } = datos;
+  //Estado para habilitar boton siguiente
   const [disabled, setDisabled] = useState(true);
+  //Estado para indicar estado de carga
   const [isLoading, setIsLoading] = useState(false);
+  //Estado para saber si el usuario ofrece servicio a domicilio
   const [isDomicilio, setIsDomicilio] = useState(servicio_domicilio);
+  //Estado para saber si el usuario ofrece servicio a consultorio
   const [isConsultorio, setIsConsultorio] = useState(servicio_consultorio);
+  //Estado para saber si el rango introducido por el usuario es valido
   const [isRangoCorrecto, setIsRangoCorrecto] = useState(false);
+  //Estado para saber si los datos del consultorio introducido por el usuario son validos
   const [isConsultorioCorrecto, setIsConsultorioCorrecto] = useState(false);
   const theme = useMantineTheme();
 
   useEffect(() => {
     let isModalidadSeleccionada = isDomicilio || isConsultorio;
+    //Cada vez que cambien los datos se realiza una revision
+    //Si el usuario ofrece a domicilio, su rango es correcto al igual que su direccion, y no ofrece servicio a consultorio activamos el boton de siguiente
     if (isDomicilio && isRangoCorrecto && !isConsultorio && direccion) {
       setDisabled(false);
       return;
     }
+    //Si el usuario ofrece a consultorio, su rango es correcto y no ofrece servicio a domicilio activamos el boton de siguiente
     if (
       isConsultorio &&
       !isDomicilio &&
@@ -74,6 +84,7 @@ export function DatosConsultorio({ anterior, siguiente }) {
       setDisabled(false);
       return;
     }
+    //Si el usuario ofrece a domicilio y consultrio, además su rango es correcto, activamos el boton de siguiente
     if (
       isDomicilio &&
       isConsultorio &&
@@ -119,11 +130,13 @@ export function DatosConsultorio({ anterior, siguiente }) {
           Ahora, cuentamos acerca de como ofrecerás tus servicios en K-Bocchi
         </Text>
         <Stack mt="lg">
+          {/* Se renderiza el componente de los rangos de precio y se le pasa el setter para rangoCorrecto */}
           <RegistroRangoPrecios
             datos={datos}
             setDatos={setDatos}
             setIsCorrecto={setIsRangoCorrecto}
           />
+          {/* Componente check para servicio a domicilio*/}
           <SwitchWithIcon
             checked={isDomicilio}
             setChecked={(value) => {
@@ -132,6 +145,7 @@ export function DatosConsultorio({ anterior, siguiente }) {
             }}
             label={"Servicio a domicilio"}
           />
+          {/* Componente check para servicio a consultorio*/}
           <SwitchWithIcon
             checked={isConsultorio}
             setChecked={(value) => {
@@ -144,17 +158,19 @@ export function DatosConsultorio({ anterior, siguiente }) {
             Agrega una referencia de la zona en que sueles trabajar, para que
             sea más sencillo que tus pacientes te encuentren
           </Text>
+          {/* Si el usuario solo ofrece servicio a domicilio, se le muestra la opcion de ingresar su domicilio */}
           {!isConsultorio && isDomicilio && (
             <>
               <Text color={!direccion ? "red.4" : "green-nature"}>
-                Dirección:{" "}
-                {direccion || "Aún no se ha seleccionado"}
+                Dirección: {direccion || "Aún no se ha seleccionado"}
               </Text>
               <Button
                 color="green-nature"
                 onClick={() =>
+                  //Abrir mapa es la función que se encarga de mostrar el mapa de google maps
                   abrirMapa({
                     setDatosLat: ({ coords, direccion }) => {
+                      //Se guardan las coordenadas y dirección obtenidas
                       setDatos({
                         ...datos,
                         coords: { ...coords },
@@ -169,6 +185,7 @@ export function DatosConsultorio({ anterior, siguiente }) {
               </Button>
             </>
           )}
+          {/* Si el terapeuta ofrece servicio en consultorio se muestra el componente para capturar datos de consultorio */}
           {isConsultorio && (
             <ConsultorioInformacion
               datos={datos}
@@ -224,7 +241,9 @@ function SwitchWithIcon({ checked, setChecked, label }) {
   );
 }
 
+//Componente que recibe los datos, el setter para cambiar los datos y el de correcto
 function ConsultorioInformacion({ datos, setDatos, setIsCorrecto }) {
+  //obtenemos los datos que requerimos
   const { nombre_del_consultorio, direccion } = datos;
   const form = useForm({
     initialValues: {
@@ -240,15 +259,18 @@ function ConsultorioInformacion({ datos, setDatos, setIsCorrecto }) {
     },
   });
   useEffect(() => {
+    //cada vez que cambie direccion o el formulario se actualizan los datos
     console.log(form.isValid());
     setDatos({
       ...datos,
       ...form.values,
     });
+    //Si no es valido este formulario seteamos como incorrecto mediante el setter de los parametros
     if (!form.isValid()) {
       setIsCorrecto(false);
       return;
     }
+    //Si la dirección esta vacia o nula igual marcamos como incorrecto
     if (direccion == "" || direccion == null) {
       setIsCorrecto(false);
       // form.setErrors({
@@ -257,6 +279,7 @@ function ConsultorioInformacion({ datos, setDatos, setIsCorrecto }) {
       // });
       return;
     }
+    //si pasa todas las pruebas marca como correcto
     setIsCorrecto(true);
     form.setErrors({});
   }, [form.values, direccion]);
@@ -291,7 +314,9 @@ function ConsultorioInformacion({ datos, setDatos, setIsCorrecto }) {
   );
 }
 
+//Componente que permite obtener los rangos de precio
 function RegistroRangoPrecios({ datos, setDatos, setIsCorrecto }) {
+  //Se obtiene los datos necesarios
   let { pago_maximo, pago_minimo } = datos;
   const form = useForm({
     validateInputOnBlur: true,
@@ -324,21 +349,27 @@ function RegistroRangoPrecios({ datos, setDatos, setIsCorrecto }) {
     },
   });
   useEffect(() => {
+    //Cada que cambia un valor se valida el formulario
     setIsCorrecto(form.isValid());
-    if (form.isDirty() ) {
+    //isDirty permite saber si el formulario tiene valores distintos a los iniciales
+    if (form.isDirty()) {
+      //Si es así, actualiza los datos y vuelve a validar el formulario
       setDatos({ ...datos, ...form.values });
       setIsCorrecto(!form.validate().hasErrors);
     }
-  }, [form.values,datos]);
+  }, [form.values, datos]);
   return (
     <Center>
       <Grid>
         <Grid.Col span="auto">
+          {/* Componente de input numerico de mantine */}
           <NumberInput
             label="Pago minimo"
             description="Lo minimo que cobrarías por una cita"
             hideControls
+            //Parser permite quitar los simbolos agregados por el formatter mediante regex(expresion regular)
             parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+            //formatter permite agregar simbolos al input, en este caso un signo $
             formatter={(value) =>
               !Number.isNaN(parseFloat(value))
                 ? `$ ${value}`.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
@@ -365,3 +396,10 @@ function RegistroRangoPrecios({ datos, setDatos, setIsCorrecto }) {
     </Center>
   );
 }
+
+//registro
+//chatbot
+//chat
+//marketplace
+//bitacora
+//videollamada

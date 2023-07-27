@@ -69,11 +69,8 @@ import Notificaciones from "./pages/Notificaciones";
 // import EnviosContext from "./pages/Marketplace/Envios/EnviosContext";
 
 function App() {
-  let usuario = useSelector(selectUsuario);
-  let dispatch = useDispatch();
-  let { isExpirado } = useSesionExpiracion();
-
   return (
+    //MantineProvider es un componente que permite hacer configuraciones globales para la librería UI
     <MantineProvider
       withGlobalStyles
       withNormalizeCSS
@@ -331,6 +328,7 @@ function App() {
         },
       }}
     >
+      {/* PaypalScriptProvier es un componente de la api de Paypal que permite cargar el script de paypal */}
       <PayPalScriptProvider
         options={{
           "client-id": process.env.REACT_APP_PAYPAL_CLIENT_ID,
@@ -338,10 +336,12 @@ function App() {
           locale: "es_MX",
         }}
       >
+        {/* Notifications es un componente de Mantine que permite desplegar las notifcaciones */}
         <Notifications />
         <div className="App">
           {/**Router es un componente que permite crear un enrutador para la aplicacion. Además soporta los controles de anterior y siguiente del navegador */}
           <BrowserRouter>
+            {/* ModalsProvider es un componente de mantine que permite mostrar los modals de la aplicacion y también darles una configuración global*/}
             <ModalsProvider
               modalProps={{
                 centered: true,
