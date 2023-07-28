@@ -30,20 +30,26 @@ export const PreguntaSeleccionarModalidad = new NodoPregunta(
     console.log("bien");
     // NodoPregunta.setPregunta(siguiente);
   },
+  //El contenido de la pregunta
   (
     <>
       <MensajeSeleccionarModalidad />
     </>
   ),
   async (value) => {
+    //Se obtiene el valor escrito por el usuario
     switch (value) {
       case "1":
+        //Si es 1, quiere modalidad de consultorio
         console.log("consultorio");
+        //Se guardan los datos del terapeuta
         setTerapeutaConsultorioDatos(NodoPregunta.datos.terapeuta);
+        //Y se le pregunta la fecha que quiera
         NodoPregunta.setPregunta(PreguntaSeleccionarFecha);
         break;
       case "2":
         console.log("domicilio");
+        //Si es domicilio, se marca la siguiente pregunta como PreguntaSeleccionarDomicilio
         NodoPregunta.setPregunta(PreguntaSeleccionarDomicilio);
         break;
       default:
@@ -51,7 +57,10 @@ export const PreguntaSeleccionarModalidad = new NodoPregunta(
     }
   },
   () => {
+    //Esta funcion se ejecuta en cuanto se carga la pregunta, pero antes de que muestre el contenido de la misma
+    //Se obtiene primero el terapeuta de los datos
     let { terapeuta } = NodoPregunta.datos;
+    //Si el terapeuta tiene ambas modalidades, muestra la pregunta de seleccionar domicilio retornando un true
     if (
       terapeuta.servicio_domicilio === 1 &&
       terapeuta.nombre_del_consultorio !== ""
@@ -59,14 +68,16 @@ export const PreguntaSeleccionarModalidad = new NodoPregunta(
       // alert("Ambos");
       return true;
     }
+    //Si el terapeuta solo tiene a domicilio, se marca la siguiente pregunta como la de PreguntaSeleccionarDomicilio y se retorna false, para no mostrar la pregunta PreguntaSeleccionarModalidad
     if (
       terapeuta.servicio_domicilio === 1 &&
       terapeuta.nombre_del_consultorio === ""
-    ) {
-      // alert("Domicilio");
+      ) {
+        // alert("Domicilio");
       NodoPregunta.setPregunta(PreguntaSeleccionarDomicilio);
       return false;
     }
+    //Si el terapeuta solo tiene a consultorio, se marca la siguiente pregunta como la de PreguntaSeleccionarFecha y se retorna false, para no mostrar la pregunta PreguntaSeleccionarModalidad
     if (
       terapeuta.servicio_domicilio === 0 &&
       terapeuta.nombre_del_consultorio !== ""

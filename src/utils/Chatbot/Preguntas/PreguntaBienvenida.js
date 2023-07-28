@@ -16,24 +16,29 @@ export const PreguntaBienvenida = new NodoPregunta(
   null,
   null,
   (e) => {
+    //Escribimos el mensaje de error
     console.log(e);
+    //Creamos el componente con el mensaje de error
     let error = (
       <>
         <BotMensaje>
           <Text>{e.message}</Text>
         </BotMensaje>
-
+        {/* Mostramos las opciones posibles del menu */}
         <MensajeOpcionesCrud />
       </>
     );
+    //Agregamos el mensaje
     NodoPregunta.addMensaje(error);
     return;
   },
   (siguiente) => {
+    //Cuando se elige una opcion correcta, se cambia la pregunta a la opción elegida
     console.log("bien");
     NodoPregunta.setPregunta(siguiente);
   },
   (
+    //Este es el contenido de la pregunta
     <>
       <MensajeOpcionesCrud />
     </>

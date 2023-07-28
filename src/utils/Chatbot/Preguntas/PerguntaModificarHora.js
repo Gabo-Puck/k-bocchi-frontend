@@ -12,7 +12,7 @@ import {
 } from "../../../Components/Chatbot/MensajesModificarCita";
 import { PreguntaModificarFecha } from "./PreguntaModificarFecha";
 import { PreguntaConfirmacionAgendar } from "./PreguntaConfirmacionAgendar";
-
+// PreguntaModificarHora->PreguntaConfirmacionAgendar
 export const PreguntaModificarHora = new NodoPregunta(
   null,
   null,
@@ -32,9 +32,11 @@ export const PreguntaModificarHora = new NodoPregunta(
   (horario) => {
     console.log("bien");
     console.log(horario);
+    //Se guarda el horario nuevo
     NodoPregunta.setDatos({
       cita: { ...NodoPregunta.datos.cita, fecha: horario.fecha },
     });
+    //Se manda a la pantalla de guardar
     NodoPregunta.setPregunta(PreguntaConfirmacionAgendar);
   },
   (
@@ -43,8 +45,10 @@ export const PreguntaModificarHora = new NodoPregunta(
     </>
   ),
   async (value) => {
+    //Se revisa si el valor ingresado por el usuario es valido
     let seleccionado = NodoPregunta.opciones[value - 1];
     if (!seleccionado) throw new Error("Opcion no identificada");
+    //Se retorna el valor seleccionado
     return seleccionado;
   }
 );

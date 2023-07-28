@@ -16,6 +16,7 @@ export const PreguntaAgendar = new NodoPregunta(
   null,
   null,
   (e) => {
+    //Misma forma de mostrar error
     console.log(e);
     let error = (
       <>
@@ -29,6 +30,8 @@ export const PreguntaAgendar = new NodoPregunta(
     return;
   },
   (resultados) => {
+    //Se reciben los resultados
+    //Si es un solo resultado automáticamente se selecciona el terapeuta y se guarda en los datos
     if (resultados.length === 1) {
       if (resultados[0].dias_habiles === 0)
         throw new Error(
@@ -38,24 +41,30 @@ export const PreguntaAgendar = new NodoPregunta(
         terapeuta: resultados[0],
         cita: { ...NodoPregunta.datos.cita, id_terapeuta: resultados[0].id },
       });
+      //Se determina que la siguiente pregunta es PreguntaSeleccionarModalidad
       NodoPregunta.setPregunta(PreguntaSeleccionarModalidad);
     } else {
+      //Si son varios, se guardan todos en las opciones
       NodoPregunta.opciones = resultados;
       console.log(NodoPregunta.opciones);
+      //Y se determina la siguiente pregunta PreguntaSeleccionarTerapeuta
       NodoPregunta.setPregunta(PreguntaSeleccionarTerapeuta);
     }
     console.log("bien");
     // NodoPregunta.setPregunta(siguiente);
   },
   (
+    //El contenido de la pregunta
     <>
       <MensajeBienvenidaAgendar />
       <MensajeNombre />
     </>
   ),
   async (value) => {
+    //Se recibe el valor que escribio el usuario
     let response;
     try {
+      //Buscar terapeutas con ese nombre
       response = await axios.get(
         `/usuarios/fisioterapeutas/buscarNombre/${value}`
       );
@@ -63,9 +72,12 @@ export const PreguntaAgendar = new NodoPregunta(
       if (!err) throw { message: "Algo ha salido mal :c" };
       throw { message: err.response.data };
     }
+    //Si no hay respuesta, se tira error
     if (!response) throw new Error("Algo ha salido mal :c");
+    //Si no se encontro nada también se tira error
     if (response.data.length === 0)
       throw new Error("No se encontro un terapeuta con ese nombre");
+    //Si todo salió bien se retornan los resultados
     return response.data;
   },
   () => {

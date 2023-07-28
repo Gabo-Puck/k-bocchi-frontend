@@ -29,6 +29,7 @@ export const PreguntaModificar = new NodoPregunta(
     return;
   },
   (cita) => {
+    //Se guardan los datos de la cita seleccionada
     console.log("bien");
     // NodoPregunta.setPregunta(siguiente);
     let { terapeuta_datos } = { ...cita };
@@ -42,16 +43,20 @@ export const PreguntaModificar = new NodoPregunta(
         ...terapeuta_datos,
       },
     });
+    //Se manda al menu de modificacion
     NodoPregunta.setPregunta(PreguntaMenuModificar);
   },
   (
+    //La pregunta como tal
     <>
       <MensajeModificarBienvenida />
       <MensajeMostrarCitas mensaje="Elije una cita para modificarla"/>
     </>
   ),
   async (value) => {
+    //Se obtiene el valor ingresado por el usuario
     let seleccionado = NodoPregunta.opciones[value - 1];
+    //Si el valor no esta dentro de los parametros se le hace saber
     if (!seleccionado) throw new Error("Opcion no identificada");
     return seleccionado;
   }

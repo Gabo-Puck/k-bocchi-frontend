@@ -19,7 +19,7 @@ import { PreguntaBienvenida } from "./PreguntaBienvenida";
 import { type } from "@testing-library/user-event/dist/type";
 import BotMensaje from "../../../Components/Chatbot/BotMensaje";
 
-//PreguntaSeleccionarModalidad ->PreguntaSeleccionarDomicilio
+//PreguntaConfirmacionAgendar ->PreguntaBienvenida
 export const PreguntaConfirmacionAgendar = new NodoPregunta(
   null,
   null,
@@ -40,18 +40,24 @@ export const PreguntaConfirmacionAgendar = new NodoPregunta(
     );
   },
   (Siguiente) => {
+    //Se marca la pregunta siguiente
     NodoPregunta.setPregunta(Siguiente);
   },
   (
+    //La pregunta en si
     <>
       <MensajeCitaInformacion />
       <MensajeCitaConfirmacion />
     </>
   ),
   async (value) => {
+    //Se obtiene lo que ingreso el usuario
     try {
       switch (value) {
+        //si es 1, quiere decir que desea guardar los datos
         case "1":
+          //Ahora, si la cita ya tiene una id, se esta modificando una cita, por lo tanto se hace una petición patch en vez de un post
+          //Y se guarda los cambios / se crea la cita
           if (NodoPregunta.datos.cita.id) {
             await axios.patch("/citas", {
               ...NodoPregunta.datos.cita,
@@ -61,6 +67,7 @@ export const PreguntaConfirmacionAgendar = new NodoPregunta(
               ...NodoPregunta.datos.cita,
             });
           }
+          //Se añade un mensaje de guardado
           NodoPregunta.datos = null;
           NodoPregunta.addMensaje(
             <>
@@ -69,8 +76,10 @@ export const PreguntaConfirmacionAgendar = new NodoPregunta(
               </BotMensaje>
             </>
           );
+          //se retorna la pregunta siguiente
           return PreguntaBienvenida;
         case "2":
+          //Si puso 2, quiere decir que quiere cancelar
           return PreguntaBienvenida;
         default:
           throw new Error("Opcion no reconocida");

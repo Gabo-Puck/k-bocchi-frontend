@@ -28,12 +28,14 @@ export function MensajeNombre() {
 
 export function MensajeSeleccionarTerapeuta({ terapeutas }) {
   console.log(NodoPregunta.opciones);
+
   return (
     <BotMensaje>
       <Text>
         Por favor elige el terapeuta con el que deseas agendar una cita
       </Text>
       <List type="ordered">
+        {/* Se itera sobre todas las opciones posibles para mostrarlas */}
         {NodoPregunta.opciones.map((t) => {
           return (
             <List.Item key={`${t.id_usuario}`}>
@@ -74,6 +76,7 @@ export function MensajeSeleccionarModalidad() {
 }
 
 export function MensajeSeleccionarDomicilio() {
+  //Se crea un estado para guardar la direccion seleccionada
   const [direccionSeleccionada, setDireccionSeleccionada] = useState(false);
   return (
     <BotMensaje>
@@ -82,10 +85,12 @@ export function MensajeSeleccionarDomicilio() {
         <Text>Direccion seleccionada: {direccionSeleccionada}</Text>
       ) : (
         <>
+          {/* Se muestra la pregunta de seleccionar ubicación y el boton que permite abrir el mapa */}
           <Button
             color="blue-calm.4"
             onClick={async () => {
               let domicilio = await seleccionarUbicacion();
+              //Una vez se obtiene el domicilio, ejecuta la función onSubmit la pregunta PreguntaSeleccionarDomicilio
               await PreguntaSeleccionarDomicilio.onSubmit(domicilio);
               setDireccionSeleccionada(domicilio.direccion);
             }}
@@ -136,7 +141,7 @@ export function MensajeSeleccionarHorario() {
 
 export function MensajeListaHorarios() {
   let horarios_disponibles = NodoPregunta.opciones;
-  //s
+  //Se itera sobre las opciones de horario y se muestran
   return (
     <BotMensaje>
       <List type="ordered">
@@ -155,6 +160,7 @@ export function MensajeListaHorarios() {
 export function MensajeCitaInformacion() {
   let { cita } = NodoPregunta.datos;
   let { terapeuta } = NodoPregunta.datos;
+  //Se muestran los datos de la cita
   return (
     <BotMensaje>
       <Text>

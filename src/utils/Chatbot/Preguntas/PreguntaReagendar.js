@@ -39,6 +39,7 @@ export const PreguntaReagendar = new NodoPregunta(
     </>
   ),
   async (value) => {
+    //Si marca 1, desea reagendar, si marca 2 no desea reagendar
     try {
       switch (value) {
         case "1":

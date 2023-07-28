@@ -28,7 +28,7 @@ export const PreguntaSeleccionarDomicilio = new NodoPregunta(
         <BotMensaje>
           <Text>{message}</Text>
         </BotMensaje>
-        
+
         <MensajeSeleccionarDomicilio />
       </>
     );
@@ -36,6 +36,8 @@ export const PreguntaSeleccionarDomicilio = new NodoPregunta(
     return;
   },
   (resultados) => {
+    //Se obtiene el domicilio seleccionado por el usuario
+    //Se guarda en los datos
     NodoPregunta.setDatos({
       cita: {
         ...NodoPregunta.datos.cita,
@@ -45,30 +47,38 @@ export const PreguntaSeleccionarDomicilio = new NodoPregunta(
         domicilio: resultados.direccion,
       },
     });
-    if(NodoPregunta.datos.cita.id){
+    //Si la cita en datos tiene un id, quiere decir que estamos modificando una cita, entonces mandamos al usuario a la pregunta de guardar
+    if (NodoPregunta.datos.cita.id) {
       NodoPregunta.setPregunta(PreguntaConfirmacionAgendar);
-    }else{
+    } else {
+      //Si no tiene id, quiere decir que estamos agendando/creando una cita
       NodoPregunta.setPregunta(PreguntaSeleccionarFecha);
-
     }
   },
   (
+    //El contenido de la pregunta
     <>
       <MensajeSeleccionarDomicilio />
     </>
   ),
   async (value) => {
+    //Si el usuario no selecciono nada, se marca error
     if (!value.direccion || !value.lat || !value.lng)
       throw new Error("Vuelve a seleccionar la dirección porfavor");
     console.log(NodoPregunta.datos.terapeuta);
     try {
+      // Se obtienen los datos ingresados por el usuario
       let { lat: latA, lng: lngA } = value;
+      //Y se obtiene la id del terapeuta
       let { id } = NodoPregunta.datos.terapeuta;
+      //Se valida que el domicilio este dentro del rango
       await axios.get(
         `/citas/validarDomicilio/${id}?latA=${latA}&lngA=${lngA}`
       );
+      //Retorna el valor ingresado si todo sale bien
       return value;
     } catch (err) {
+      //Si algo sale mal se marca como error
       if (!err) throw new Error("Algo ha salido mal :c");
       let { status, data } = err.response;
       throw { status, message: data };
@@ -76,6 +86,7 @@ export const PreguntaSeleccionarDomicilio = new NodoPregunta(
   }
 );
 
+//Permite abrir el mapa y guardar los datos
 export async function seleccionarUbicacion() {
   return new Promise((resolve, reject) => {
     abrirMapa({

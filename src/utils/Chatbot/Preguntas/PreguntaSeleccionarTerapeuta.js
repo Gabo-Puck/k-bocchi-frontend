@@ -25,13 +25,16 @@ export const PreguntaSeleccionarTerapeuta = new NodoPregunta(
     return;
   },
   (seleccionado) => {
+    //Se guarda el terapeuta seleccionado en los datos;
     console.log("bien");
     NodoPregunta.setDatos({
       terapeuta: seleccionado,
       cita: { ...NodoPregunta.datos.cita, id_terapeuta: seleccionado.id },
     });
+    //Se marca como siguiente pregunta PreguntaSeleccionarModalidad
     NodoPregunta.setPregunta(PreguntaSeleccionarModalidad);
   },
+  //El contenido de la pregunta
   (
     <>
       <MensajeAvisoVariosTerapeutas />
@@ -39,12 +42,16 @@ export const PreguntaSeleccionarTerapeuta = new NodoPregunta(
     </>
   ),
   async (value) => {
+    //Se obtiene el valor escrito por el usuario
     let seleccionado = NodoPregunta.opciones[value - 1];
+    //Si no se encuentra ese valor, se hace saber
     if (!seleccionado) throw new Error("Opcion no identificada");
+    //Si el terapeuta no tiene dias_habiles (no ha definido su horario)
     if (seleccionado.dias_habiles === 0)
       throw new Error(
         "Lo lamento, este terapeuta no ha definido su horario de trabajo 😐"
       );
+      //Se retorna el valor seleccionado
     return seleccionado;
   }
 );

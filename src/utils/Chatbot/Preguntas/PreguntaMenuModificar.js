@@ -16,6 +16,7 @@ import { MensajeFechasOpciones } from "../../../Components/Chatbot/MensajesAgend
 import { PreguntaSeleccionarFecha } from "./PreguntaSeleccionarFecha";
 import { PreguntaSeleccionarDomicilio } from "./PreguntaSeleccionarDomicilio";
 
+//PreguntaModificar -> PreguntaMenuModificar
 export const PreguntaMenuModificar = new NodoPregunta(
   null,
   null,
@@ -43,35 +44,48 @@ export const PreguntaMenuModificar = new NodoPregunta(
     </>
   ),
   async (value) => {
+    //Se evalua lo que ingreso el usuario
     switch (value) {
       case "1":
+        //si puso 1 quiere modificar la fecha
         //fecha
         return PreguntaModificarFecha;
       case "2":
+        ///Si puso 2 quiere modificar la hora
+        //Se obtienen los datos
         let { id } = NodoPregunta.datos.terapeuta;
         let { fecha: fecha_completa } = NodoPregunta.datos.cita;
         let fecha = fecha_completa.split("T")[0];
         let horariosResponse;
         try {
+          //se sacan los horarios disponibles en la fecha de la cita
           horariosResponse = await axios.get(
             `/citas/validarFecha/${id}?fecha=${fecha}`
           );
+          //se guardan como opciones los horarios disponibles
           NodoPregunta.opciones = horariosResponse.data.horarios_disponibles;
+          //Se marca la siguiente pregunta PreguntaModificarHora
           return PreguntaModificarHora;
         } catch (err) {
+          //Si algo salio mal
           if (!err) throw new Error("Algo ha salido mal :c");
+          //Se revisa si el status es 420 (No hay horarios para ese día ya)
           if (err.response.status === 420) {
+            //Se guardan las fechas disponibles mas cercanas
             NodoPregunta.opciones = err.response.data;
             console.log(NodoPregunta.opciones);
+            //Y se retorna la siguiente pregunta
             return PreguntaModificarDesicion;
           }
           throw { message: err.response.data, status: err.response.status };
         }
       //hora
       case "3":
+        //Si pone 3 quiere modificar ambos parametros fecha y hora
         return PreguntaSeleccionarFecha;
       //ambas
       case "4":
+        //si puso 4 quiere modificar el domicilio de su cita
         //domicilio
         return PreguntaSeleccionarDomicilio;
         break;
