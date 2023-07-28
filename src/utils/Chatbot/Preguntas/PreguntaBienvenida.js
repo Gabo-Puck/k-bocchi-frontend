@@ -43,32 +43,41 @@ export const PreguntaBienvenida = new NodoPregunta(
       <MensajeOpcionesCrud />
     </>
   ),
+  //Aqui se procesa lo que el usuario escribio
   async (value) => {
     switch (value) {
+      //Si escribio 1 la siguiente pregunta es la de agendar
       case "1":
         //agendar
         console.log("Agendar");
         return PreguntaAgendar;
       //Modificar
+      //Si escribio 1 la siguiente pregunta es la de modficar
       case "2": {
         console.log("Modificar");
+        //Se obtiene el id del paciente y la fecha actual
         let id = NodoPregunta.id_paciente;
         let fecha = getFecha(new Date());
         let citas;
         try {
+          //Posteriormente se obtiene las citas del paciente
           citas = await axios.get(
             `/usuarios/pacientes/${id}/citas?fecha=${fecha}`
           );
         } catch (err) {
+          //Si hay un error se lanza al siguiente try catch
           console.log(err);
           throw new Error("Algo ha salido mal :c");
         }
+        //Si no tiene citas se hace lo mismo
         if (citas.data.length === 0) {
           throw new Error("Disculpa, no tienes citas proximas 😓");
         }
+        //Si solo tiene una cita, se guardan los datos de la misma
         if (citas.data.length === 1) {
           let { terapeuta_datos } = { ...citas.data[0] };
           delete citas.data[0].terapeuta_datos;
+          //Se guardan en los datos
           NodoPregunta.setDatos({
             cita: {
               ...NodoPregunta.datos.cita,
@@ -78,9 +87,12 @@ export const PreguntaBienvenida = new NodoPregunta(
               ...terapeuta_datos,
             },
           });
+          //Y se retorna la siguiente pregunta que es la de PreguntaMenuModificar
           return PreguntaMenuModificar;
         }
+        //Si tiene más de una se agregan todas las citas como opciones
         NodoPregunta.opciones = citas.data;
+        //Y se retorna la siguiente pregunta PreguntaModificar
         return PreguntaModificar;
       }
 
@@ -92,6 +104,7 @@ export const PreguntaBienvenida = new NodoPregunta(
         let fecha = getFecha(new Date());
         let citas;
         try {
+          //Se obtienen las citas del usuario
           citas = await axios.get(
             `/usuarios/pacientes/${id}/citas?fecha=${fecha}`
           );
@@ -114,9 +127,12 @@ export const PreguntaBienvenida = new NodoPregunta(
               ...terapeuta_datos,
             },
           });
+          //Se determina que la siguiente pregunta es PreguntaConfirmacionEliminar
           return PreguntaConfirmacionEliminar;
         }
+        //Se guardan las citas como opciones
         NodoPregunta.opciones = citas.data;
+        //Y se retorna PreguntaEliminar como siguiente pregunta
         return PreguntaEliminar;
       }
       default:

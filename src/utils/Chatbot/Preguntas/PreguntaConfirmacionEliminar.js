@@ -61,6 +61,7 @@ export const PreguntaConfirmacionEliminar = new NodoPregunta(
           //Se manda a la pregunta de reagendar
           return PreguntaReagendar;
         case "2":
+          //Si marco 2 quiere decir que no desea eliminar la cita seleccionada
           return PreguntaBienvenida;
         default:
           throw new Error("Opcion no reconocida");

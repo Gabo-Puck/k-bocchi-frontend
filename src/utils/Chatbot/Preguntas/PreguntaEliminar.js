@@ -30,9 +30,12 @@ export const PreguntaEliminar = new NodoPregunta(
     return;
   },
   (cita) => {
+    //Se obtienen los datos de la cita seleccionada
     console.log("bien");
     let { terapeuta_datos } = { ...cita };
+    //Se elemina la propiedad terapeuta_datos para que no se repita en los datos
     delete cita.terapeuta_datos;
+    //Guardamos en los datos la cita seleccionada
     NodoPregunta.setDatos({
       cita: {
         ...NodoPregunta.datos.cita,
@@ -42,6 +45,7 @@ export const PreguntaEliminar = new NodoPregunta(
         ...terapeuta_datos,
       },
     });
+    //Se manda a la pantall de confirmar eliminar
     NodoPregunta.setPregunta(PreguntaConfirmacionEliminar);
     // NodoPregunta.setPregunta(siguiente);
   },
